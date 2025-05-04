@@ -3,8 +3,21 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Container } from '@mui/material';
+import PostEditor from '@/components/PostEditer';
+import PostViewer from '@/components/PostViewer';
 
 export default function Home() {
+  const handleSubmit = (data: { title: string; content: string }) => {
+    console.log("Bài viết gửi đi:", data);
+    // TODO: Gửi API lưu bài viết vào database
+  };
+
+  const sampleContent = `
+  <p>Đây là nội dung bài viết.</p>
+  <p><img src="https://via.placeholder.com/600x300" alt="Demo ảnh" /></p>
+  <p><video controls src="https://www.w3schools.com/html/mov_bbb.mp4" width="600"></video></p>
+`;
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -43,6 +56,16 @@ export default function Home() {
                 </div>
               ))}
             </div>
+          </section>
+
+          {/* Editer */}
+          <section className="mb-10">
+            <PostEditor onSubmit={handleSubmit} />
+          </section>
+          
+          {/* Bài viết */}
+          <section className="mb-10">
+            <PostViewer title="Tiêu đề bài viết demo" content={sampleContent} />
           </section>
 
           {/* Chia sẻ kinh nghiệm */}

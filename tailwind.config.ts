@@ -15,6 +15,6 @@ const config: Config = {
       // Bạn có thể mở rộng theme Tailwind ở đây
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 }
 export default config
