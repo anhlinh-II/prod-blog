@@ -3,8 +3,8 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Container } from '@mui/material';
-import PostEditor from '@/components/PostEditer';
-import PostViewer from '@/components/PostViewer';
+import ProductCarousel from '@/components/product/ProductCarousel';
+import BannerSlider2 from '@/components/BannerSlider';
 
 export default function Home() {
   const handleSubmit = (data: { title: string; content: string }) => {
@@ -12,15 +12,12 @@ export default function Home() {
     // TODO: Gửi API lưu bài viết vào database
   };
 
-  const sampleContent = `
-  <p>Đây là nội dung bài viết.</p>
-  <p><img src="https://via.placeholder.com/600x300" alt="Demo ảnh" /></p>
-  <p><video controls src="https://www.w3schools.com/html/mov_bbb.mp4" width="600"></video></p>
-`;
-
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
+
+      {/* Banner */}
+      <BannerSlider2 />
 
       <main className="flex-grow bg-gray-50 py-6">
         <Container maxWidth="lg">
@@ -60,12 +57,8 @@ export default function Home() {
 
           {/* Editer */}
           <section className="mb-10">
-            <PostEditor onSubmit={handleSubmit} />
-          </section>
-          
-          {/* Bài viết */}
-          <section className="mb-10">
-            <PostViewer title="Tiêu đề bài viết demo" content={sampleContent} />
+            <h2 className="text-2xl font-bold mb-4">Sản phẩm nổi bật</h2>
+            <ProductCarousel />
           </section>
 
           {/* Chia sẻ kinh nghiệm */}

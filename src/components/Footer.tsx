@@ -12,8 +12,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-8">
         {/* Logo & Bộ Công Thương */}
         <div className="space-y-4">
-          <img src="/logo-muji.png" alt="MUJI Logo" className="w-24" />
-          <img src="/bo-cong-thuong.png" alt="Bộ Công Thương" className="w-36" />
+          <img src="" alt="Logo" className="w-24" />
+          <img src="" alt="Bộ Công Thương" className="w-36" />
         </div>
 
         {/* Về MUJI */}
