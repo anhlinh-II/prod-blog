@@ -1,3 +1,4 @@
+// components/common/FilterSidebar.tsx
 export default function FilterSidebar() {
     return (
       <div className="space-y-6">

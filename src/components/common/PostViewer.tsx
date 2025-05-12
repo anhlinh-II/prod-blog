@@ -1,4 +1,4 @@
-// components/PostViewer.tsx
+// components/common/PostViewer.tsx
 "use client";
 
 import { useRef, useState, useEffect } from 'react';

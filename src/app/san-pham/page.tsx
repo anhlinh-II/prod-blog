@@ -3,7 +3,7 @@ import { Button } from "@/components/common/Button";
 import DisplayMedia from "@/components/common/DisplayMedia";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import PostViewer from "@/components/PostViewer";
+import PostViewer from "@/components/common/PostViewer";
 import ProductCarousel from "@/components/product/ProductCarousel";
 import ProductGallery from "@/components/product/ProductGallery";
 import { Container } from "@mui/material";
@@ -143,7 +143,7 @@ export default function ProductPage() {
                                     >
                                         <tbody>
                                         {filtered.map(([key, value]) => (
-                                            <tr key={key} className="h-14">
+                                            <tr key={key} className="h-12">
                                                 <th className="px-4 py-2 border border-gray-300 bg-gray-50 font-bold 
                                                     text-gray-700 w-1/3 align-middle">
                                                     {key}
@@ -154,7 +154,7 @@ export default function ProductPage() {
                                             </tr>
                                         ))}
                                         {needPaddingRow && (
-                                            <tr className="h-14">
+                                            <tr className="h-12">
                                                 <th className="px-4 py-2 border border-gray-300 bg-gray-50"></th>
                                                 <td className="px-4 py-2 border border-gray-300"></td>
                                             </tr>

@@ -1,3 +1,4 @@
+// components/common/Pagination.tsx
 import { BsThreeDots } from "react-icons/bs";
 type PaginationProps = {
     currentPage: number;
@@ -8,14 +9,23 @@ type PaginationProps = {
 export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
     const pageNumbers = [];
 
-    if (totalPages <= 5) {
+    if (totalPages <= 7) {
+        // Hiển thị toàn bộ nếu số trang ít
         for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
     } else {
         pageNumbers.push(1);
-        pageNumbers.push(2);
-        if (currentPage > 3) pageNumbers.push('...');
-        if (currentPage > 1 && currentPage < totalPages) pageNumbers.push(currentPage);
-        if (currentPage < totalPages - 1) pageNumbers.push('...');
+
+        const start = Math.max(2, currentPage - 2);
+        const end = Math.min(totalPages - 1, currentPage + 2);
+
+        if (start > 2) pageNumbers.push('...');
+
+        for (let i = start; i <= end; i++) {
+            pageNumbers.push(i);
+        }
+
+        if (end < totalPages - 1) pageNumbers.push('...');
+
         pageNumbers.push(totalPages);
     }
 
@@ -33,6 +43,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
             </button>
 
             {/* Page Numbers */}
+            <div className="flex items-center justify-center gap-2 md:min-w-md">
             {pageNumbers.map((num, idx) =>
                 typeof num === 'string' ? (
                     <span key={idx} className="px-2">
@@ -50,6 +61,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
                     </button>
                 )
             )}
+            </div>
 
             {/* Next */}
             <button

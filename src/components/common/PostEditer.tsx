@@ -1,4 +1,4 @@
-// components/PostEditor.tsx
+// components/common/PostEditor.tsx
 "use client";
 
 import dynamic from "next/dynamic";

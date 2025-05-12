@@ -43,7 +43,7 @@ const ProductGallery: React.FC<ProductGallery> = ({ images, setIsDisplayMedia })
                 onClick={() => setCurrentIndex(i)}>
                 <div className={`w-20 h-20 relative cursor-pointer border border-gray-200
                     ${i === currentIndex ? 'border-blue-500 brightness-75' : 'border-gray-200'}`}>
-                    <Image src={src} alt={`thumb-${i}`} fill className="object-cover" />
+                    <Image src={src} alt={`thumb-${i}`} sizes='20' fill className="object-cover" />
                 </div>
                 </SwiperSlide>
             ))}
@@ -74,6 +74,8 @@ const ProductGallery: React.FC<ProductGallery> = ({ images, setIsDisplayMedia })
         <Image
           src={images[currentIndex]}
           alt="main"
+          priority
+          sizes='full'
           fill
           className="object-contain cursor-pointer"
           onClick={() => setIsDisplayMedia(true)}
