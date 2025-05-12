@@ -107,7 +107,7 @@ export default function ProductCarousel() {
 
             <button
                 onClick={next}
-                className="hidden md:block absolute -right-12 top-1/2 -translate-y-1/2 z-10 p-2 bg-white text-2xl
+                className="hidden md:block absolute -right-16 top-1/2 -translate-y-1/2 z-10 p-2 bg-white text-2xl
                 shadow rounded-full hover:bg-red-900 hover:text-white cursor-pointer"
             >
                 <IoIosArrowForward />

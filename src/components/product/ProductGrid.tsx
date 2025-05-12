@@ -51,7 +51,7 @@ const sampleProducts = [
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
         {sampleProducts.map((p, idx) => (
-          <ProductItem {...p} />
+          <ProductItem key={idx} {...p} />
         ))}
       </div>
     );
