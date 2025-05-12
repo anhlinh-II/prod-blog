@@ -1,1 +1,260 @@
 @import "tailwindcss";
+
+@keyframes slideInFromRightMUI {
+     from {
+          transform: translateX(40px);
+          opacity: 0;
+     }
+
+     to {
+          transform: translateX(0);
+          opacity: 1;
+     }
+}
+
+@keyframes slideInFromLeftMUI {
+     from {
+          transform: translateX(-40px);
+          opacity: 0;
+     }
+
+     to {
+          transform: translateX(0);
+          opacity: 1;
+     }
+}
+
+/* Tùy chỉnh thanh cuộn cho submenu (WebKit browsers) */
+.custom-submenu-scroll::-webkit-scrollbar {
+     width: 8px;
+}
+
+.custom-submenu-scroll::-webkit-scrollbar-track {
+     background: #f1f1f1;
+     border-radius: 10px;
+}
+
+.custom-submenu-scroll::-webkit-scrollbar-thumb {
+     background: #ababab;
+     /* Màu xám nhạt hơn cho thanh cuộn */
+     border-radius: 10px;
+}
+
+.custom-submenu-scroll::-webkit-scrollbar-thumb:hover {
+     background: #888888;
+}
+
+/* --- Định nghĩa Keyframes --- */
+
+/* Keyframe Rung (Đã sửa đổi để có khoảng nghỉ) */
+@keyframes shake {
+  /* Phần trăm thời gian animation */
+  0%, 100% { transform: translateX(0); } /* Trạng thái nghỉ (đầu, cuối) */
+  5%, 15% { transform: translateX(-3px); } /* Rung trái nhanh */
+  10% { transform: translateX(3px); } /* Rung phải nhanh */
+  /* Từ 0% đến 20%: Rung */
+  /* Từ 20% đến 100%: Nghỉ (không có transform) */
+}
+
+/* Keyframe Lan tỏa (Pulse) cho Pseudo-element */
+@keyframes pulse {
+  0% {
+    transform: scale(0.95); /* Kích thước ban đầu hơi nhỏ */
+    opacity: 0.7;         /* Độ mờ ban đầu */
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7); /* Bóng đổ ban đầu (màu đỏ ví dụ) */
+  }
+  70% {
+    transform: scale(1.3); /* Phóng to ra ngoài */
+    opacity: 0;          /* Mờ dần hoàn toàn */
+    box-shadow: 0 0 0 15px rgba(255, 82, 82, 0); /* Bóng đổ lan rộng và mờ đi */
+  }
+  100% {
+    transform: scale(0.95); /* Quay lại kích thước ban đầu */
+    opacity: 0;           /* Vẫn ẩn */
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0); /* Reset bóng đổ */
+  }
+}
+
+/* --- Định nghĩa Keyframes --- */
+
+/* Keyframe Rung + Xoay nhẹ (Wiggle) - Xoay nhanh hơn */
+@keyframes wiggle {
+     0%, 100% { transform: rotate(0deg); } /* Trạng thái nghỉ */
+     25% { transform: rotate(-90deg); } /* Xoay ngược chiều kim đồng hồ 1/4 vòng */
+     50% { transform: rotate(90deg); }  /* Xoay theo chiều kim đồng hồ 1/4 vòng */
+     75% { transform: rotate(-90deg); } /* Xoay ngược lại 1/4 vòng */
+}
+
+
+/* Keyframe Lan tỏa (Pulse) - Mượt mà hơn */
+@keyframes gentle-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.5); /* Màu xanh dương nhẹ (ví dụ) */
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1.6); /* Lan tỏa rộng hơn */
+    box-shadow: 0 0 0 12px rgba(52, 152, 219, 0); /* Mờ dần hoàn toàn */
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* --- Định nghĩa Keyframes --- */
+
+/* Keyframe Rung + Xoay nhẹ (Wiggle) - Giữ nguyên */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg) translateX(0); }
+  5% { transform: rotate(-4deg) translateX(-2px); }
+  10% { transform: rotate(4deg) translateX(2px); }
+  15% { transform: rotate(-2deg) translateX(-1px); }
+  20% { transform: rotate(2deg) translateX(1px); }
+  /* Đứng yên từ 25% đến 100% */
+  25%, 100% { transform: rotate(0deg) translateX(0); }
+}
+
+/* Keyframe Lan tỏa (Pulse) - Dùng biến CSS và đậm hơn */
+@keyframes gentle-pulse {
+  0% {
+    transform: scale(1);
+    /* Sử dụng biến --pulse-color. Nếu không có, dùng màu hồng nhạt làm mặc định */
+    /* Tăng alpha lên 0.8 cho đậm hơn */
+    box-shadow: 0 0 0 0 var(--pulse-color, rgba(255, 105, 180, 0.8));
+    opacity: 0.85; /* Tăng opacity ban đầu một chút */
+  }
+  70% {
+    transform: scale(1.8); /* Tăng độ lớn khi lan tỏa */
+    /* Tăng kích thước spread của shadow lên 15px */
+    /* Sử dụng biến --pulse-color-fade (hoặc --pulse-color với alpha 0) */
+    box-shadow: 0 0 0 15px var(--pulse-color-fade, rgba(255, 105, 180, 0));
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+    box-shadow: 0 0 0 0 var(--pulse-color-fade, rgba(255, 105, 180, 0));
+  }
+}
+
+/* --- Định nghĩa Class chung cho các phần tử cần hiệu ứng --- */
+/* Bạn có thể dùng class này hoặc các class cụ thể bên dưới */
+.attention-element {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  animation: wiggle 4s ease-in-out infinite;
+  /* Đặt màu mặc định ở đây nếu muốn */
+  /* --pulse-color: rgba(255, 105, 180, 0.8); */
+  /* --pulse-color-fade: rgba(255, 105, 180, 0); */
+}
+
+.attention-element::before,
+.attention-element::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  z-index: -1;
+  /* Animation sẽ lấy màu từ biến CSS được định nghĩa trên thẻ cha */
+  animation: gentle-pulse 2.5s ease-out infinite;
+}
+
+.attention-element::before {
+  animation-delay: 0.5s; /* Hiệu ứng kép */
+}
+
+
+/* --- Định nghĩa MÀU SẮC cụ thể cho từng loại Icon --- */
+
+/* 1. Icon Messenger */
+.attention-element-messenger {
+  /* Kế thừa các thuộc tính từ .attention-element nếu bạn dùng cả hai class */
+  /* Hoặc sao chép các thuộc tính display, position, animation vào đây */
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; position: relative; z-index: 1;
+  animation: wiggle 4s ease-in-out infinite;
+
+  /* Định nghĩa màu hồng nhạt cho Messenger */
+  --pulse-color: rgba(255, 105, 180, 0.8); /* Hot Pink, alpha 0.8 */
+  --pulse-color-fade: rgba(255, 105, 180, 0); /* Màu tương ứng với alpha 0 */
+}
+/* Áp dụng cấu trúc ::before, ::after */
+.attention-element-messenger::before,
+.attention-element-messenger::after {
+  content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; border-radius: 50%; z-index: -1;
+  animation: gentle-pulse 2.5s ease-out infinite; /* Dùng cùng keyframe */
+}
+.attention-element-messenger::before {
+  animation-delay: 0.5s;
+}
+
+
+/* 2. Ví dụ: Icon Thông báo (Màu xanh dương) */
+.attention-element-notification {
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; position: relative; z-index: 1;
+  animation: wiggle 4s ease-in-out infinite;
+
+  /* Định nghĩa màu xanh dương cho Notification */
+  --pulse-color: rgba(52, 152, 219, 0.8); /* Blue, alpha 0.8 */
+  --pulse-color-fade: rgba(52, 152, 219, 0);
+}
+/* Áp dụng cấu trúc ::before, ::after */
+.attention-element-notification::before,
+.attention-element-notification::after {
+   content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; border-radius: 50%; z-index: -1;
+  animation: gentle-pulse 2.5s ease-out infinite; /* Dùng cùng keyframe */
+}
+.attention-element-notification::before {
+  animation-delay: 0.5s;
+}
+
+/* 3. Ví dụ: Icon Cảnh báo (Màu vàng) */
+.attention-element-warning {
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; position: relative; z-index: 1;
+  animation: wiggle 4s ease-in-out infinite;
+
+  /* Định nghĩa màu vàng cho Warning */
+  --pulse-color: rgba(241, 196, 15, 0.8); /* Yellow, alpha 0.8 */
+  --pulse-color-fade: rgba(241, 196, 15, 0);
+}
+/* Áp dụng cấu trúc ::before, ::after */
+.attention-element-warning::before,
+.attention-element-warning::after {
+   content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; border-radius: 50%; z-index: -1;
+  animation: gentle-pulse 2.5s ease-out infinite; /* Dùng cùng keyframe */
+}
+.attention-element-warning::before {
+  animation-delay: 0.5s;
+}
+
+
+/* --- CSS cho lớp phủ mờ (Giữ nguyên nếu cần) --- */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+/* --- Đảm bảo nổi bật trên lớp phủ (Nếu cần) --- */
+/* Nếu cần, thêm z-index: 1001 vào các class .attention-element-* */
+/* Ví dụ: */
+/*
+.attention-element-messenger,
+.attention-element-notification,
+.attention-element-warning {
+  z-index: 1001;
+}
+*/
