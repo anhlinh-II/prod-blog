@@ -1,15 +1,15 @@
 "use client";
 
 import Header from "@/components/Header";
-import FilterSidebar from "../../components/FilterSidebar";
+import FilterSidebar from "../../components/common/FilterSidebar";
 import ProductGrid from "../../components/product/ProductGrid";
 import Footer from "@/components/Footer";
-import Pagination from "@/components/Pagination";
+import Pagination from "@/components/common/Pagination";
 import { useState } from "react";
 
 export default function ProductListPage() {
 	const [currentPage, setCurrentPage] = useState(1);
-	const totalPages = 6;
+	const totalPages = 8;
 
 	return (
 		<div className="flex flex-col min-h-screen">

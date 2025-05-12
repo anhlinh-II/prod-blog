@@ -14,7 +14,28 @@ const products = [
         price: 883000,
     },
     {
+        name: 'MUJI Gối Cotton Soft MUJI Gối Soybean Fiber - L',
+        image: '/test.jpg',
+        tag: '',
+        oldPrice: 750000,
+        price: 715000,
+    },
+    {
         name: 'MUJI Gối Cotton Soft',
+        image: '/test.jpg',
+        tag: 'MỚI',
+        oldPrice: 750000,
+        price: 715000,
+    },
+    {
+        name: 'MUJI Gối Cotton Soft MUJI Gối Soybean Fiber - L MUJI Gối Soybean Fiber - L',
+        image: '/test.jpg',
+        tag: '',
+        oldPrice: 750000,
+        price: 715000,
+    },
+    {
+        name: 'MUJI Gối Cotton SoftMUJI Gối Soybean Fiber - L',
         image: '/test.jpg',
         tag: '',
         oldPrice: 750000,
@@ -37,33 +58,12 @@ const products = [
     {
         name: 'MUJI Gối Cotton Soft',
         image: '/test.jpg',
-        tag: '',
-        oldPrice: 750000,
-        price: 715000,
-    },
-    {
-        name: 'MUJI Gối Cotton Soft',
-        image: '/test.jpg',
         tag: 'MỚI',
         oldPrice: 750000,
         price: 715000,
     },
     {
-        name: 'MUJI Gối Cotton Soft',
-        image: '/test.jpg',
-        tag: '',
-        oldPrice: 750000,
-        price: 715000,
-    },
-    {
-        name: 'MUJI Gối Cotton Soft',
-        image: '/test.jpg',
-        tag: 'MỚI',
-        oldPrice: 750000,
-        price: 715000,
-    },
-    {
-        name: 'MUJI Gối Cotton Soft',
+        name: 'MUJI Gối Cotton Soft MUJI Gối Cotton Soft MUJI Gối Cotton SoftMUJI Gối Cotton Soft',
         image: '/test.jpg',
         tag: 'MỚI',
         oldPrice: 750000,
@@ -107,7 +107,7 @@ export default function ProductCarousel() {
 
             <button
                 onClick={next}
-                className="hidden md:block absolute -right-12 top-1/2 -translate-y-1/2 z-10 p-2 bg-white text-2xl
+                className="hidden md:block absolute -right-16 top-1/2 -translate-y-1/2 z-10 p-2 bg-white text-2xl
                 shadow rounded-full hover:bg-red-900 hover:text-white cursor-pointer"
             >
                 <IoIosArrowForward />
