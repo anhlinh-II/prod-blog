@@ -2,6 +2,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from 'react';
+import { IoIosArrowDown } from 'react-icons/io';
 
 type PostViewerProps = {
 	title: string;
@@ -34,14 +35,28 @@ export default function PostViewer({ title, content }: PostViewerProps) {
 			/>
 			{showToggle && (
 				<button
-					onClick={() => setExpanded(!expanded)}
-					className="w-full mt-4 py-3 font-bold text-black hover:text-blue-600 cursor-pointer bg-gradient-to-t from-gray-300 to-transparent"
+					className="absolute flex flex-col items-center justify-center -bottom-6 w-full mt-4 py-3 font-bold"
 				>
-					{expanded ? 'Ẩn bớt' : 'Xem thêm'}
+					{!expanded && (
+						<div className='w-full h-10 bg-gradient-to-t from-gray-50 to-white/60'></div>
+					)}
+					<div className='bg-white w-xl rounded-b-2xl py-0.5 border flex items-center justify-center gap-2 cursor-pointer
+						hover:text-red-800'
+						onClick={() => setExpanded(!expanded)}>
+						<p>{expanded ? 'Ẩn bớt' : 'Xem thêm'}</p>
+						<span
+							className={`transform transition-transform duration-300 
+								${expanded ? 'rotate-180' : 'rotate-0'}`}>
+							<IoIosArrowDown />
+						</span>
+					</div>
 				</button>
 			)}
 			<style jsx>{`
-			.prose img,
+			.prose img {
+			  max-height: 500px;
+			  max-width: 60%;
+			},
 			.prose video {
 			  margin-left: auto;
 			  margin-right: auto;

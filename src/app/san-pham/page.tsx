@@ -9,6 +9,7 @@ import ProductGallery from "@/components/product/ProductGallery";
 import { Container } from "@mui/material";
 import { useState } from "react";
 import { FiMinus, FiPlus } from "react-icons/fi";
+import { FaEye } from "react-icons/fa";
 
 export default function ProductPage() {
     const [quantity, setQuantity] = useState(1);
@@ -53,13 +54,19 @@ export default function ProductPage() {
         công và tiết kiệm thời gian khá nhiều.</p>
        `);
 
-    const spec = {
-        "Chất liệu": "Nhựa ABS cao cấp",
-        "Cổng sạc": "USB Type-C",
-        "Điện áp": "5V",
-        "Kích thước": "18 x 10 x 6 cm",
-        "Trọng lượng": "300g"
-    };
+    const specs = [
+        { key: "Kích thước", value: "15x15x10 cm" },
+        { key: "Trọng lượng", value: "500g" },
+        { key: "Chất liệu", value: "Nhựa ABS" },
+        { key: "Nguồn điện", value: "USB 5V" },
+        { key: "Màu sắc", value: "Xanh Lá" },
+        { key: "Bảo hành", value: "12 tháng" },
+        { key: "Xuất xứ", value: "Việt Nam" },
+        { key: "Bảo hành", value: "12 tháng" },
+        { key: "Xuất xứ", value: "Việt Nam" },
+        { key: "Bảo hành", value: "12 tháng" },
+        { key: "Xuất xứ", value: "Việt Nam" },
+    ];
 
 
     return (
@@ -70,21 +77,33 @@ export default function ProductPage() {
 
                     <section className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 p-2 max-w-6xl mb-10">
                         {/* Left Images */}
-                        <ProductGallery images={images} setIsDisplayMedia={() => setIsDisplayMedia(true)}/>
+                        <ProductGallery images={images} tag="MỚI" setIsDisplayMedia={() => setIsDisplayMedia(true)}/>
 
                         {/* Product Info */}
                         <div className="space-y-4">
-                            <h1 className="text-2xl font-semibold">
-                                Quạt Bàn Usb Xoay Ít Ồn - Xanh Lá
+                            <h1 className="text-2xl font-semibold line-clamp-3">
+                                Quạt Bàn Usb Xoay Ít Ồn - Xanh Lá Quạt Bàn Usb Xoay Ít Ồn - Xanh Lá
                             </h1>
-                            <p className="text-sm text-gray-500">
-                                SKU: <span className="text-black">4547315193042</span> (4 Đã bán)
+                            <p className="text-sm text-gray-500 flex justify-between">
+                                <span className="text-black">SKU: 4547315193042 (4 Đã bán)</span>
+                                <span className="text-black flex items-center gap-2"><FaEye /><span>5637</span></span>
                             </p>
-                            <p className="text-2xl font-bold text-red-700">1.699.000
-                                <span className="text-sm font-normal">VND</span>
+                            <p className="text-2xl font-bold text-red-700">1.699.000 
+                                <span className="text-sm font-normal"> VND</span>
+                                <span className="text-lg line-through ms-4 text-gray-500 font-medium">2.099.000 VND</span>
                             </p>
+                            
+                            {/* Product Specifications List */}
+                            <ul className="list-disc pl-5 text-sm space-y-1">
+                            {specs.slice(0, 8).map((item, index) => (
+                                <li key={index} className="text-base mb-2">
+                                    <span className="font-semibold">{item.key}: </span>
+                                    <span>{item.value}</span>
+                                </li>
+                            ))}
+                            </ul>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center justify-center gap-2 w-full my-4">
                                 <Button variant="secondary" onClick={handleDecrease}>
                                     <FiMinus />
                                 </Button>
@@ -94,11 +113,11 @@ export default function ProductPage() {
                                 </Button>
                             </div>
 
-                            <div className="flex gap-4 mt-4">
-                                <Button className="flex-1 text-white bg-gray-800 hover:bg-gray-700">
+                            <div className="flex flex-col items-center justify-center w-full gap-4 mt-4">
+                                <Button className="flex-1 w-[80%] text-white bg-gray-800 hover:bg-gray-700">
                                     Thêm vào giỏ hàng
                                 </Button>
-                                <Button variant="outline" className="flex-1">
+                                <Button variant="outline" className="flex-1 w-[80%]">
                                     Mua nhanh
                                 </Button>
                             </div>
@@ -132,9 +151,9 @@ export default function ProductPage() {
                         {tab === "spec" && (
                             <div className="grid grid-cols-1 md:grid-cols-2 mt-4">
                             {[0, 1].map((colIdx) => {
-                                const filtered = Object.entries(spec).filter((_, idx) => idx % 2 === colIdx);
+                                const filtered = Object.entries(specs).filter((_, idx) => idx % 2 === colIdx);
                                 const needPaddingRow =
-                                    Object.entries(spec).length % 2 !== 0 && colIdx === 1;
+                                    Object.entries(specs).length % 2 !== 0 && colIdx === 1;
 
                                 return (
                                     <table
@@ -142,14 +161,15 @@ export default function ProductPage() {
                                         className="w-full text-left border border-gray-300 table-fixed"
                                     >
                                         <tbody>
-                                        {filtered.map(([key, value]) => (
-                                            <tr key={key} className="h-12">
-                                                <th className="px-4 py-2 border border-gray-300 bg-gray-50 font-bold 
-                                                    text-gray-700 w-1/3 align-middle">
-                                                    {key}
+                                        {filtered.map(([key, value], rowIdx) => (
+                                            <tr key={key} 
+                                                className={`h-12 ${rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
+                                                <th className="px-4 py-2 text-center border border-gray-300 font-bold 
+                                                    text-gray-700 w-1/3 align-middle bg-inherit">
+                                                    {value.key}
                                                 </th>
-                                                <td className="px-4 py-2 border border-gray-300 align-middle">
-                                                    {value}
+                                                <td className="px-4 py-2 border text-center border-gray-300 align-middle">
+                                                    {value.value}
                                                 </td>
                                             </tr>
                                         ))}

@@ -10,10 +10,22 @@ interface DisplayMediaProps {
 
 const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, setIsDisplayMedia }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [scale, setScale] = useState(1);
 
     const isVideoUrl = (url: string): boolean => {
         const videoExtensions = ['.mp4', '.webm', '.mov', '.avi', '.mkv'];
         return videoExtensions.some(ext => url.toLowerCase().includes(ext));
+    };
+
+    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const delta = e.deltaY;
+
+        setScale(prev => {
+            let newScale = prev - delta * 0.001;
+            newScale = Math.min(Math.max(newScale, 0.5), 3); // Giới hạn zoom từ 0.5x đến 3x
+            return newScale;
+        });
     };
 
     const nextImage = () => {
@@ -48,27 +60,29 @@ const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, setIsDisplayMedia }
                 </button>
 
                 {/* Media display */}
-                <div className="flex items-center justify-center max-h-[80vh] min-h-[80vh] w-full"
-                    onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-center max-h-[94vh] min-h-[94vh] w-full"
+                    onClick={(e) => e.stopPropagation()}
+                    onWheel={handleWheel}>
                     {isVideoUrl(images[currentIndex]) ? (
                         <video src={images[currentIndex]} controls className="max-w-full max-h-[80vh] rounded-lg" />
                     ) : (
                         <img
                             src={images[currentIndex]}
                             alt="Media"
-                            className="w-full max-h-[80vh] rounded-lg"
+                            className="w-full h-full max-h-[94vh] min-h-[94vh] rounded-lg transition-transform duration-150 ease-in-out"
+                            style={{ transform: `scale(${scale})`, transformOrigin: 'center' }}
                         />
                     )}
                 </div>
 
                 {/* Navigation buttons */}
-                <div className="absolute flex justify-between w-full max-w-[90vw] mt-4">
+                <div className="absolute flex justify-between w-full max-w-[96vw] h-full mt-4">
                     <button 
                         onClick={(e) => {
                             e.stopPropagation();
                             prevImage();
                         }} 
-                        className="text-white text-4xl p-2 cursor-pointer hover:text-red-500">
+                        className="text-white h-full text-4xl p-2 ps-10 cursor-pointer hover:text-red-500">
                         <FiChevronLeft />
                     </button>
                     <button 
@@ -76,13 +90,13 @@ const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, setIsDisplayMedia }
                             e.stopPropagation();
                             nextImage();
                         }} 
-                        className="text-white text-4xl p-2 cursor-pointer hover:text-red-500">
+                        className="text-white h-full text-4xl p-2 pe-10 cursor-pointer hover:text-red-500">
                         <FiChevronRight />
                     </button>
                 </div>
 
                 {/* Thumbnails */}
-                <div className="mt-4 flex space-x-2"
+                {/* <div className="mt-4 flex space-x-2"
                     onClick={(e) => e.stopPropagation()}>
                     {images.map((image, index) => (
                         <div
@@ -99,7 +113,7 @@ const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, setIsDisplayMedia }
                             />
                         </div>
                     ))}
-                </div>
+                </div> */}
             </div>
         </div>
     );

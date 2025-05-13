@@ -7,6 +7,8 @@ import CartItem from "@/components/product/CartItem";
 import { Container } from "@mui/material";
 import Toast from "@/components/common/Toast";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import BreadcrumbStep from "@/components/common/OrderBreadcrumb";
+import Link from "next/link";
 
 
 type CartItem = {
@@ -119,12 +121,19 @@ export default function Cart() {
         0
     );
 
+    const steps = [
+        { label: 'GIỎ HÀNG', url: '/gio-hang', isActive: true },
+        { label: 'ĐẶT HÀNG', url: '/thanh-toan', isActive: false },
+        { label: 'HOÀN THÀNH', url: '', isActive: false },
+    ];
+
     return (
         <div className="flex flex-col min-h-screen">
             <Header />
 
             <main className="flex-grow bg-gray-50 py-6">
                 <Container maxWidth={"lg"}>
+                    <BreadcrumbStep steps={steps} />
                     <h1 className="text-2xl font-bold ms-2 mb-2">Giỏ Hàng</h1>
                     <div className="grid grid-cols-1 md:grid-cols-[9fr_5fr] gap-8 p-2 max-w-6xl mb-10">
                         {/* Giỏ hàng */}
@@ -147,7 +156,7 @@ export default function Cart() {
                         </div>
 
                         {/* Thông tin đơn hàng */}
-                        <div className="bg-gray-100 p-6 rounded-md h-max">
+                        <div className="p-6 rounded-xl h-max border border-gray-300">
                             <h2 className="text-lg font-bold mb-4">
                                 Thông tin đơn hàng ({cartItems.length})
                             </h2>
@@ -168,11 +177,15 @@ export default function Cart() {
                             </div>
                             <p className="text-sm text-gray-500">(Đã bao gồm VAT)</p>
 
-                            <button className="w-full bg-black text-white py-2 rounded mt-4 font-bold">
-                                Thanh toán
+                                <Link href={`/thanh-toan`}>
+                            <button className="w-full bg-black text-white py-2 rounded mt-4 font-bold cursor-pointer">
+                                    Thanh toán
                             </button>
-                            <button className="w-full mt-2 text-center text-gray-700 underline">
-                                Tiếp tục mua hàng
+                                </Link>
+                            <button className="w-full mt-2 text-center text-gray-700 underline cursor-pointer">
+                                <Link href={`/`}>
+                                    Tiếp tục mua hàng
+                                </Link>
                             </button>
                         </div>
                     </div>

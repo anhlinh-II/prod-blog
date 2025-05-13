@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 type ProductItemProps = {
   name: string;
@@ -16,7 +17,8 @@ export default function ProductItem({
   price,
 }: ProductItemProps) {
   return (
-    <div className="w-full border rounded-xl overflow-hidden shadow-sm bg-white hover:bg-gray-100">
+    <div className="w-full border rounded-xl overflow-hidden shadow-sm bg-white hover:bg-gray-100 hover:text-red-800">
+      <Link href={`/san-pham`}>
       <div className="relative">
         {tag && (
           <div className="absolute top-2 left-2 bg-[#5c0a0a] text-white text-xs font-bold px-2 py-1 rounded">
@@ -52,6 +54,7 @@ export default function ProductItem({
           Mua Hàng
         </button>
       </div>
+      </Link>
     </div>
   );
 }
