@@ -1,11 +1,8 @@
 'use client';
 
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { Container } from '@mui/material';
 import ProductCarousel from '@/components/product/ProductCarousel';
-import BannerSlider2 from '@/components/BannerSlider';
-import FloatingSocialIcons from '@/components/FloatingSocialIcon';
+import BannerSlider from '@/components/BannerSlider';
 
 export default function Home() {
   const handleSubmit = (data: { title: string; content: string }) => {
@@ -14,11 +11,10 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <div className="">
 
       {/* Banner */}
-      <BannerSlider2 />
+      <BannerSlider />
 
       <main className="flex-grow bg-gray-50 py-6">
         <Container maxWidth="lg">
@@ -81,9 +77,6 @@ export default function Home() {
           </section>
         </Container>
       </main>
-
-      <Footer />
-      <FloatingSocialIcons />
     </div>
   );
 }

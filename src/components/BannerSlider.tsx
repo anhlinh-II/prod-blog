@@ -61,13 +61,15 @@ const BannerSlider = () => {
 				{/* Custom Navigation Buttons */}
 				<button
 					ref={prevRef}
-					className="absolute h-full left-0 top-1/2 z-10 -translate-y-1/2 text-4xl cursor-pointer rounded-full p-2 ps-6"
+					className="absolute h-full left-0 top-1/2 z-10 -translate-y-1/2 text-4xl cursor-pointer rounded-full p-2 ps-6
+					hover:text-red-600 transition-all ease-in duration-150"
 				>
 					<IoIosArrowBack />
 				</button>
 				<button
 					ref={nextRef}
-					className="absolute h-full right-0 top-1/2 z-10 -translate-y-1/2 text-4xl cursor-pointer rounded-full p-2 pe-6"
+					className="absolute h-full right-0 top-1/2 z-10 -translate-y-1/2 text-4xl cursor-pointer rounded-full p-2 pe-6
+					hover:text-red-600 transition-all ease-in duration-150"
 				>
 					<IoIosArrowForward />
 				</button>

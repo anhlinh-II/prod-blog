@@ -1,7 +1,5 @@
 "use client";
 
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { useCallback, useState } from "react";
 import CheckoutForm from "./CheckoutForm";
 import OrderSummary from "./OrderSummary";
@@ -77,8 +75,7 @@ export default function Checkout() {
     ];
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <Header />
+        <div className="">
             <main className="flex-grow bg-gray-50 py-6">
                 <Container maxWidth={"lg"}>
                     <BreadcrumbStep steps={steps} />
@@ -99,7 +96,6 @@ export default function Checkout() {
                     </div>
                 </Container>
             </main>
-            <Footer />
         </div>
     );
 }

@@ -99,16 +99,16 @@ export default function ProductCarousel() {
             {/* Buttons */}
             <button
                 onClick={prev}
-                className="hidden md:block absolute -left-12 top-1/2 -translate-y-1/2 z-10 p-2 bg-white text-2xl
-                shadow rounded-full hover:bg-red-900 hover:text-white cursor-pointer"
+                className="hidden md:block absolute -left-12 top-1/2 -translate-y-1/2 z-10 p-2 text-2xl
+                rounded-full hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150"
             >
                 <IoIosArrowBack />
             </button>
 
             <button
                 onClick={next}
-                className="hidden md:block absolute -right-16 top-1/2 -translate-y-1/2 z-10 p-2 bg-white text-2xl
-                shadow rounded-full hover:bg-red-900 hover:text-white cursor-pointer"
+                className="hidden md:block absolute -right-16 top-1/2 -translate-y-1/2 z-10 p-2 text-2xl
+                rounded-full hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150"
             >
                 <IoIosArrowForward />
             </button>

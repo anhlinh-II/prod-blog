@@ -50,7 +50,7 @@ export default function ProductItem({
         </div>
 
         <button className="w-full mt-2 py-2 border border-gray-500 rounded font-medium 
-            text-sm hover:bg-red-900 hover:text-white cursor-pointer">
+            text-sm hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150">
           Mua Hàng
         </button>
       </div>

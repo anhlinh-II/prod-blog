@@ -1,8 +1,6 @@
 "use client";
 import { Button } from "@/components/common/Button";
 import DisplayMedia from "@/components/common/DisplayMedia";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import PostViewer from "@/components/common/PostViewer";
 import ProductCarousel from "@/components/product/ProductCarousel";
 import ProductGallery from "@/components/product/ProductGallery";
@@ -16,7 +14,7 @@ export default function ProductPage() {
     const [tab, setTab] = useState("description");
     const [isDisplayMedia, setIsDisplayMedia] = useState(false);
 
-    const images = ['/test.jpg', '/banner1.jpg', '/banner2.webp', '/test.jpg', '/test.jpg', '/test.jpg', '/test.jpg'];
+    const images = ['/test.jpg', '/banner1.jpg', '/test2.jpg', '/test3.jpg', '/test4.jpg', '/test5.jpg'];
 
     const handleDecrease = () => {
         if (quantity > 1) setQuantity(quantity - 1);
@@ -70,9 +68,8 @@ export default function ProductPage() {
 
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-grow bg-gray-50 py-6">
+        <div className="">
+            <main className="flex-grow py-6">
                 <Container maxWidth={"lg"}>
 
                     <section className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 p-2 max-w-6xl mb-10">
@@ -80,7 +77,7 @@ export default function ProductPage() {
                         <ProductGallery images={images} tag="MỚI" setIsDisplayMedia={() => setIsDisplayMedia(true)}/>
 
                         {/* Product Info */}
-                        <div className="space-y-4">
+                        <div className="space-y-4 border border-gray-300 rounded-xl p-4">
                             <h1 className="text-2xl font-semibold line-clamp-3">
                                 Quạt Bàn Usb Xoay Ít Ồn - Xanh Lá Quạt Bàn Usb Xoay Ít Ồn - Xanh Lá
                             </h1>
@@ -200,7 +197,6 @@ export default function ProductPage() {
                 <DisplayMedia images={images} setIsDisplayMedia={setIsDisplayMedia} />
             )}
 
-            <Footer />
         </div>
     );
 }

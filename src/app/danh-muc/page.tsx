@@ -1,9 +1,7 @@
 "use client";
 
-import Header from "@/components/Header";
 import FilterSidebar from "../../components/common/FilterSidebar";
 import ProductGrid from "../../components/product/ProductGrid";
-import Footer from "@/components/Footer";
 import Pagination from "@/components/common/Pagination";
 import { useState } from "react";
 
@@ -12,8 +10,7 @@ export default function ProductListPage() {
 	const totalPages = 8;
 
 	return (
-		<div className="flex flex-col min-h-screen">
-		  <Header />
+		<div className="">
 			<div className="flex flex-col w-full lg:flex-row px-4 lg:px-20 py-8 gap-6">
 				{/* Sidebar */}
 				<aside className="w-full lg:w-1/4">
@@ -30,7 +27,6 @@ export default function ProductListPage() {
 					/>
 				</section>
 			</div>
-	  		<Footer />
 		</div>
 	);
 }

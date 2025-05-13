@@ -36,14 +36,14 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, setIsDispl
                 spaceBetween={10}
                 navigation
                 modules={[Navigation]}
-                className="h-120 w-20"
+                className="h-120 w-18"
             >
             {images.map((src, i) => (
                 <SwiperSlide key={i}
                   onClick={() => setCurrentIndex(i)}>
-                <div className={`w-20 h-20 relative cursor-pointer border border-gray-200
+                <div className={`w-18 h-18 relative cursor-pointer border border-gray-200
                     ${i === currentIndex ? 'border-blue-500 brightness-75' : 'border-gray-200'}`}>
-                    <Image src={src} alt={`thumb-${i}`} sizes='20' fill className="object-cover" />
+                    <Image src={src} alt={`thumb-${i}`} sizes='18' fill className="object-cover" />
                 </div>
                 </SwiperSlide>
             ))}
@@ -74,7 +74,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, setIsDispl
       </div>
 
       {/* Main image */}
-      <div className="flex-1 w-full min-w-0 relative aspect-square border border-gray-300 group">
+      <div className="flex-1 w-full min-w-0 relative aspect-square group">
         {tag && (
           <div className="absolute top-2 left-2 bg-[#5c0a0a] text-white text-sm font-bold px-3 py-2 z-10">
             {tag}
