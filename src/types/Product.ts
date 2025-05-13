@@ -33,7 +33,7 @@ export interface ProductResponse {
   description?: string;
   image?: string;
   price: number;
-  discountPercent?: number;
+  discountPercent: number;
   specialPrice?: number;
   stockQuantity?: number;
   quantitySold?: number;
@@ -52,12 +52,13 @@ export interface ProductShortResponse {
   id: number;
   name: string;
   slug: string;
-  image?: string;
+  image: string;
   price: number;
-  discountPercent?: number;
+  discountPercent: number;
   views?: number;
   isEnabled: boolean;
   isActive: boolean;
+  createdAt: string;
 
   // brandSlug?: string;
   // categorySlugs?: Set<string>;

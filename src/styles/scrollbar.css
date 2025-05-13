@@ -1,0 +1,33 @@
+/* Tùy chỉnh thanh cuộn trong Webkit-based browsers (Chrome, Safari, Edge) */
+
+/* ::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+::-webkit-scrollbar-track { 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d3d3d3;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bcbcbc;
+} */
+
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 0px;
+  width: 0px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.3);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}

@@ -1,4 +1,5 @@
 // components/common/Pagination.tsx
+"use-client"
 import { BsThreeDots } from "react-icons/bs";
 type PaginationProps = {
     currentPage: number;
@@ -30,20 +31,23 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
     }
 
     return (
+        pageNumbers.length > 1 && (
         <div className="flex justify-center items-center gap-2 mt-8">
             {/* Prev */}
-            <button
-                disabled={currentPage === 1}
-                onClick={() => onPageChange(currentPage - 1)}
-                className={`border px-3 py-1 rounded me-4 cursor-pointer
-                    ${currentPage === 1 ? 'text-gray-400 bg-gray-100' 
-                        : 'hover:bg-red-900 hover:text-white font-semibold'}`}
-            >
-                Trước
-            </button>
+            {pageNumbers.length > 1 && (
+                <button
+                    disabled={currentPage === 1}
+                    onClick={() => onPageChange(currentPage - 1)}
+                    className={`border px-3 py-1 rounded me-4 cursor-pointer
+                        ${currentPage === 1 ? 'text-gray-400 bg-gray-100' 
+                            : 'hover:bg-red-900 hover:text-white font-semibold'}`}
+                >
+                    Trước
+                </button>
+            )}
 
             {/* Page Numbers */}
-            <div className="flex items-center justify-center gap-2 md:min-w-md">
+            <div className="flex items-center justify-center gap-2 ">
             {pageNumbers.map((num, idx) =>
                 typeof num === 'string' ? (
                     <span key={idx} className="px-2">
@@ -64,15 +68,18 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
             </div>
 
             {/* Next */}
-            <button
-                disabled={currentPage === totalPages}
-                onClick={() => onPageChange(currentPage + 1)}
-                className={`border px-3 py-1 rounded ms-4 cursor-pointer
-                    ${currentPage === totalPages ? 'text-gray-400 bg-gray-100' 
-                        : 'hover:bg-red-900 hover:text-white font-semibold'}`}
-            >
-                Sau
-            </button>
+            {pageNumbers.length > 1 && (
+                <button
+                    disabled={currentPage === totalPages}
+                    onClick={() => onPageChange(currentPage + 1)}
+                    className={`border px-3 py-1 rounded ms-4 cursor-pointer
+                        ${currentPage === totalPages ? 'text-gray-400 bg-gray-100' 
+                            : 'hover:bg-red-900 hover:text-white font-semibold'}`}
+                >
+                    Sau
+                </button>
+            )}
         </div>
-    );
+    )
+)
 }

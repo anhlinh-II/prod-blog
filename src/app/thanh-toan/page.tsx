@@ -80,7 +80,7 @@ export default function Checkout() {
                 <Container maxWidth={"lg"}>
                     <BreadcrumbStep steps={steps} />
 
-                    <div className="flex justify-center gap-4">
+                    <div className="flex flex-col md:flex-row justify-center gap-4">
                         <section className="w-full lg:w-4/7">
                             <CheckoutForm onChange={handleFormChange} errors={formErrors}  />
                         </section>

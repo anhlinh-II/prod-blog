@@ -1,45 +1,54 @@
+"use client";
+import { ProductShortResponse } from '@/types/Product';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 type ProductItemProps = {
-  name: string;
-  image: string;
-  tag?: string;
-  oldPrice: number;
-  price: number;
+  product: ProductShortResponse;
 };
 
-export default function ProductItem({
-  name,
-  image,
-  tag,
-  oldPrice,
-  price,
-}: ProductItemProps) {
+export default function ProductItem({ product }: ProductItemProps) {
+  const [isNew, setIsNew] = useState(false);
+  const [price, setPrice] = useState(0);
+  
+  useEffect(() => {
+    
+    const now = new Date();
+    const createdAt = new Date(product.createdAt);
+    const diffInDays = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
+    setIsNew(diffInDays <= 7);
+    
+    setPrice(product.price * (100 - product.discountPercent) / 100);
+  }, [product]);
+
   return (
-    <div className="w-full border rounded-xl overflow-hidden shadow-sm bg-white hover:bg-gray-100 hover:text-red-800">
-      <Link href={`/san-pham`}>
+    <div className="w-full max-w-[224px] border rounded-xl overflow-hidden shadow-sm bg-white hover:shadow-xl hover:text-red-800">
+      <Link href={`/san-pham/${product.slug}`}>
       <div className="relative">
-        {tag && (
+        {isNew && (
           <div className="absolute top-2 left-2 bg-[#5c0a0a] text-white text-xs font-bold px-2 py-1 rounded">
-            {tag}
+            MỚI
           </div>
         )}
-        <Image
-            src={image}
-            alt={name}
+        <div>
+          <Image
+            src={product.image}
+            alt={product.name}
             width={200}
             height={150}
             className="object-cover w-full cursor-pointer"
-        />
+            priority={true}
+          />
+        </div>
       </div>
 
       <div className="p-3 space-y-2">
-        <p className="text-sm font-medium line-clamp-3 min-h-[3.7rem] cursor-pointer">{name}</p>
+        <p className="text-sm font-medium line-clamp-3 min-h-[3.7rem] cursor-pointer">{product.name}</p>
 
         <div className="flex items-center justify-between">
           <span className="text-gray-500 line-through text-sm">
-            {oldPrice.toLocaleString()}VND
+            {product.price.toLocaleString()}VND
           </span>
         </div>
 

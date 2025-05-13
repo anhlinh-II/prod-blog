@@ -4,75 +4,37 @@ import { useKeenSlider } from 'keen-slider/react';
 import 'keen-slider/keen-slider.min.css';
 import ProductItem from './ProductItem';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { ProductShortResponse } from '@/types/Product';
+import { useEffect, useState } from 'react';
 
-const products = [
-    {
-        name: 'MUJI Gối Soybean Fiber - L',
-        image: '/test.jpg',
-        tag: 'MỚI',
-        oldPrice: 899000,
-        price: 883000,
-    },
-    {
-        name: 'MUJI Gối Cotton Soft MUJI Gối Soybean Fiber - L',
-        image: '/test.jpg',
-        tag: '',
-        oldPrice: 750000,
-        price: 715000,
-    },
-    {
-        name: 'MUJI Gối Cotton Soft',
-        image: '/test.jpg',
-        tag: 'MỚI',
-        oldPrice: 750000,
-        price: 715000,
-    },
-    {
-        name: 'MUJI Gối Cotton Soft MUJI Gối Soybean Fiber - L MUJI Gối Soybean Fiber - L',
-        image: '/test.jpg',
-        tag: '',
-        oldPrice: 750000,
-        price: 715000,
-    },
-    {
-        name: 'MUJI Gối Cotton SoftMUJI Gối Soybean Fiber - L',
-        image: '/test.jpg',
-        tag: '',
-        oldPrice: 750000,
-        price: 715000,
-    },
-    {
-        name: 'MUJI Gối Cotton Soft',
-        image: '/test.jpg',
-        tag: 'MỚI',
-        oldPrice: 750000,
-        price: 715000,
-    },
-    {
-        name: 'MUJI Gối Cotton Soft',
-        image: '/test.jpg',
-        tag: '',
-        oldPrice: 750000,
-        price: 715000,
-    },
-    {
-        name: 'MUJI Gối Cotton Soft',
-        image: '/test.jpg',
-        tag: 'MỚI',
-        oldPrice: 750000,
-        price: 715000,
-    },
-    {
-        name: 'MUJI Gối Cotton Soft MUJI Gối Cotton Soft MUJI Gối Cotton SoftMUJI Gối Cotton Soft',
-        image: '/test.jpg',
-        tag: 'MỚI',
-        oldPrice: 750000,
-        price: 715000,
-    },
-    // Thêm các sản phẩm khác ở đây...
-];
+type ProductCarouseltProps = {
+    products?: ProductShortResponse[];
+};
 
-export default function ProductCarousel() {
+export default function ProductCarousel({ products }: ProductCarouseltProps) {
+    const getCurrentPerView = () => {
+        if (typeof window === "undefined") return 2;
+        if (window.innerWidth >= 1280) return 5;
+        if (window.innerWidth >= 1024) return 3;
+        if (window.innerWidth >= 640) return 2;
+        return 2;
+    };
+
+    const [isSliderMode, setIsSliderMode] = useState(true);
+
+    useEffect(() => {
+        const checkMode = () => {
+            const perView = getCurrentPerView();
+            if(products) {
+                setIsSliderMode(products.length > perView);
+            }
+        };
+
+        checkMode();
+        window.addEventListener("resize", checkMode);
+        return () => window.removeEventListener("resize", checkMode);
+    }, [products]);
+
     const [sliderRef, slider] = useKeenSlider<HTMLDivElement>({
         slides: {
             perView: 2,
@@ -83,10 +45,10 @@ export default function ProductCarousel() {
                 slides: { perView: 2, spacing: 8 },
             },
             '(min-width: 1024px)': {
-                slides: { perView: 3, spacing: 24 },
+                slides: { perView: 3, spacing: 8 },
             },
             '(min-width: 1280px)': {
-                slides: { perView: 5, spacing: 16 },
+                slides: { perView: 5, spacing: 8 },
             },
         },
     });
@@ -96,33 +58,47 @@ export default function ProductCarousel() {
 
     return (
         <div className="relative">
-            {/* Buttons */}
-            <button
-                onClick={prev}
-                className="hidden md:block absolute -left-12 top-1/2 -translate-y-1/2 z-10 p-2 text-2xl
-                rounded-full hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150"
-            >
-                <IoIosArrowBack />
-            </button>
 
-            <button
-                onClick={next}
-                className="hidden md:block absolute -right-16 top-1/2 -translate-y-1/2 z-10 p-2 text-2xl
-                rounded-full hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150"
-            >
-                <IoIosArrowForward />
-            </button>
+            {isSliderMode && products?.length && products?.length > 5 && (
+                <button
+                    onClick={prev}
+                    className="absolute h-fit left-24 md:-left-12 -bottom-16 md:top-1/2 -translate-y-1/2 z-10 p-2 text-2xl
+                    rounded-full hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150
+                    bg-red-800 text-white md:text-black md:bg-transparent"
+                >
+                    <IoIosArrowBack />
+                </button>
+            )}
+            
+            {isSliderMode && products?.length && products?.length > 5 && (
+                <button
+                    onClick={next}
+                    className="absolute h-fit right-24 md:-right-16 -bottom-16 md:top-1/2 -translate-y-1/2 z-10 p-2 text-2xl
+                    rounded-full hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150
+                    bg-red-800 text-white md:text-black md:bg-transparent"
+                >
+                    <IoIosArrowForward />
+                </button>
+            )}
 
-            {/* Carousel */}
-            <div className="sm:overflow-visible overflow-x-auto -mx-4 ps-4">
-                <div ref={sliderRef} className="keen-slider">
-                {products.map((product, index) => (
-                    <div className="keen-slider__slide" key={index}>
-                        <ProductItem {...product} />
+            {products && (
+                isSliderMode ? (
+                    <div ref={sliderRef} className="keen-slider">
+                        {products.map((product, index) => (
+                            <div className="keen-slider__slide" key={index}>
+                                <ProductItem product={product} />
+                            </div>
+                        ))}
                     </div>
-                ))}
-                </div>
-            </div>
+                ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                        {products.map((product, index) => (
+                            <ProductItem key={index} product={product} />
+                        ))}
+                    </div>
+                )
+            )}
+
         </div>
     );
 }

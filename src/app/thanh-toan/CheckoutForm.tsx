@@ -41,7 +41,7 @@ const CheckoutForm:React.FC<Props> = ({ onChange, errors }) => {
     };
   
   return (
-    <form className="max-w-4xl mx-auto p-8 rounded-2xl space-y-8 border border-gray-300">
+    <form className="max-w-4xl mx-auto ps-4 md:ps-8 p-8 pb-0 rounded-2xl space-y-8 border border-gray-300">
       <h2 className="text-2xl font-bold text-gray-800">Thông tin thanh toán</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

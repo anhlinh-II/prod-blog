@@ -35,12 +35,12 @@ export default function PostViewer({ title, content }: PostViewerProps) {
 			/>
 			{showToggle && (
 				<button
-					className="absolute flex flex-col items-center justify-center -bottom-6 w-full mt-4 py-3 font-bold"
+					className="absolute flex flex-col items-center justify-center -bottom-6 w-[90%] md:w-full mt-4 py-3 font-bold"
 				>
 					{!expanded && (
 						<div className='w-full h-10 bg-gradient-to-t from-gray-50 to-white/60'></div>
 					)}
-					<div className='bg-white w-xl rounded-b-2xl py-0.5 border flex items-center justify-center gap-2 cursor-pointer
+					<div className='bg-white w-full lg:w-xl rounded-b-2xl py-0.5 border flex items-center justify-center gap-2 cursor-pointer
 						hover:text-red-800'
 						onClick={() => setExpanded(!expanded)}>
 						<p>{expanded ? 'Ẩn bớt' : 'Xem thêm'}</p>

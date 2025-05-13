@@ -18,9 +18,18 @@ export const getSortedProducts = async (sortOption: string, categorySlug: string
 };
 
 export const getProductsWithMultiSort = async (sortOption: string[], categorySlug: string, page = 0, size = 12) => {
+    const params = new URLSearchParams();
+    
+    sortOption.forEach(option => {
+        params.append('sortOption', option);
+    });
+    
+    params.append('categorySlug', categorySlug);
+    params.append('page', page.toString());
+    params.append('size', size.toString());
     return (await instance.get<ApiResponse<Page<ProductShortResponse>>>(
         `/api/products/multi-sort`,
-        { params: { sortOption, categorySlug, page, size } }
+        { params }
     )).data;
 };
 
@@ -45,10 +54,10 @@ export const searchProductsWithKeyword = async (keyword: string, page = 0, size 
     )).data;
 };
 
-export const findSimilarProducts = async (productId: number) => {
+export const findSimilarProducts = async (productSlug: string) => {
     return (await instance.get<ApiResponse<ProductShortResponse[]>>(
         `/api/products/similar`,
-        { params: { productId } }
+        { params: { productSlug } }
     )).data;
 };
 
@@ -56,6 +65,13 @@ export const getProductById = async (id: number) => {
     return (await instance.get<ApiResponse<ProductResponse>>(
         `/api/products/id`,
         { params: { id } }
+    )).data;
+};
+
+export const getProductBySlug = async (slug: string) => {
+    return (await instance.get<ApiResponse<ProductResponse>>(
+        `/api/products/slug`,
+        { params: { slug } }
     )).data;
 };
 

@@ -5,12 +5,17 @@ import { IoClose } from "react-icons/io5";
 
 interface DisplayMediaProps {
     images: string[];
-    setIsDisplayMedia: (open: boolean) => void;
+    index: number;
+    setIsDisplayMedia: (index: number | null) => void;
 }
 
-const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, setIsDisplayMedia }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
+const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, index, setIsDisplayMedia }) => {
+    const [currentIndex, setCurrentIndex] = useState(index);
     const [scale, setScale] = useState(1);
+
+    useEffect(() => {
+        setCurrentIndex(prev => prev);
+    }, []);
 
     const isVideoUrl = (url: string): boolean => {
         const videoExtensions = ['.mp4', '.webm', '.mov', '.avi', '.mkv'];
@@ -46,21 +51,21 @@ const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, setIsDisplayMedia }
     return (
         <div
             className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#050E15]/50 z-50"
-            onClick={() => setIsDisplayMedia(false)}
+            onClick={() => setIsDisplayMedia(null)}
         >
             <div
-                className="flex flex-col items-center justify-center max-w-[90vw] max-h-[94vh] p-4 rounded-lg"
+                className="flex flex-col items-center justify-center w-full md:max-w-[90vw] max-h-[70vh] md:max-h-[94vh] md:p-4 rounded-lg"
             >
                 <button
-                    className="absolute top-4 left-6 text-3xl text-black bg-gray-100 hover:bg-gray-200 
+                    className="absolute top-16 md:top-4 left-6 text-3xl text-black bg-gray-100 hover:bg-gray-200 
                     rounded-full p-1 cursor-pointer"
-                    onClick={() => setIsDisplayMedia(false)}
+                    onClick={() => setIsDisplayMedia(null)}
                 >
                     <IoClose />
                 </button>
 
                 {/* Media display */}
-                <div className="flex items-center justify-center max-h-[94vh] min-h-[94vh] w-full"
+                <div className="flex items-center justify-center max-h-[70vh] min-h-[70vh] md:max-h-[94vh] md:min-h-[94vh] w-full"
                     onClick={(e) => e.stopPropagation()}
                     onWheel={handleWheel}>
                     {isVideoUrl(images[currentIndex]) ? (
@@ -69,20 +74,20 @@ const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, setIsDisplayMedia }
                         <img
                             src={images[currentIndex]}
                             alt="Media"
-                            className="w-full h-full max-h-[94vh] min-h-[94vh] rounded-lg transition-transform duration-150 ease-in-out"
+                            className="w-auto max-w-[90vw] h-full max-h-[70vh] min-h-[70vh] md:max-h-[94vh] md:min-h-[94vh] rounded-lg transition-transform duration-150 ease-in-out"
                             style={{ transform: `scale(${scale})`, transformOrigin: 'center' }}
                         />
                     )}
                 </div>
 
                 {/* Navigation buttons */}
-                <div className="absolute flex justify-between w-full max-w-[96vw] h-full mt-4">
+                <div className="absolute flex items-center justify-between w-full max-w-[96vw] h-full mt-4">
                     <button 
                         onClick={(e) => {
                             e.stopPropagation();
                             prevImage();
                         }} 
-                        className="text-white h-full text-4xl p-2 ps-10 cursor-pointer hover:text-red-500">
+                        className="text-white bg-black/20 md:bg-transparent h-fit rounded-full md:h-full text-4xl p-2 md:ps-10 cursor-pointer hover:text-red-500">
                         <FiChevronLeft />
                     </button>
                     <button 
@@ -90,7 +95,7 @@ const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, setIsDisplayMedia }
                             e.stopPropagation();
                             nextImage();
                         }} 
-                        className="text-white h-full text-4xl p-2 pe-10 cursor-pointer hover:text-red-500">
+                        className="text-white bg-black/20 md:bg-transparent h-fit rounded-full md:h-full text-4xl p-2 md:pe-10 cursor-pointer hover:text-red-500">
                         <FiChevronRight />
                     </button>
                 </div>
