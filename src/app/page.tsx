@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import { Container } from '@mui/material';
 import ProductCarousel from '@/components/product/ProductCarousel';
 import BannerSlider2 from '@/components/BannerSlider';
+import FloatingSocialIcons from '@/components/FloatingSocialIcon';
 
 export default function Home() {
   const handleSubmit = (data: { title: string; content: string }) => {
@@ -82,6 +83,7 @@ export default function Home() {
       </main>
 
       <Footer />
+      <FloatingSocialIcons />
     </div>
   );
 }
