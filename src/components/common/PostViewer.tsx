@@ -22,7 +22,7 @@ export default function PostViewer({ title, content }: PostViewerProps) {
 	}, [content]);
 
 	return (
-		<div className="relative p-6 rounded">
+		<div className="relative p-6 rounded-2xl bg-white shadow-md border border-gray-300">
 			{title && (
 				<h1 className="text-2xl font-bold mb-4">{title}</h1>
 			)}
@@ -35,7 +35,7 @@ export default function PostViewer({ title, content }: PostViewerProps) {
 			/>
 			{showToggle && (
 				<button
-					className="absolute flex flex-col items-center justify-center -bottom-6 w-[90%] md:w-full mt-4 py-3 font-bold"
+					className="absolute flex flex-col items-center justify-center right-0 -bottom-10 w-[90%] md:w-full mt-4 py-3 font-bold"
 				>
 					{!expanded && (
 						<div className='w-full h-10 bg-gradient-to-t from-gray-50 to-white/60'></div>

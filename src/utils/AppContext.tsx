@@ -35,7 +35,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!cached) fetchData();
     const lastUpdated = localStorage.getItem('categories_updated_at');
-    const expired = !lastUpdated || (Date.now() - parseInt(lastUpdated)) > 7200_000; // quá 2 tiếng
+    const expired = !lastUpdated || (Date.now() - parseInt(lastUpdated)) > 300_000; // quá 5 phút
 
     if (expired) fetchData();
 

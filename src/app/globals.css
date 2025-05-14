@@ -55,6 +55,30 @@
   /* Từ 0% đến 20%: Rung */
   /* Từ 20% đến 100%: Nghỉ (không có transform) */
 }
+.animate-wiggle {
+  animation: wiggle 1.5s infinite;
+}
+/* ⭐ Ngôi sao 5 cánh */
+.star-five {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  background: red;
+  clip-path: polygon(
+    50% 0%,
+    71% 25%,
+    98% 35%,
+    78% 67%,
+    79% 91%,
+    50% 80%,
+    21% 91%,
+    22% 67%,
+    2% 35%,
+    29% 25%
+  );
+  text-align: center;
+  line-height: 50px;
+}
 
 /* Keyframe Lan tỏa (Pulse) cho Pseudo-element */
 @keyframes pulse {

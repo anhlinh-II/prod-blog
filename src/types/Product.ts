@@ -35,8 +35,8 @@ export interface ProductResponse {
   price: number;
   discountPercent: number;
   specialPrice?: number;
-  stockQuantity?: number;
-  quantitySold?: number;
+  stockQuantity: number;
+  quantitySold: number;
   views?: number;
   isEnabled: boolean;
   isActive: boolean;

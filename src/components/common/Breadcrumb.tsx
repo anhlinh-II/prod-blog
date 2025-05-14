@@ -15,10 +15,10 @@ interface BreadcrumbProps {
 export default function Breadcrumb({ items, title }: BreadcrumbProps) {
     
   return (
-    <nav className="text-sm text-gray-600 w-full p-4 border-b border-gray-300" aria-label="Breadcrumb">
+    <nav className="text-sm text-gray-600 w-full p-4 mt-4 border-b border-gray-300" aria-label="Breadcrumb">
         <main className="flex-grow">
             <Container maxWidth={"lg"} className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2">
               {items.map((item, index) => {
                   const isLast = index === items.length - 1;
 
@@ -26,17 +26,17 @@ export default function Breadcrumb({ items, title }: BreadcrumbProps) {
                   <div key={index} className="flex items-center gap-2">
                       {index > 0 && <ChevronRight size={16} />}
                         {item.href && !isLast ? (
-                        <Link href={item.href} className="hover:text-red-600 text-gray-600">
+                        <Link href={item.href} className="hover:text-red-600 text-gray-600 text-base">
                             {item.label}
                         </Link>
                         ) : (
-                        <span className="font-medium text-gray-800">{item.label}</span>
+                        <span className="text-base font-medium text-gray-800 ">{item.label}</span>
                       )}
                   </div>
                   );
               })}
               </div>
-            <div className="absolute left-1/2 transform -translate-x-1/2 font-bold text-xl text-red-600">{title}</div>
+            <div className="hidden md:block font-bold text-xl text-red-600">{title}</div>
             </Container>
         </main>
     </nav>

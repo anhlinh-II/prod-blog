@@ -130,6 +130,13 @@ export default function ProductPage({ params }: ProductPageProps) {
                             ))}
                             </ul>
 
+                            <div className="ms-1">
+                                Tình trạng: 
+                                <span className={`ms-2 font-bold ${product?.stockQuantity > 0 ? 'text-blue-600' : 'text-red-700'}`}>
+                                    {product?.stockQuantity > 0 ? 'Còn hàng' : 'Hết hàng'}
+                                </span>
+                            </div>
+
                             <div className="flex items-center justify-center gap-2 w-full my-4">
                                 <Button variant="secondary" onClick={handleDecrease}>
                                     <FiMinus />
