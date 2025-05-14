@@ -7,6 +7,7 @@ import Toast from "@/components/common/Toast";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import BreadcrumbStep from "@/components/common/OrderBreadcrumb";
 import Link from "next/link";
+import Breadcrumb from "@/components/common/Breadcrumb";
 
 
 type CartItem = {
@@ -124,9 +125,15 @@ export default function Cart() {
         { label: 'ĐẶT HÀNG', url: '/thanh-toan', isActive: false },
         { label: 'HOÀN THÀNH', url: '', isActive: false },
     ];
+    
+	const breadcrumbItems = [
+		{ label: "Trang chủ", href: "/" },
+		{ label: "Giỏ hàng" }
+  	];
 
     return (
         <div className="">
+            <Breadcrumb items={breadcrumbItems} />
 
             <main className="flex-grow bg-gray-50 py-6">
                 <Container maxWidth={"lg"}>

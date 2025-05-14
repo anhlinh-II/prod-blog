@@ -11,6 +11,7 @@ import { FaEye } from "react-icons/fa";
 import { findSimilarProducts, getProductBySlug } from "@/services/ProductService";
 import { ProductResponse, ProductShortResponse } from "@/types/Product";
 import { formatNumberWithCommas } from "@/utils/FormatNumber";
+import Breadcrumb from "@/components/common/Breadcrumb";
 
 interface ProductPageProps {
   params: {
@@ -58,8 +59,16 @@ export default function ProductPage({ params }: ProductPageProps) {
         fetchProduct();
     }, [productSlug]);
 
+    
+	const breadcrumbItems = [
+		{ label: "Trang chủ", href: "/" },
+		{ label: "Sản phẩm", href: "/danh-muc" },
+		{ label: product?.name },
+  	];
+
     return (
         <div className="">
+            <Breadcrumb items={breadcrumbItems} title={product?.name}/>
             <main className="flex-grow py-6">
                 <Container maxWidth={"lg"}>
                 {isLoading || !product || !price ? (
@@ -85,7 +94,12 @@ export default function ProductPage({ params }: ProductPageProps) {
                     ) : (
                     <section className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 p-2 max-w-6xl mb-10">
                         {/* Left Images */}
-                        <ProductGallery images={images} tag="MỚI" setIsDisplayMedia={setDisplayMediaIndex}/>
+                        <ProductGallery 
+                            images={images} 
+                            tag="MỚI" 
+                            discountPercent={product.discountPercent} 
+                            setIsDisplayMedia={setDisplayMediaIndex}
+                        />
 
                         {/* Product Info */}
                         <div className="space-y-4 border border-gray-300 rounded-xl p-4">
@@ -94,7 +108,10 @@ export default function ProductPage({ params }: ProductPageProps) {
                             </h1>
                             <p className="text-sm text-gray-500 flex justify-between">
                                 <span className="text-black">ID: {product?.id} ({product?.quantitySold} Đã bán)</span>
-                                <span className="text-black flex items-center gap-2"><FaEye /><span>{product?.views}</span></span>
+                                <span className="text-black flex items-center gap-2">
+                                    <FaEye />
+                                    <span>{product?.views ? product.views : 0}</span>
+                                </span>
                             </p>
                             <p className="text-2xl font-bold text-red-700">{formatNumberWithCommas(price)}
                                 <span className="text-sm font-normal"> VND</span>

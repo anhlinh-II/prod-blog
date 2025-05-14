@@ -7,6 +7,7 @@ import { Container } from "@mui/material";
 import BreadcrumbStep from "@/components/common/OrderBreadcrumb";
 import { validateOrderFormData } from "@/utils/ValidateForm";
 import { throttle } from 'lodash';
+import Breadcrumb from "@/components/common/Breadcrumb";
 
 export default function Checkout() {
     
@@ -73,9 +74,16 @@ export default function Checkout() {
         { label: 'ĐẶT HÀNG', url: '/thanh-toan', isActive: true },
         { label: 'HOÀN THÀNH', url: '', isActive: false },
     ];
+    
+	const breadcrumbItems = [
+		{ label: "Trang chủ", href: "/" },
+		{ label: "Giỏ hàng", href: "/gio-hang" },
+		{ label: "Thanh toán" },
+  	];
 
     return (
         <div className="">
+            <Breadcrumb items={breadcrumbItems} />
             <main className="flex-grow bg-gray-50 py-6">
                 <Container maxWidth={"lg"}>
                     <BreadcrumbStep steps={steps} />

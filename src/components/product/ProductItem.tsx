@@ -27,7 +27,7 @@ export default function ProductItem({ product }: ProductItemProps) {
       <Link href={`/san-pham/${product.slug}`}>
       <div className="relative">
         {isNew && (
-          <div className="absolute top-2 left-2 bg-[#5c0a0a] text-white text-xs font-bold px-2 py-1 rounded">
+          <div className="absolute top-2 left-2 bg-[#a21212] text-white text-xs font-bold px-2 py-1 rounded">
             MỚI
           </div>
         )}
@@ -44,16 +44,22 @@ export default function ProductItem({ product }: ProductItemProps) {
       </div>
 
       <div className="p-3 space-y-2">
-        <p className="text-sm font-medium line-clamp-3 min-h-[3.7rem] cursor-pointer">{product.name}</p>
+        <p className="text-base font-medium line-clamp-3 min-h-[4.5rem] cursor-pointer">{product.name} </p>
 
-        <div className="flex items-center justify-between">
+        <div className="relative flex items-center justify-between">
           <span className="text-gray-500 line-through text-sm">
             {product.price.toLocaleString()}VND
           </span>
+          
+          {product.discountPercent && product.discountPercent != 0 && (
+          <span className="absolute -bottom-1 right-2 bg-red-600 text-white text-sm p-1 rounded-lg">
+            -{product.discountPercent}%
+          </span>
+          )}
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-lg font-semibold text-[#a00404]">
+          <span className="text-base font-semibold text-[#a00404]">
             {price.toLocaleString()} VND
           </span>
         </div>

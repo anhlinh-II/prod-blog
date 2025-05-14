@@ -9,10 +9,11 @@ import '../../styles/scrollbar.css'
 interface ProductGalleryProps {
   images: string[];
   tag?: string;
+  discountPercent?: number;
   setIsDisplayMedia: (index: number | null) => void;
 }
 
-const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, setIsDisplayMedia }) => {
+const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, discountPercent, setIsDisplayMedia }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const mainSliderRef = useRef<HTMLDivElement>(null);
   const mainImageRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -82,6 +83,11 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, setIsDispl
           {tag && (
             <div className="absolute top-2 left-2 bg-[#5c0a0a] text-white text-sm font-bold px-3 py-2 z-10">
               {tag}
+            </div>
+          )}
+          {discountPercent && (
+            <div className="absolute top-2 right-2 bg-[#d60000] text-white text-lg font-bold px-2 py-4 z-10 rounded-full">
+              -{discountPercent}%
             </div>
           )}
           {images.map((src, i) => (
