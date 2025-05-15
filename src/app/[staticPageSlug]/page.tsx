@@ -3,27 +3,27 @@
 import { useCallback, useState } from "react";
 import { Container } from "@mui/material";
 import Breadcrumb from "@/components/common/Breadcrumb";
+import StaticPageSidebar from "./StaticPageSidebar";
 import PostViewer from "@/components/common/PostViewer";
-import Link from "next/link";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import NewsSidebar from "../NewsSidebar";
-import '../../../styles/scrollbar.css'
+import Link from "next/link";
+import '../../styles/scrollbar.css'
 
-export default function NewsPage() {
+export default function StaticPage() {
 
     const breadcrumbItems = [
         { label: "🏠 Trang chủ", href: "/" },
-        { label: "Tin tức", href: "/tin-tuc" },
-        { label: "Tin tức" }
+        { label: "Slug" }
     ];
 
     return (
         <div className="">
             <Breadcrumb items={breadcrumbItems} />
-            <main className="min-h-screen flex-grow bg-gray-50 py-6">
+            <main className="flex-grow bg-gray-50 py-6">
                 <Container maxWidth={"lg"}>
+                  <div className="text-3xl text-gray-800 border-b border-gray-300 pb-2 mb-4">Chính sách / Về chúng tôi / Hướng dẫn</div>
 
-                    <div className="flex flex-col lg:flex-row justify-center gap-4">
+                    <div className="flex flex-col md:flex-row justify-center gap-4">
                         <section className="w-full lg:w-5/7 flex flex-col gap-12">
                             <PostViewer title={""} content={`<h1><strong>Giới thiệu sản phẩm mới: Tai nghe không dây X-Pro</strong></h1>
 
@@ -83,7 +83,7 @@ export default function NewsPage() {
                         </section>
 
                         <section className="w-full lg:w-2/7 sticky top-0 h-60 md:h-screen overflow-y-auto pb-8 custom-2-scrollbar">
-                            <NewsSidebar />
+                            <StaticPageSidebar />
                         </section>
                     </div>
                 </Container>

@@ -15,7 +15,7 @@ interface BreadcrumbProps {
 export default function Breadcrumb({ items, title }: BreadcrumbProps) {
     
   return (
-    <nav className="text-sm text-gray-600 w-full p-4 mt-4 border-b border-gray-300" aria-label="Breadcrumb">
+    <nav className="text-sm text-gray-600 w-full p-4 pt-0 mt-4 border-b border-gray-300" aria-label="Breadcrumb">
         <main className="flex-grow">
             <Container maxWidth={"lg"} className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">

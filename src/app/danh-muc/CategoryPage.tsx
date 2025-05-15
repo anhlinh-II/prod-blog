@@ -49,11 +49,11 @@ export default function ProductListPage({ params }: ProductListPageProps) {
     }, [currentPage, sortOption]);
 
     const breadcrumbItems = categorySlug ? [
-        { label: "Trang chủ", href: "/" },
+        { label: "🏠 Trang chủ", href: "/" },
         { label: "Danh mục", href: "/danh-muc" },
         { label: category?.name },
     ] : [
-        { label: "Trang chủ", href: "/" },
+        { label: "🏠 Trang chủ", href: "/" },
         { label: "Sản phẩm" }
     ];
 

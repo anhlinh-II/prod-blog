@@ -61,7 +61,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
     
 	const breadcrumbItems = [
-		{ label: "Trang chủ", href: "/" },
+		{ label: "🏠 Trang chủ", href: "/" },
 		{ label: "Sản phẩm", href: "/danh-muc" },
 		{ label: product?.name },
   	];
@@ -120,9 +120,9 @@ export default function ProductPage({ params }: ProductPageProps) {
                                 </span>
                             </p>
                             
-                            {/* Product Specifications List */}
+                            {/* Product attributes List */}
                             <ul className="list-disc pl-5 text-sm space-y-1">
-                            {product?.specifications.slice(0, 8).map((item, index) => (
+                            {product?.attributes.slice(0, 8).map((item, index) => (
                                 <li key={index} className="text-base mb-2">
                                     <span className="font-semibold">{item.specKey}: </span>
                                     <span>{item.value}</span>
@@ -183,12 +183,12 @@ export default function ProductPage({ params }: ProductPageProps) {
                             <PostViewer title={""} content={product?.description} />
                         )}
 
-                        {tab === "spec" && product?.specifications && (
+                        {tab === "spec" && product?.attributes && (
                             <div className="grid grid-cols-1 md:grid-cols-2 mt-4">
                             {[0, 1].map((colIdx) => {
-                                const filtered = Object.entries(product?.specifications).filter((_, idx) => idx % 2 === colIdx);
+                                const filtered = Object.entries(product?.attributes).filter((_, idx) => idx % 2 === colIdx);
                                 const needPaddingRow =
-                                    Object.entries(product?.specifications).length % 2 !== 0 && colIdx === 1;
+                                    Object.entries(product?.attributes).length % 2 !== 0 && colIdx === 1;
 
                                 return (
                                     <table

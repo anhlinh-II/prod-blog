@@ -3,12 +3,55 @@
 import { Container } from '@mui/material';
 import ProductCarousel from '@/components/product/ProductCarousel';
 import BannerSlider from '@/components/BannerSlider';
+import NewsItem, { News } from '@/components/news/NewsItem';
+import ProductGrid from '@/components/product/ProductGrid';
+import { ProductShortResponse } from '@/types/Product';
+import { useEffect, useState } from 'react';
+import { getAllProducts } from '@/services/ProductService';
+
+
+const fakeNews: News[] = [
+  {
+    id: 1,
+    title: 'Khai trương chi nhánh mới tại TP.HCM',
+    description: 'Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.',
+    imageUrl: '/news.jpg',
+    createdAt: '2024-05-10',
+  },
+  {
+    id: 2,
+    title: 'Ra mắt sản phẩm mới 2025',
+    description: 'Chúng tôi vừa giới thiệu dòng sản phẩm mới với nhiều cải tiến.',
+    imageUrl: '/test4.jpg',
+    createdAt: '2024-12-20',
+  },
+]
 
 export default function Home() {
+
+  
+  const [products, setProducts] = useState<ProductShortResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const handleSubmit = (data: { title: string; content: string }) => {
     console.log("Bài viết gửi đi:", data);
     // TODO: Gửi API lưu bài viết vào database
   };
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+        try {
+            setIsLoading(true);
+            const res = await getAllProducts(0, 12);
+            setProducts(res.result.content);
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    fetchProducts();
+  }, []);
 
   return (
     <div className="">
@@ -19,43 +62,36 @@ export default function Home() {
       <main className="flex-grow bg-gray-50 py-6">
         <Container maxWidth="lg">
 
-          {/* Danh mục sản phẩm */}
-          <section className="mb-10">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Danh mục sản phẩm</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {['Bánh ngọt', 'Bánh mì', 'Đồ uống'].map((item) => (
-                <div
-                  key={item}
-                  className="bg-white p-4 rounded-xl shadow hover:shadow-md transition"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-          </section>
-
           {/* Bài viết */}
           <section className="mb-10">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Bài viết nổi bật</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[1, 2].map((id) => (
-                <div
-                  key={id}
-                  className="bg-white p-6 rounded-xl shadow hover:shadow-md transition"
-                >
-                  <h3 className="text-lg font-medium">Tiêu đề bài viết {id}</h3>
-                  <p className="text-sm text-gray-600 mt-2">
-                    Đây là phần mô tả ngắn cho bài viết số {id}. Click để xem chi tiết.
-                  </p>
-                </div>
+              {fakeNews.map((news) => (
+                  <NewsItem key={news.id} news={news} />
               ))}
             </div>
           </section>
 
-          {/* Editer */}
+          {/* Products */}
           <section className="mb-10">
             <h2 className="text-2xl font-bold mb-4">Sản phẩm nổi bật</h2>
-            <ProductCarousel />
+            <ProductCarousel products={products}/>
+          </section>
+
+          {/* Products */}
+          <section className="mb-10">
+            <h2 className="text-2xl font-bold mb-4">Sản phẩm mới</h2>
+            <ProductCarousel products={products}/>
+          </section>
+
+          {/* Products */}
+          <section className="mb-10">
+            <h2 className="text-2xl font-bold mb-4">Giảm giá sốc</h2>
+            <ProductCarousel products={products}/>
+          </section>
+
+          <section>
+            <ProductGrid products={products} isLoading={isLoading}/>
           </section>
 
           {/* Chia sẻ kinh nghiệm */}

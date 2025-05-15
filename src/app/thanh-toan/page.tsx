@@ -76,7 +76,7 @@ export default function Checkout() {
     ];
     
 	const breadcrumbItems = [
-		{ label: "Trang chủ", href: "/" },
+		{ label: "🏠 Trang chủ", href: "/" },
 		{ label: "Giỏ hàng", href: "/gio-hang" },
 		{ label: "Thanh toán" },
   	];

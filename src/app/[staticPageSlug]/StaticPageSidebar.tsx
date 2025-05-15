@@ -51,7 +51,7 @@ const latestNews = [
   },
 ];
 
-export default function NewsSidebar() {
+export default function StaticPageSidebar() {
   return (
     <aside className="w-full md:w-80 px-4 py-2 border-s border-gray-300 space-y-4">
       {/* Danh mục */}

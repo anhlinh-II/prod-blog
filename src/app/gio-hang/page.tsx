@@ -127,7 +127,7 @@ export default function Cart() {
     ];
     
 	const breadcrumbItems = [
-		{ label: "Trang chủ", href: "/" },
+		{ label: "🏠 Trang chủ", href: "/" },
 		{ label: "Giỏ hàng" }
   	];
 

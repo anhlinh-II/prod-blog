@@ -57,7 +57,7 @@ export default function ContactPage() {
     );
     
     const breadcrumbItems = [
-        { label: "Trang chủ", href: "/" },
+        { label: "🏠 Trang chủ", href: "/" },
         { label: "Liên hệ" }
     ];
 

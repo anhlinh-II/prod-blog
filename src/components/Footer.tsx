@@ -6,7 +6,7 @@ import { SiZalo } from "react-icons/si";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-100 text-sm text-gray-800 py-10 px-4 md:px-16">
+    <footer className="sticky top-full bg-gray-100 text-sm text-gray-800 py-10 px-4 md:px-16">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12">
         {/* Logo & Bộ Công Thương */}
         <div className="space-y-6">

@@ -22,7 +22,7 @@ export default function PostViewer({ title, content }: PostViewerProps) {
 	}, [content]);
 
 	return (
-		<div className="relative p-6 rounded-2xl bg-white shadow-md border border-gray-300">
+		<div className="relative p-6 rounded-2xl">
 			{title && (
 				<h1 className="text-2xl font-bold mb-4">{title}</h1>
 			)}
@@ -40,8 +40,8 @@ export default function PostViewer({ title, content }: PostViewerProps) {
 					{!expanded && (
 						<div className='w-full h-10 bg-gradient-to-t from-gray-50 to-white/60'></div>
 					)}
-					<div className='bg-white w-full lg:w-xl rounded-b-2xl py-0.5 border flex items-center justify-center gap-2 cursor-pointer
-						hover:text-red-800'
+					<div className='w-full lg:w-xl rounded-b-2xl py-0.5 border border-gray-300 flex items-center justify-center gap-2 cursor-pointer
+						hover:text-red-800 hover:border-red-800'
 						onClick={() => setExpanded(!expanded)}>
 						<p>{expanded ? 'Ẩn bớt' : 'Xem thêm'}</p>
 						<span
