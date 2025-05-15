@@ -2,7 +2,7 @@ import { ApiResponse, CategoryResponse } from "@/types";
 
 export const fetchCategories = async () => {
      try {
-          const response = await fetch('http://localhost:8080/api/categories/tree');
+          const response = await fetch('http://localhost:8080/api/categories/product/tree');
           if (!response.ok) {
                throw new Error(`HTTP error! status: ${response.status}`);
           }

@@ -71,10 +71,63 @@ export interface Account {
      }
 }
 
+
+////////////////////////////////////// Brand
+export interface BrandRequest {
+  name: string;
+}
+
+export interface BrandResponse {
+  id: number;
+  name: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+////////////////////////////////////// Category
+export enum CategoryType {
+    NEWS_TIPS = 'NEWS_TIPS',
+    PRODUCT = 'PRODUCT'
+}
+
+export interface CategoryRequest {
+  name: string;
+  description?: string;
+  type: CategoryType;
+  parentId?: number;
+}
+
 export interface CategoryResponse {
      id: string;
      name: string;
      slug: string;
      description: string;
      children: CategoryResponse[];
+}
+
+////////////////////////////////////// Contact
+export interface ContactRequest {
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+}
+
+export interface ContactResponse {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+////////////////////////////////////// Meida
+export interface MediaResponse {
+    fileName: string;
+    fileDownloadUri: string;
+    fileType: string;
+    size: number;
 }

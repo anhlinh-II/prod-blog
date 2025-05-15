@@ -3,6 +3,7 @@ import './globals.css';
 import Footer from '@/components/Footer';
 import FloatingSocialIcons from '@/components/FloatingSocialIcon';
 import { Providers } from './Providers';
+import NewsPopup from '@/components/NewsPopup';
 
 export const metadata = {
   title: 'Product Blog Web',
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
               <Footer />
               <FloatingSocialIcons />
+              <NewsPopup />
             </div>
           </Providers>
         </body>

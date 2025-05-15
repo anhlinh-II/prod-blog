@@ -25,7 +25,7 @@ export interface UserUpdateRequest {
     job?: string;
 }
 
-export interface UserDTO {
+export interface UserShortResponse {
     id: number;
     firstName: string;
     lastName?: string;

@@ -8,7 +8,7 @@ import CategoryTreeMenu, { CategoryResponse } from "@/components/CategoryTreeMen
 import '../globals.css'
 import Breadcrumb from "@/components/common/Breadcrumb";
 import ProductGrid from "@/components/product/ProductGrid";
-import Filterbar from "@/components/common/Filterbar";
+import Filterbar from "@/app/danh-muc/Filterbar";
 
 interface ProductListPageProps {
   params: {

@@ -1,7 +1,7 @@
-export interface ProductSpecRequest {
+export interface ProductAttributeRequest {
   specKey: string;
   value: string;
-  orderIndex?: number; // optional nếu có thể null
+  orderIndex?: number;
 }
 
 export interface ProductRequest {
@@ -17,10 +17,10 @@ export interface ProductRequest {
   isActive?: boolean;
   brandId?: number;
   categoryIds?: Set<number>;
-  specifications?: ProductSpecRequest[];
+  attributes?: ProductAttributeRequest[];
 }
 
-export interface ProductSpecification {
+export interface ProductAttribute {
   specKey: string;
   value: string;
   orderIndex?: number;
@@ -40,12 +40,12 @@ export interface ProductResponse {
   views?: number;
   isEnabled: boolean;
   isActive: boolean;
-  createdAt: string;  // hoặc `Date` nếu bạn muốn xử lý dạng đối tượng
+  createdAt: string;
   updatedAt: string;
 
   brandSlug: string;
   categorySlugs: Set<string>;
-  specifications: ProductSpecification[];
+  attributes: ProductAttribute[];
 }
 
 export interface ProductShortResponse {
