@@ -2,17 +2,11 @@
 
 import Image from 'next/image';
 import '../../app/globals.css'
-
-export interface News {
-  id: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-  createdAt: string;
-};
+import { NewsResponse } from '@/types/News';
+import Link from 'next/link';
 
 type Props = {
-  news: News;
+  news: NewsResponse;
   orientation?: "row" | "col"; // chỉ cho phép 2 kiểu
 };
 
@@ -20,6 +14,8 @@ export default function NewsItem({ news, orientation = "col" }: Props) {
   const isRow = orientation === "row";
 
   return (
+    news &&
+    <Link href={`/tin-tuc/${news.slug}`}>
     <div
       className={`
         relative flex flex-col 
@@ -34,6 +30,7 @@ export default function NewsItem({ news, orientation = "col" }: Props) {
           <Image
             src={news.imageUrl}
             alt={news.title}
+            fill
             className={`object-cover group-hover:scale-105 transition-all ease-in duration-200 
               ${isRow ? "h-full" : "w-full aspect-[1/1]"}`}
           />
@@ -60,6 +57,7 @@ export default function NewsItem({ news, orientation = "col" }: Props) {
         <p className="text-xs font-bold">{formatDate(news.createdAt)}</p>
       </div>
     </div>
+    </Link>
   );
 }
 

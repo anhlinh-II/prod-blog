@@ -9,9 +9,10 @@ import { useEffect, useState } from 'react';
 
 type ProductCarouseltProps = {
     products?: ProductShortResponse[];
+    isLoading?: boolean;
 };
 
-export default function ProductCarousel({ products }: ProductCarouseltProps) {
+export default function ProductCarousel({ products, isLoading }: ProductCarouseltProps) {
     const getCurrentPerView = () => {
         if (typeof window === "undefined") return 2;
         if (window.innerWidth >= 1280) return 5;
@@ -59,6 +60,8 @@ export default function ProductCarousel({ products }: ProductCarouseltProps) {
     const next = () => slider.current?.next();
 
     return (
+        !isLoading ? (
+            
         <div className="relative">
 
             {isSliderMode && products?.length && products?.length > 5 && (
@@ -102,5 +105,12 @@ export default function ProductCarousel({ products }: ProductCarouseltProps) {
             )}
 
         </div>
+        ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                {[1,2,3,4,5].map((index) => (
+                    <div key={index} className="w-[224px] h-[300px] rounded-xl bg-gray-200 animate-pulse"></div>
+                ))}
+            </div>
+        )
     );
 }

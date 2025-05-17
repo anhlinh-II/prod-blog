@@ -26,7 +26,6 @@ export default function ProductPage({ params }: ProductPageProps) {
 	const [isLoading, setIsLoading] = useState(true);
     const [price, setPrice] = useState<number>();
     const [quantity, setQuantity] = useState(1);
-    const [tab, setTab] = useState("description");
     const [displayMediaIndex, setDisplayMediaIndex] = useState<number | null>(null);
 
     const images = ['/test4.jpg', '/test2.jpg', '/test3.jpg', '/test4.jpg', '/test5.jpg', '/test2.jpg', '/test.jpg', '/test5.jpg'];
@@ -68,7 +67,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
     return (
         <div className="">
-            <Breadcrumb items={breadcrumbItems} title={product?.name}/>
+            <Breadcrumb items={breadcrumbItems}/>
             <main className="flex-grow py-6">
                 <Container maxWidth={"lg"}>
                 {isLoading || !product || !price ? (

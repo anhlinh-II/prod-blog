@@ -33,7 +33,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       <div className="space-y-4 mb-4">
         {products.map((product) => (
           <div key={product.id} className="flex items-start gap-4 border-t border-gray-300 pt-4">
-            <Image src={product.image} alt={product.name} className="w-20 h-20 object-contain" />
+            <Image src={product.image} width={80} height={80} alt={product.name} className="w-20 h-20 object-contain" />
             <div className="flex-1">
               <p className="font-medium text-gray-800">{product.name}</p>
               <p className="text-sm text-gray-600">Số lượng: {product.quantity}</p>

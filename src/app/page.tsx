@@ -3,75 +3,62 @@
 import { Container } from '@mui/material';
 import ProductCarousel from '@/components/product/ProductCarousel';
 import BannerSlider from '@/components/BannerSlider';
-import NewsItem, { News } from '@/components/news/NewsItem';
+import NewsItem from '@/components/news/NewsItem';
 import ProductGrid from '@/components/product/ProductGrid';
 import { ProductShortResponse } from '@/types/Product';
 import { useEffect, useState } from 'react';
 import { getAllProducts } from '@/services/ProductService';
 import Link from 'next/link';
-import { FiChevronRight } from 'react-icons/fi';
 import { IoIosArrowForward } from 'react-icons/io';
 import CardLayout from '@/components/news/CardLayout';
-
-
-const fakeNews: News[] = [
-  {
-    id: 1,
-    title: 'Khai trương chi nhánh mới tại TP.HCM',
-    description: 'Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.',
-    imageUrl: '/news.jpg',
-    createdAt: '2024-05-10',
-  },
-  {
-    id: 2,
-    title: 'Ra mắt sản phẩm mới 2025',
-    description: 'Chúng tôi vừa giới thiệu dòng sản phẩm mới với nhiều cải tiến.',
-    imageUrl: '/test4.jpg',
-    createdAt: '2024-12-20',
-  },
-  {
-    id: 3,
-    title: 'Khai trương chi nhánh mới tại TP.HCM',
-    description: 'Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.',
-    imageUrl: '/news.jpg',
-    createdAt: '2024-05-10',
-  },
-  {
-    id: 4,
-    title: 'Ra mắt sản phẩm mới 2025',
-    description: 'Chúng tôi vừa giới thiệu dòng sản phẩm mới với nhiều cải tiến.',
-    imageUrl: '/test4.jpg',
-    createdAt: '2024-12-20',
-  },
-]
+import { NewsResponse } from '@/types/News';
+import { getAllNews } from '@/services/NewsService';
 
 export default function Home() {
 
   const [products, setProducts] = useState<ProductShortResponse[]>([]);
+  const [newsList, setNewsList] = useState<NewsResponse[]>([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [size, setSize] = useState(10);
 
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
+  const fetchProducts = async () => {
+    try {
+      setIsLoadingProducts(true);
+      const res = await getAllProducts(0, size);
+        console.log(res)
+      setProducts(res.result.content);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setIsLoadingProducts(false);
+    }
+  };
+
+  const fetchNews = async () => {
+    try {
         setIsLoading(true);
-        const res = await getAllProducts(0, size);
-        setProducts(res.result.content);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
+        const res = await getAllNews(0, 12);
+        console.log(res)
+        setNewsList(res.result.content);
+    } catch (error) {
+        console.error("Error fetching news:", error);
+    } finally {
         setIsLoading(false);
-      }
-    };
-    fetchProducts();
+    }
+  };
+
+  fetchProducts();
+  fetchNews();
   }, []);
 
   useEffect(() => {
     const checkMode = () => {
         if (products) {
             const isMobile = window.innerWidth < 640;
-            setSize(isMobile ? 8 : 10)
+            setSize(isMobile ? 8 : 20)
         }
     };
 
@@ -102,7 +89,7 @@ export default function Home() {
                   <span className="arrow arrow-3"><IoIosArrowForward /></span>
               </Link>
             </div>
-            <ProductCarousel products={products} />
+            <ProductCarousel products={products} isLoading={isLoadingProducts}/>
           </section>
 
           {/* Products */}
@@ -118,30 +105,32 @@ export default function Home() {
                   <span className="arrow arrow-3"><IoIosArrowForward /></span>
               </Link>
             </div>
-            <ProductCarousel products={products} />
+            <ProductCarousel products={products} isLoading={isLoadingProducts}/>
           </section>
           
           {/* Tin tức mới nhất */}
+          {newsList.length == 4 && (
           <section className="mb-10">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Tin tức mới nhất</h2>
             <div className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-[21fr_22fr] gap-4 max-w-6xl mx-auto">
                 {/* Card lớn bên trái */}
                 <div className="">
-                  <NewsItem news={fakeNews[0]} orientation='col'/>
+                  <NewsItem news={newsList[0]} orientation='col'/>
                 </div>
 
                 {/* 4 card nhỏ bên phải */}
                 <div className="flex flex-col">
                   <div className="grid grid-cols-2 gap-4 mb-4 md:mb-auto">
-                    <NewsItem news={fakeNews[1]} orientation='col'/>
-                    <NewsItem news={fakeNews[2]} orientation='col'/>
+                    <NewsItem news={newsList[1]} orientation='col'/>
+                    <NewsItem news={newsList[2]} orientation='col'/>
                   </div>
-                  <NewsItem news={fakeNews[3]} orientation='row'/>
+                  <NewsItem news={newsList[3]} orientation='row'/>
                 </div>
               </div>
             </div>
           </section>
+          )}
 
           {/* Products */}
           <section className="mb-10">
@@ -156,7 +145,7 @@ export default function Home() {
                   <span className="arrow arrow-3"><IoIosArrowForward /></span>
               </Link>
             </div>
-            <ProductCarousel products={products} />
+            <ProductCarousel products={products} isLoading={isLoadingProducts}/>
           </section>
 
           <section className="mb-10">
@@ -200,14 +189,16 @@ export default function Home() {
           </section>
           
           {/* Bài viết */}
+          {newsList.length > 0 && (
           <section className="mb-10">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Bài viết</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {fakeNews.map((news) => (
+              {newsList.map((news) => (
                 <NewsItem key={news.id} news={news} orientation='row'/>
               ))}
             </div>
           </section>
+          )}
 
         </Container>
       </main>

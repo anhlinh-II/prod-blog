@@ -72,7 +72,7 @@ const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, index, setIsDisplay
                     {isVideoUrl(images[currentIndex]) ? (
                         <video src={images[currentIndex]} controls className="max-w-full max-h-[80vh] rounded-lg" />
                     ) : (
-                        <Image
+                        <img
                             src={images[currentIndex]}
                             alt="Media"
                             className="w-auto max-w-[90vw] h-full max-h-[70vh] min-h-[70vh] md:max-h-[94vh] md:min-h-[94vh] rounded-lg transition-transform duration-150 ease-in-out"
