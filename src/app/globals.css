@@ -58,27 +58,6 @@
 .animate-wiggle {
   animation: wiggle 1.5s infinite;
 }
-/* ⭐ Ngôi sao 5 cánh */
-.star-five {
-  position: relative;
-  width: 50px;
-  height: 50px;
-  background: red;
-  clip-path: polygon(
-    50% 0%,
-    71% 25%,
-    98% 35%,
-    78% 67%,
-    79% 91%,
-    50% 80%,
-    21% 91%,
-    22% 67%,
-    2% 35%,
-    29% 25%
-  );
-  text-align: center;
-  line-height: 50px;
-}
 
 /* Keyframe Lan tỏa (Pulse) cho Pseudo-element */
 @keyframes pulse {
@@ -282,3 +261,72 @@
   z-index: 1001;
 }
 */
+
+/* Shapes */
+
+/* ⭐ Ngôi sao 5 cánh */
+.star-five {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  background: red;
+  clip-path: polygon(
+    50% 0%,
+    71% 25%,
+    98% 35%,
+    78% 67%,
+    79% 91%,
+    50% 80%,
+    21% 91%,
+    22% 67%,
+    2% 35%,
+    29% 25%
+  );
+  text-align: center;
+  line-height: 50px;
+}
+
+.home-title {
+  position: relative;
+  background: rgb(216, 0, 0);
+  clip-path: polygon(
+    0% 100%,
+    5% 0%,
+    10% 0%,
+    5% 100%,
+    10% 100%,
+    15% 0%,
+    90% 0%,
+    85% 100%,
+    90% 100%,
+    95% 0%,
+    100% 0%,
+    95% 100%
+  );
+}
+
+@keyframes pulseColor {
+  0%, 100% {
+    color: #9ca3af; /* gray-400 */
+  }
+  50% {
+    color: #ff1c1c; /* blue-500 */
+  }
+}
+
+.arrow {
+  animation: pulseColor 1s infinite;
+  font-weight: bolder;
+}
+
+.arrow-1 {
+  animation-delay: 0s;
+}
+
+.arrow-2 {
+  animation-delay: 0.2s;
+}
+
+.arrow-3 {
+  animation-delay: 0.4s;
+}

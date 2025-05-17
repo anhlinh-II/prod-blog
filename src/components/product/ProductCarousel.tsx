@@ -15,8 +15,8 @@ export default function ProductCarousel({ products }: ProductCarouseltProps) {
     const getCurrentPerView = () => {
         if (typeof window === "undefined") return 2;
         if (window.innerWidth >= 1280) return 5;
-        if (window.innerWidth >= 1024) return 3;
-        if (window.innerWidth >= 640) return 2;
+        if (window.innerWidth >= 1024) return 4;
+        if (window.innerWidth >= 640) return 4;
         return 2;
     };
 
@@ -24,9 +24,11 @@ export default function ProductCarousel({ products }: ProductCarouseltProps) {
 
     useEffect(() => {
         const checkMode = () => {
-            const perView = getCurrentPerView();
-            if(products) {
-                setIsSliderMode(products.length > perView);
+            if (products) {
+                const isMobile = window.innerWidth < 640;
+                const shouldSlider =
+                    products.length > (isMobile ? 999 : getCurrentPerView());
+                setIsSliderMode(shouldSlider);
             }
         };
 
@@ -42,10 +44,10 @@ export default function ProductCarousel({ products }: ProductCarouseltProps) {
         },
         breakpoints: {
             '(min-width: 640px)': {
-                slides: { perView: 2, spacing: 8 },
+                slides: { perView: 4, spacing: 8 },
             },
             '(min-width: 1024px)': {
-                slides: { perView: 3, spacing: 8 },
+                slides: { perView: 4, spacing: 8 },
             },
             '(min-width: 1280px)': {
                 slides: { perView: 5, spacing: 8 },
@@ -62,7 +64,7 @@ export default function ProductCarousel({ products }: ProductCarouseltProps) {
             {isSliderMode && products?.length && products?.length > 5 && (
                 <button
                     onClick={prev}
-                    className="absolute h-fit left-24 md:-left-12 -bottom-16 md:top-1/2 -translate-y-1/2 z-10 p-2 text-2xl
+                    className="hidden lg:block absolute h-fit left-24 md:-left-12 -bottom-16 md:top-1/2 -translate-y-1/2 z-10 p-2 text-2xl
                     rounded-full hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150
                     bg-red-800 text-white md:text-black md:bg-transparent"
                 >
@@ -73,7 +75,7 @@ export default function ProductCarousel({ products }: ProductCarouseltProps) {
             {isSliderMode && products?.length && products?.length > 5 && (
                 <button
                     onClick={next}
-                    className="absolute h-fit right-24 md:-right-16 -bottom-16 md:top-1/2 -translate-y-1/2 z-10 p-2 text-2xl
+                    className="hidden lg:block absolute h-fit right-24 md:-right-12 -bottom-16 md:top-1/2 -translate-y-1/2 z-10 p-2 text-2xl
                     rounded-full hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150
                     bg-red-800 text-white md:text-black md:bg-transparent"
                 >

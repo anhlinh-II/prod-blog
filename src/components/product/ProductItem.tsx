@@ -23,21 +23,22 @@ export default function ProductItem({ product }: ProductItemProps) {
   }, [product]);
 
   return (
-    <div className="w-full max-w-[224px] border rounded-xl overflow-hidden shadow-sm bg-white hover:shadow-xl hover:text-red-800">
+    <div className="w-full max-w-[224px] border rounded-xl overflow-hidden shadow-sm bg-white 
+      hover:shadow-xl hover:text-red-800 group">
       <Link href={`/san-pham/${product.slug}`}>
-      <div className="relative">
+      <div className="relative overflow-hidden">
         {isNew && (
-          <div className="absolute top-2 left-2 bg-[#a21212] text-white text-xs font-bold px-2 py-1 rounded">
+          <div className="absolute top-2 left-2 bg-[#a21212] text-white text-xs font-bold px-2 py-1 rounded z-5">
             MỚI
           </div>
         )}
-        <div>
+        <div className='overflow-hidden'>
           <Image
             src={product.image}
             alt={product.name}
             width={200}
             height={150}
-            className="object-cover w-full cursor-pointer"
+            className="object-cover w-full cursor-pointer group-hover:scale-105 transition-transform duration-200"
             priority={true}
           />
         </div>
@@ -52,7 +53,7 @@ export default function ProductItem({ product }: ProductItemProps) {
           </span>
           
           {product.discountPercent && product.discountPercent != 0 && (
-          <span className="absolute -bottom-1 right-2 bg-red-600 text-white text-sm p-1 rounded-lg">
+          <span className="absolute -bottom-1 right-0 bg-red-600 text-white text-sm p-1 rounded-lg">
             -{product.discountPercent}%
           </span>
           )}
@@ -66,7 +67,7 @@ export default function ProductItem({ product }: ProductItemProps) {
 
         <button className="w-full mt-2 py-2 border border-gray-500 rounded font-medium 
             text-sm hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150">
-          Mua Hàng
+          Liên hệ
         </button>
       </div>
       </Link>

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
@@ -71,7 +72,7 @@ const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, index, setIsDisplay
                     {isVideoUrl(images[currentIndex]) ? (
                         <video src={images[currentIndex]} controls className="max-w-full max-h-[80vh] rounded-lg" />
                     ) : (
-                        <img
+                        <Image
                             src={images[currentIndex]}
                             alt="Media"
                             className="w-auto max-w-[90vw] h-full max-h-[70vh] min-h-[70vh] md:max-h-[94vh] md:min-h-[94vh] rounded-lg transition-transform duration-150 ease-in-out"
@@ -109,7 +110,7 @@ const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, index, setIsDisplay
                             onClick={() => setCurrentIndex(index)}
                             className="cursor-pointer"
                         >
-                            <img
+                            <Image
                                 src={image}
                                 alt={`Thumbnail ${index}`}
                                 className={`w-20 h-20 object-cover rounded-md ${

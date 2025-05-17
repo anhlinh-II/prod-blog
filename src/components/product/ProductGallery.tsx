@@ -112,14 +112,14 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, discountPe
         <button
           onClick={handlePrev}
           className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-3 ps-5 cursor-pointer h-full
-          rounded-full text-4xl hover:text-red-500 opacity-0 group-hover:opacity-100 transition"
+          rounded-full text-4xl hover:text-red-500 md:opacity-0 group-hover:opacity-100 transition"
         >
           <FiChevronLeft />
         </button>
         <button
           onClick={handleNext}
           className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-3 pe-5 cursor-pointer h-full
-          rounded-full text-4xl hover:text-red-500 opacity-0 group-hover:opacity-100 transition"
+          rounded-full text-4xl hover:text-red-500 md:opacity-0 group-hover:opacity-100 transition"
         >
           <FiChevronRight />
         </button>
