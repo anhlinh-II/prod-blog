@@ -3,54 +3,68 @@
 import { Container } from '@mui/material';
 import ProductCarousel from '@/components/product/ProductCarousel';
 import BannerSlider from '@/components/BannerSlider';
-import NewsItem, { News } from '@/components/news/NewsItem';
+import NewsItem from '@/components/news/NewsItem';
 import ProductGrid from '@/components/product/ProductGrid';
 import { ProductShortResponse } from '@/types/Product';
 import { useEffect, useState } from 'react';
 import { getAllProducts } from '@/services/ProductService';
-
-
-const fakeNews: News[] = [
-  {
-    id: 1,
-    title: 'Khai trương chi nhánh mới tại TP.HCM',
-    description: 'Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.Công ty chính thức mở rộng chi nhánh tại Quận 1, TP.HCM.',
-    imageUrl: '/news.jpg',
-    createdAt: '2024-05-10',
-  },
-  {
-    id: 2,
-    title: 'Ra mắt sản phẩm mới 2025',
-    description: 'Chúng tôi vừa giới thiệu dòng sản phẩm mới với nhiều cải tiến.',
-    imageUrl: '/test4.jpg',
-    createdAt: '2024-12-20',
-  },
-]
+import Link from 'next/link';
+import { IoIosArrowForward } from 'react-icons/io';
+import CardLayout from '@/components/news/CardLayout';
+import { NewsResponse } from '@/types/News';
+import { getAllNews } from '@/services/NewsService';
 
 export default function Home() {
 
-  
   const [products, setProducts] = useState<ProductShortResponse[]>([]);
+  const [newsList, setNewsList] = useState<NewsResponse[]>([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [size, setSize] = useState(10);
 
-  const handleSubmit = (data: { title: string; content: string }) => {
-    console.log("Bài viết gửi đi:", data);
-    // TODO: Gửi API lưu bài viết vào database
-  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-        try {
-            setIsLoading(true);
-            const res = await getAllProducts(0, 12);
-            setProducts(res.result.content);
-        } catch (error) {
-            console.error("Error fetching products:", error);
-        } finally {
-            setIsLoading(false);
+  const fetchProducts = async () => {
+    try {
+      setIsLoadingProducts(true);
+      const res = await getAllProducts(0, size);
+        console.log(res)
+      setProducts(res.result.content);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setIsLoadingProducts(false);
+    }
+  };
+
+  const fetchNews = async () => {
+    try {
+        setIsLoading(true);
+        const res = await getAllNews(0, 12);
+        console.log(res)
+        setNewsList(res.result.content);
+    } catch (error) {
+        console.error("Error fetching news:", error);
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
+  fetchProducts();
+  fetchNews();
+  }, []);
+
+  useEffect(() => {
+    const checkMode = () => {
+        if (products) {
+            const isMobile = window.innerWidth < 640;
+            setSize(isMobile ? 8 : 20)
         }
     };
-    fetchProducts();
+
+    checkMode();
+    window.addEventListener("resize", checkMode);
+    return () => window.removeEventListener("resize", checkMode);
   }, []);
 
   return (
@@ -62,55 +76,130 @@ export default function Home() {
       <main className="flex-grow bg-gray-50 py-6">
         <Container maxWidth="lg">
 
-          {/* Bài viết */}
+          {/* Products */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Bài viết nổi bật</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {fakeNews.map((news) => (
-                  <NewsItem key={news.id} news={news} />
-              ))}
+            <div className='border-b border-red-700 mb-4 flex justify-between items-end'>
+              <div className='home-title w-max ps-8 pe-8 md:ps-16 md:pe-20 py-1 text-white'>
+                <h2 className="text-base md:text-2xl font-semibold">Sản phẩm nổi bật</h2>
+              </div>
+              <Link href={`/danh-muc`} className='flex items-center hover:text-red-600'>
+                  <span className="text-sm mb-1 md:text-lg md:me-2">Xem tất cả</span>
+                  <span className="arrow arrow-1"><IoIosArrowForward /></span>
+                  <span className="arrow arrow-2"><IoIosArrowForward /></span>
+                  <span className="arrow arrow-3"><IoIosArrowForward /></span>
+              </Link>
             </div>
+            <ProductCarousel products={products} isLoading={isLoadingProducts}/>
           </section>
 
           {/* Products */}
           <section className="mb-10">
-            <h2 className="text-2xl font-bold mb-4">Sản phẩm nổi bật</h2>
-            <ProductCarousel products={products}/>
+            <div className='border-b border-red-700 mb-4 flex justify-between items-end'>
+              <div className='home-title w-max ps-8 pe-8 md:ps-16 md:pe-20 py-1 text-white'>
+                <h2 className="text-base md:text-2xl font-semibold">Sản phẩm mới</h2>
+              </div>
+              <Link href={`/danh-muc`} className='flex items-center hover:text-red-600'>
+                  <span className="text-sm mb-1 md:text-lg md:me-2">Xem tất cả</span>
+                  <span className="arrow arrow-1"><IoIosArrowForward /></span>
+                  <span className="arrow arrow-2"><IoIosArrowForward /></span>
+                  <span className="arrow arrow-3"><IoIosArrowForward /></span>
+              </Link>
+            </div>
+            <ProductCarousel products={products} isLoading={isLoadingProducts}/>
           </section>
-
-          {/* Products */}
+          
+          {/* Tin tức mới nhất */}
+          {newsList.length == 4 && (
           <section className="mb-10">
-            <h2 className="text-2xl font-bold mb-4">Sản phẩm mới</h2>
-            <ProductCarousel products={products}/>
-          </section>
-
-          {/* Products */}
-          <section className="mb-10">
-            <h2 className="text-2xl font-bold mb-4">Giảm giá sốc</h2>
-            <ProductCarousel products={products}/>
-          </section>
-
-          <section>
-            <ProductGrid products={products} isLoading={isLoading}/>
-          </section>
-
-          {/* Chia sẻ kinh nghiệm */}
-          <section className="mb-10">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Chia sẻ kinh nghiệm</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">Tin tức mới nhất</h2>
             <div className="space-y-4">
-              {[1, 2, 3].map((id) => (
-                <div
-                  key={id}
-                  className="bg-white p-4 rounded-xl shadow hover:shadow-md transition"
-                >
-                  <h4 className="font-medium">Kinh nghiệm {id}</h4>
-                  <p className="text-sm text-gray-600">
-                    Một vài dòng chia sẻ hữu ích dành cho bạn đọc...
-                  </p>
+              <div className="grid grid-cols-1 lg:grid-cols-[21fr_22fr] gap-4 max-w-6xl mx-auto">
+                {/* Card lớn bên trái */}
+                <div className="">
+                  <NewsItem news={newsList[0]} orientation='col'/>
                 </div>
+
+                {/* 4 card nhỏ bên phải */}
+                <div className="flex flex-col">
+                  <div className="grid grid-cols-2 gap-4 mb-4 md:mb-auto">
+                    <NewsItem news={newsList[1]} orientation='col'/>
+                    <NewsItem news={newsList[2]} orientation='col'/>
+                  </div>
+                  <NewsItem news={newsList[3]} orientation='row'/>
+                </div>
+              </div>
+            </div>
+          </section>
+          )}
+
+          {/* Products */}
+          <section className="mb-10">
+            <div className='border-b border-red-700 mb-4 flex justify-between items-end'>
+              <div className='home-title w-max ps-8 pe-8 md:ps-16 md:pe-20 py-1 text-white'>
+                <h2 className="text-base md:text-2xl font-semibold">Giảm giá sốc</h2>
+              </div>
+              <Link href={`/danh-muc`} className='flex items-center hover:text-red-600'>
+                  <span className="text-sm mb-1 md:text-lg md:me-2">Xem tất cả</span>
+                  <span className="arrow arrow-1"><IoIosArrowForward /></span>
+                  <span className="arrow arrow-2"><IoIosArrowForward /></span>
+                  <span className="arrow arrow-3"><IoIosArrowForward /></span>
+              </Link>
+            </div>
+            <ProductCarousel products={products} isLoading={isLoadingProducts}/>
+          </section>
+
+          <section className="mb-10">
+            <div className='border-b border-red-700 mb-4 flex justify-between items-end'>
+              <div className='home-title w-max ps-8 pe-8 md:ps-16 md:pe-20 py-1 text-white'>
+                <h2 className="text-base md:text-2xl font-semibold">Sản phẩm khác</h2>
+              </div>
+              <Link href={`/danh-muc`} className='flex items-center hover:text-red-600'>
+                  <span className="text-sm mb-1 md:text-lg md:me-2">Xem tất cả</span>
+                  <span className="arrow arrow-1"><IoIosArrowForward /></span>
+                  <span className="arrow arrow-2"><IoIosArrowForward /></span>
+                  <span className="arrow arrow-3"><IoIosArrowForward /></span>
+              </Link>
+            </div>
+            <ProductGrid products={products} isLoading={isLoading} />
+          </section>
+          
+          {/* Mẹo đời sống */}
+          <section className="mb-10">
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">Mẹo đời sống</h2>
+            <div className="space-y-4">
+              <CardLayout
+                mainCard={
+                  <div className="h-full bg-red-100 rounded-xl p-6 shadow hover:shadow-lg transition-all">
+                    <h2 className="text-xl font-bold mb-2">Mẹo nổi bật</h2>
+                    <p className="text-gray-700">Đây là mẹo chính có nhiều nội dung và hình ảnh nổi bật...</p>
+                  </div>
+                }
+                sideCards={
+                  <>
+                    {[1, 2, 3, 4].map((item) => (
+                      <div key={item} className="bg-blue-100 rounded-xl p-4 shadow hover:shadow-md transition-all">
+                        <h3 className="text-md font-semibold">Mẹo #{item}</h3>
+                        <p className="text-sm text-gray-600">Mô tả ngắn cho mẹo này...</p>
+                      </div>
+                    ))}
+                  </>
+                }
+              />
+            </div>
+          </section>
+          
+          {/* Bài viết */}
+          {newsList.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">Bài viết</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {newsList.map((news) => (
+                <NewsItem key={news.id} news={news} orientation='row'/>
               ))}
             </div>
           </section>
+          )}
+
         </Container>
       </main>
     </div>

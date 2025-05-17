@@ -71,7 +71,7 @@ export default function Checkout() {
     
     const steps = [
         { label: 'GIỎ HÀNG', url: '/gio-hang', isActive: false },
-        { label: 'ĐẶT HÀNG', url: '/thanh-toan', isActive: true },
+        { label: 'TẠO ĐƠN HÀNG', url: '/thanh-toan', isActive: true },
         { label: 'HOÀN THÀNH', url: '', isActive: false },
     ];
     

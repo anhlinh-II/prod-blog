@@ -99,7 +99,7 @@ export interface CategoryRequest {
 }
 
 export interface CategoryResponse {
-     id: string;
+     id: number;
      name: string;
      slug: string;
      description: string;

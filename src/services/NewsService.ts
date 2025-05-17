@@ -10,6 +10,14 @@ export const getAllNews = async (page = 0, size = 20) => {
     return response.data;
 };
 
+export const getPopularNews = async (page = 0, size = 20) => {
+    const response = await instance.get<ApiResponse<Page<NewsResponse>>>(
+        `/api/news/popular`,
+        { params: { page, size } }
+    );
+    return response.data;
+};
+
 export const getAllDeletedNews = async (page = 0, size = 20) => {
     const response = await instance.get<ApiResponse<Page<NewsResponse>>>(
         `/api/news/deleted`,
@@ -36,6 +44,11 @@ export const getNewsByCategory = async (categorySlug: string, page = 0, size = 1
 
 export const getNewsById = async (id: number) => {
     const response = await instance.get<ApiResponse<NewsResponse>>(`/api/news/${id}`);
+    return response.data;
+};
+
+export const getNewsBySlug = async (slug: string) => {
+    const response = await instance.get<ApiResponse<NewsResponse>>(`/api/news/slug`, {params: slug});
     return response.data;
 };
 

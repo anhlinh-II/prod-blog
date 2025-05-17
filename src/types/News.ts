@@ -17,6 +17,8 @@ export interface NewsResponse {
   id: number;
   title: string;
   slug: string;
+  imageUrl: string;
+  description: string;
   content: string;
   type: NewsType;
   categorySlugs: string[]; 

@@ -30,13 +30,13 @@ export default function Breadcrumb({ items, title }: BreadcrumbProps) {
                             {item.label}
                         </Link>
                         ) : (
-                        <span className="text-base font-medium text-gray-800 ">{item.label}</span>
+                        <span className="text-base font-medium text-gray-800 line-clamp-1">{item.label}</span>
                       )}
                   </div>
                   );
               })}
               </div>
-            <div className="hidden md:block font-bold text-xl text-red-600">{title}</div>
+            <div className="hidden md:block font-bold text-xl text-red-600 line-clamp-1">{title}</div>
             </Container>
         </main>
     </nav>

@@ -122,7 +122,7 @@ export default function Cart() {
 
     const steps = [
         { label: 'GIỎ HÀNG', url: '/gio-hang', isActive: true },
-        { label: 'ĐẶT HÀNG', url: '/thanh-toan', isActive: false },
+        { label: 'TẠO ĐƠN HÀNG', url: '/thanh-toan', isActive: false },
         { label: 'HOÀN THÀNH', url: '', isActive: false },
     ];
     
@@ -183,12 +183,12 @@ export default function Cart() {
 
                                 <Link href={`/thanh-toan`}>
                             <button className="w-full bg-black text-white py-2 rounded mt-4 font-bold cursor-pointer">
-                                    Thanh toán
+                                    Tạo đơn hàng
                             </button>
                                 </Link>
                             <button className="w-full mt-2 text-center text-gray-700 underline cursor-pointer">
                                 <Link href={`/`}>
-                                    Tiếp tục mua hàng
+                                    Tiếp tục xem sản phẩm khác
                                 </Link>
                             </button>
                         </div>

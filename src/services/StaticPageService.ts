@@ -21,9 +21,8 @@ export const getStaticPageById = async (id: number) => {
 
 // Lấy trang tĩnh theo slug
 export const getStaticPageBySlug = async (slug: string) => {
-  return (
-    await instance.get<ApiResponse<StaticPageResponse>>(`/api/pages/slug/${slug}`)
-  ).data;
+  const response = await instance.get<ApiResponse<StaticPageResponse>>(`/api/pages/slug}`, {params: slug});
+  return response.data;
 };
 
 // Tìm kiếm trang tĩnh với query và phân trang

@@ -26,7 +26,6 @@ export default function ProductPage({ params }: ProductPageProps) {
 	const [isLoading, setIsLoading] = useState(true);
     const [price, setPrice] = useState<number>();
     const [quantity, setQuantity] = useState(1);
-    const [tab, setTab] = useState("description");
     const [displayMediaIndex, setDisplayMediaIndex] = useState<number | null>(null);
 
     const images = ['/test4.jpg', '/test2.jpg', '/test3.jpg', '/test4.jpg', '/test5.jpg', '/test2.jpg', '/test.jpg', '/test5.jpg'];
@@ -68,7 +67,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
     return (
         <div className="">
-            <Breadcrumb items={breadcrumbItems} title={product?.name}/>
+            <Breadcrumb items={breadcrumbItems}/>
             <main className="flex-grow py-6">
                 <Container maxWidth={"lg"}>
                 {isLoading || !product || !price ? (
@@ -148,79 +147,67 @@ export default function ProductPage({ params }: ProductPageProps) {
                             </div>
 
                             <div className="flex flex-col items-center justify-center w-full gap-4 mt-4">
-                                <Button className="flex-1 w-[80%] text-white bg-gray-800 hover:bg-gray-700">
-                                    Thêm vào giỏ hàng
+                                <Button className="flex-1 w-[80%] bg-red-700 hover:bg-red-600 text-white">
+                                    Liên hệ ngay
                                 </Button>
-                                <Button variant="outline" className="flex-1 w-[80%]">
-                                    Mua nhanh
+                                <Button className="flex-1 w-[80%] text-red-700 bg-white hover:bg-gray-100
+                                    border border-red-700">
+                                    Thêm vào giỏ hàng
                                 </Button>
                             </div>
                         </div>
                     </section>
                     )}
 
-                    {/* Tabs */}
                     <section className="col-span-2 my-10">
-                        <div className="grid grid-cols-2 border-b">
-                            <button
-                                onClick={() => setTab("description")}
-                                className={`px-6 py-2 font-semibold cursor-pointer
-                                    ${tab === "description" ? "border-b-2 border-black" : "text-gray-500"}`}
-                            >
-                                Mô tả sản phẩm
-                            </button>
-                            <button
-                                onClick={() => setTab("spec")}
-                                className={`px-6 py-2 font-semibold cursor-pointer
-                                    ${tab === "spec" ? "border-b-2 border-black" : "text-gray-500"}`}
-                            >
-                                Thông số kỹ thuật
-                            </button>
-                        </div>
-
-                        <div className="mt-4">
-                        {tab === "description" && product?.description && (
-                            <PostViewer title={""} content={product?.description} />
-                        )}
-
-                        {tab === "spec" && product?.attributes && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 mt-4">
+                    {/* Thông số kỹ thuật */}
+                    {product?.attributes && product?.attributes.length > 0 && (
+                        <>
+                        <h2 className="text-xl font-semibold mb-4">Thông số kỹ thuật</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {[0, 1].map((colIdx) => {
-                                const filtered = Object.entries(product?.attributes).filter((_, idx) => idx % 2 === colIdx);
-                                const needPaddingRow =
-                                    Object.entries(product?.attributes).length % 2 !== 0 && colIdx === 1;
+                            const filtered = Object.entries(product.attributes).filter((_, idx) => idx % 2 === colIdx);
+                            const needPaddingRow =
+                                Object.entries(product.attributes).length % 2 !== 0 && colIdx === 1;
 
-                                return (
-                                    <table
-                                        key={colIdx}
-                                        className="w-full text-left border border-gray-300 table-fixed"
-                                    >
-                                        <tbody>
-                                        {filtered.map(([key, value], rowIdx) => (
-                                            <tr key={key} 
-                                                className={`h-12 ${rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
-                                                <th className="px-4 py-2 text-center border border-gray-300 font-bold 
-                                                    text-gray-700 w-1/3 align-middle bg-inherit">
-                                                    {value.specKey}
-                                                </th>
-                                                <td className="px-4 py-2 border text-center border-gray-300 align-middle">
-                                                    {value.value}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                        {needPaddingRow && (
-                                            <tr className="h-12">
-                                                <th className="px-4 py-2 border border-gray-300 bg-gray-50"></th>
-                                                <td className="px-4 py-2 border border-gray-300"></td>
-                                            </tr>
-                                        )}
-                                        </tbody>
-                                    </table>
-                                );
+                            return (
+                                <table
+                                key={colIdx}
+                                className="w-full text-left border border-gray-300 table-fixed"
+                                >
+                                <tbody>
+                                    {filtered.map(([key, value], rowIdx) => (
+                                    <tr key={key} className={`h-12 ${rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
+                                        <th className="px-4 py-2 text-center border border-gray-300 font-bold 
+                                        text-gray-700 w-1/3 align-middle bg-inherit">
+                                        {value.specKey}
+                                        </th>
+                                        <td className="px-4 py-2 border text-center border-gray-300 align-middle">
+                                        {value.value}
+                                        </td>
+                                    </tr>
+                                    ))}
+                                    {needPaddingRow && (
+                                    <tr className="h-12">
+                                        <th className="px-4 py-2 border border-gray-300 bg-gray-50"></th>
+                                        <td className="px-4 py-2 border border-gray-300"></td>
+                                    </tr>
+                                    )}
+                                </tbody>
+                                </table>
+                            );
                             })}
-                            </div>
-                        )}
                         </div>
+                        </>
+                    )}
+
+                    {/* Mô tả sản phẩm */}
+                    {product?.description && product?.description != "" && (
+                        <div className="mt-10">
+                        <h2 className="text-xl font-semibold mb-4">Mô tả sản phẩm</h2>
+                        <PostViewer title={""} content={product.description} />
+                        </div>
+                    )}
                     </section>
 
                     {/* Similar products */}

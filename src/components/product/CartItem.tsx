@@ -1,4 +1,5 @@
 // components/product/CartItem.tsx
+import Image from 'next/image';
 import React from 'react';
 import { FiMinus, FiPlus } from 'react-icons/fi';
 import { GoXCircle } from 'react-icons/go';
@@ -26,7 +27,7 @@ const CartItem: React.FC<CartItemProps> = ({
 }) => {
     return (
         <div className="relative border-b border-gray-300 pb-4 mb-4 flex flex-col sm:flex-row items-center gap-4">
-            <img src={image} alt={name} className="w-28 h-28 object-cover" />
+            <Image src={image} alt={name} width={112} height={112} className="w-28 h-28 object-cover" />
             <div className="flex-1">
                 <h2 className="font-bold">{name}</h2>
                 <p className="text-gray-600 mt-2 font-bold">

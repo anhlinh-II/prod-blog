@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
@@ -109,7 +110,7 @@ const DisplayMedia: React.FC<DisplayMediaProps> = ({ images, index, setIsDisplay
                             onClick={() => setCurrentIndex(index)}
                             className="cursor-pointer"
                         >
-                            <img
+                            <Image
                                 src={image}
                                 alt={`Thumbnail ${index}`}
                                 className={`w-20 h-20 object-cover rounded-md ${

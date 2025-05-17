@@ -11,15 +11,15 @@ type PostViewerProps = {
 
 export default function PostViewer({ title, content }: PostViewerProps) {
 	const contentRef = useRef<HTMLDivElement>(null);
-	const [expanded, setExpanded] = useState(false);
-	const [showToggle, setShowToggle] = useState(false);
+	// const [expanded, setExpanded] = useState(false);
+	// const [showToggle, setShowToggle] = useState(false);
 
-	useEffect(() => {
-		const contentEl = contentRef.current;
-		if (contentEl && contentEl.scrollHeight > 500) {
-			setShowToggle(true);
-		}
-	}, [content]);
+	// useEffect(() => {
+	// 	const contentEl = contentRef.current;
+	// 	if (contentEl && contentEl.scrollHeight > 500) {
+	// 		setShowToggle(true);
+	// 	}
+	// }, [content]);
 
 	return (
 		<div className="relative p-6 rounded-2xl">
@@ -28,12 +28,10 @@ export default function PostViewer({ title, content }: PostViewerProps) {
 			)}
 			<div
 				ref={contentRef}
-				className={`prose prose-blue max-w-none overflow-hidden transition-all duration-300 
-					${expanded ? 'max-h-none' : 'max-h-[500px]'
-				}`}
+				className={`prose prose-blue max-w-none overflow-hidden transition-all duration-300 `}
 				dangerouslySetInnerHTML={{ __html: content }}
 			/>
-			{showToggle && (
+			{/* {showToggle && (
 				<button
 					className="absolute flex flex-col items-center justify-center right-0 -bottom-10 w-[90%] md:w-full mt-4 py-3 font-bold"
 				>
@@ -51,7 +49,7 @@ export default function PostViewer({ title, content }: PostViewerProps) {
 						</span>
 					</div>
 				</button>
-			)}
+			)} */}
 			<style jsx>{`
 			.prose img {
 			  max-height: 500px;

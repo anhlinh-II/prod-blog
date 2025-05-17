@@ -20,7 +20,7 @@ const BannerSlider = () => {
 	const nextRef = useRef(null);
 
 	return (
-		<div className="relative w-full aspect-[16/6] overflow-hidden">
+		<div className="relative w-full aspect-[12/6] md:aspect-[16/6] overflow-hidden">
 			<Swiper
 				modules={[Autoplay, Pagination, Navigation]}
 				loop={true}
