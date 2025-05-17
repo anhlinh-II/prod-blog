@@ -1,5 +1,5 @@
-import { ContactFormData } from "@/app/lien-he/page";
-import { CheckoutFormData } from "@/app/thanh-toan/CheckoutForm";
+import { ContactFormData } from "@/app/(public)/lien-he/page";
+import { CheckoutFormData } from "@/app/(public)/thanh-toan/CheckoutForm";
 
 export const validateOrderFormData = (data: CheckoutFormData) => {
     const newErrors: { [key: string]: string } = {};

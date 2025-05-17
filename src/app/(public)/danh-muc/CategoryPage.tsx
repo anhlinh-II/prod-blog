@@ -5,10 +5,10 @@ import Pagination from "@/components/common/Pagination";
 import { useEffect, useState } from "react";
 import { getProductsWithMultiSort } from "@/services/ProductService";
 import CategoryTreeMenu, { CategoryResponse } from "@/components/CategoryTreeMenu";
-import '../globals.css'
+import '@/app/globals.css';
 import Breadcrumb from "@/components/common/Breadcrumb";
 import ProductGrid from "@/components/product/ProductGrid";
-import Filterbar from "@/app/danh-muc/Filterbar";
+import Filterbar from "@/app/(public)/danh-muc/Filterbar";
 
 interface ProductListPageProps {
   params: {
