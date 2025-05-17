@@ -4,13 +4,12 @@ import { ProductShortResponse } from "@/types/Product";
 import Pagination from "@/components/common/Pagination";
 import { useEffect, useRef, useState } from "react";
 import { getProductsWithMultiSort } from "@/services/ProductService";
-import CategoryTreeMenu from "@/app/danh-muc/CategoryTreeDesktop";
-import '../globals.css'
+import '@/app/globals.css';
 import Breadcrumb from "@/components/common/Breadcrumb";
 import ProductGrid from "@/components/product/ProductGrid";
-import Filterbar from "@/app/danh-muc/Filterbar";
 import { CategoryResponse } from "@/types";
 import CategoryTreeMenuWrapper from "./CategoryWrapper";
+import Filterbar from "./Filterbar";
 
 interface ProductListPageProps {
   params: {
