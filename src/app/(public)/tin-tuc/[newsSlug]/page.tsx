@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import PostViewer from "@/components/common/PostViewer";
 import Link from "next/link";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import '../../../styles/scrollbar.css'
+import '@/styles/scrollbar.css'
 import { NewsResponse } from "@/types/News";
 import { getNewsBySlug, increaseNewsViews } from "@/services/NewsService";
 

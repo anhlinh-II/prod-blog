@@ -7,7 +7,7 @@ import StaticPageSidebar from "./StaticPageSidebar";
 import PostViewer from "@/components/common/PostViewer";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Link from "next/link";
-import '../../styles/scrollbar.css'
+import '@/styles/scrollbar.css'
 import { StaticPageResponse } from "@/types/News";
 import { getAllStaticPages, getStaticPageBySlug, increaseStaticPageViews } from "@/services/StaticPageService";
 

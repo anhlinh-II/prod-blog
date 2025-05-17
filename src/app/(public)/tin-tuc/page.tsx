@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import NewsItem from "@/components/news/NewsItem";
 import Pagination from "@/components/common/Pagination";
-import '../../styles/scrollbar.css'
+import '@/styles/scrollbar.css'
 import { NewsResponse } from "@/types/News";
 import { getAllNews } from "@/services/NewsService";
 
