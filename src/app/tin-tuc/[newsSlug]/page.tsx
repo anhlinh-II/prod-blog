@@ -6,7 +6,7 @@ import Link from "next/link";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import '../../../styles/scrollbar.css'
 import { NewsResponse } from "@/types/News";
-import { getNewsBySlug } from "@/services/NewsService";
+import { getNewsBySlug, increaseNewsViews } from "@/services/NewsService";
 
 
 interface NewsPageProps {
@@ -36,6 +36,14 @@ export default function NewsPage({ params }: NewsPageProps) {
         };
         fetchNews();
     }, []);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            increaseNewsViews(newsSlug);
+        }, 3000);
+
+        return () => clearTimeout(timeout); 
+    }, [newsSlug]);
 
     // If not desktop
     useEffect(() => {

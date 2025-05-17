@@ -81,12 +81,12 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, discountPe
           ref={mainSliderRef}
         >
           {tag && (
-            <div className="absolute top-2 left-2 bg-[#5c0a0a] text-white text-sm font-bold px-3 py-2 z-10">
+            <div className="absolute top-2 left-2 bg-[#d60000] text-white text-sm font-bold px-3 py-2 z-10">
               {tag}
             </div>
           )}
           {discountPercent && (
-            <div className="absolute top-2 right-2 bg-[#d60000] text-white text-lg font-bold px-2 py-4 z-10 rounded-full">
+            <div className="absolute top-2 right-2 bg-[#d60000] text-white text-lg font-bold px-2 py-2 z-10">
               -{discountPercent}%
             </div>
           )}

@@ -9,7 +9,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Link from "next/link";
 import '../../styles/scrollbar.css'
 import { StaticPageResponse } from "@/types/News";
-import { getAllStaticPages, getStaticPageBySlug } from "@/services/StaticPageService";
+import { getAllStaticPages, getStaticPageBySlug, increaseStaticPageViews } from "@/services/StaticPageService";
 
 
 interface StaticPageProps {
@@ -52,6 +52,14 @@ export default function StaticPage({ params }: StaticPageProps) {
         fetchStaticPage();
 
         fetchStaticPageList();
+    }, [staticPageSlug]);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            increaseStaticPageViews(staticPageSlug);
+        }, 3000);
+
+        return () => clearTimeout(timeout); 
     }, [staticPageSlug]);
     
 

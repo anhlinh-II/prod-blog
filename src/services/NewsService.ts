@@ -62,12 +62,9 @@ export const updateNews = async (id: number, request: NewsRequest) => {
     return response.data;
 };
 
-export const increaseNewsViews = async (id: number) => {
-    const response = await instance.put<ApiResponse<NewsResponse>>(
-        `/api/news/views/increase`,
-        null,
-        { params: { id } }
-    );
+export const increaseNewsViews = async (slug: string) => {
+    const response = await instance.post<ApiResponse<Number>>(
+        `/api/news/views/${slug}`, null);
     return response.data;
 };
 

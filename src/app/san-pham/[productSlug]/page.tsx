@@ -8,7 +8,7 @@ import { Container } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { FaEye } from "react-icons/fa";
-import { findSimilarProducts, getProductBySlug } from "@/services/ProductService";
+import { findSimilarProducts, getProductBySlug, increaseProductViews } from "@/services/ProductService";
 import { ProductResponse, ProductShortResponse } from "@/types/Product";
 import { formatNumberWithCommas } from "@/utils/FormatNumber";
 import Breadcrumb from "@/components/common/Breadcrumb";
@@ -56,6 +56,14 @@ export default function ProductPage({ params }: ProductPageProps) {
             }
         };
         fetchProduct();
+    }, [productSlug]);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            increaseProductViews(productSlug);
+        }, 3000);
+
+        return () => clearTimeout(timeout); 
     }, [productSlug]);
 
     
@@ -163,12 +171,13 @@ export default function ProductPage({ params }: ProductPageProps) {
                     {/* Thông số kỹ thuật */}
                     {product?.attributes && product?.attributes.length > 0 && (
                         <>
-                        <h2 className="text-xl font-semibold mb-4">Thông số kỹ thuật</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h2 className="text-2xl font-bold mb-4">Thông số kỹ thuật</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2">
                             {[0, 1].map((colIdx) => {
                             const filtered = Object.entries(product.attributes).filter((_, idx) => idx % 2 === colIdx);
                             const needPaddingRow =
-                                Object.entries(product.attributes).length % 2 !== 0 && colIdx === 1;
+                                Object.entries(product.attributes).length % 2 !== 0 && colIdx === 1 && window.innerWidth > 640; 
+                                // row number is even and is not mobile (mobile doesn't need this)
 
                             return (
                                 <table
@@ -204,7 +213,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                     {/* Mô tả sản phẩm */}
                     {product?.description && product?.description != "" && (
                         <div className="mt-10">
-                        <h2 className="text-xl font-semibold mb-4">Mô tả sản phẩm</h2>
+                        <h2 className="text-2xl font-bold mb-4">Mô tả sản phẩm</h2>
                         <PostViewer title={""} content={product.description} />
                         </div>
                     )}

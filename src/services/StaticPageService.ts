@@ -82,6 +82,12 @@ export const updateStaticPage = async (
   ).data;
 };
 
+export const increaseStaticPageViews = async (slug: string) => {
+    const response = await instance.post<ApiResponse<Number>>(
+        `/api/pages/views/${slug}`, null);
+    return response.data;
+};
+
 // Xóa trang tĩnh theo ID
 export const deleteStaticPage = async (id: number): Promise<void> => {
   await instance.delete<ApiResponse<void>>(`/api/pages/${id}`);

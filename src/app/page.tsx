@@ -50,11 +50,6 @@ export default function Home() {
     }
   };
 
-  fetchProducts();
-  fetchNews();
-  }, []);
-
-  useEffect(() => {
     const checkMode = () => {
         if (products) {
             const isMobile = window.innerWidth < 640;
@@ -64,7 +59,11 @@ export default function Home() {
 
     checkMode();
     window.addEventListener("resize", checkMode);
-    return () => window.removeEventListener("resize", checkMode);
+
+    fetchProducts();
+    fetchNews();
+
+    window.removeEventListener("resize", checkMode);
   }, []);
 
   return (

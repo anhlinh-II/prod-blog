@@ -50,7 +50,7 @@ export default function Filterbar({
             <span
               className={`
                 inline-block px-3 py-1 rounded-full transition-all duration-300
-                cursor-pointer border border-gray-300
+                cursor-pointer border border-gray-400
                 peer-checked:bg-red-600 peer-checked:text-white peer-checked:border-red-600
                 hover:border-red-600
               `}

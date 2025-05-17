@@ -10,6 +10,13 @@ export const getAllProducts = async (page = 0, size = 12) => {
     )).data;
 };
 
+export const getRandomProducts = async (page = 0, size = 12) => {
+    return (await instance.get<ApiResponse<Page<ProductShortResponse>>>(
+        `/api/products/random`,
+        { params: { page, size } }
+    )).data;
+};
+
 export const getSortedProducts = async (sortOption: string, categorySlug: string, page = 0, size = 12) => {
     return (await instance.get<ApiResponse<Page<ProductShortResponse>>>(
         `/api/products/sorted`,
@@ -101,6 +108,12 @@ export const updateProduct = async (request: ProductRequest) => {
         `/api/products`,
         request
     )).data;
+};
+
+export const increaseProductViews = async (slug: string) => {
+    const response = await instance.post<ApiResponse<Number>>(
+        `/api/products/views/${slug}`, null);
+    return response.data;
 };
 
 export const deactivateProduct = async (id: number) => {
