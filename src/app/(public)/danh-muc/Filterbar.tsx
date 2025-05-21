@@ -13,8 +13,8 @@ export default function Filterbar({
     { label: "Mới nhất", value: "latest" },
     { label: "Bán chạy", value: "most-sold" },
     { label: "Phổ biến", value: "popularity" },
-    { label: "Giá tăng dần", value: "price-asc" },
     { label: "Giá giảm dần", value: "price-desc" },
+    { label: "Giá tăng dần", value: "price-asc" },
   ];
 
   const priceOptions = ["price-asc", "price-desc"];

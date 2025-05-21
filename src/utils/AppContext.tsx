@@ -1,57 +1,95 @@
-'use client';
-
+'use client'
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { fetchCategories } from '@/services/index';
-import { CategoryResponse } from '@/types/index';
 
-type AppContextType = {
-  categories: CategoryResponse[];
-  setCategories: React.Dispatch<React.SetStateAction<CategoryResponse[]>>;
-};
+export interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+}
+
+interface AppContextType {
+  cart: CartItem[];
+  addToCart: (item: CartItem) => void;
+  removeFromCart: (id: number) => void;
+  toggleCart: () => void;
+  updateCartItemQuantity: (id: number, quantity: number) => void;
+  clearCart: () => void;
+  isCartVisible: boolean;
+}
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const AppProvider = ({ children }: { children: React.ReactNode }) => {
-  const [categories, setCategories] = useState<CategoryResponse[]>([]);
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartVisible, setIsCartVisible] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
+  // Khởi tạo giỏ hàng từ localStorage chỉ lần đầu khi client-side
   useEffect(() => {
-    const cached = localStorage.getItem('categories');
-    if (cached) {
-      setCategories(JSON.parse(cached));
-    }
-
-    const fetchData = async () => {
+    if (typeof window !== 'undefined' && !isInitialized) {
       try {
-        const response = await fetchCategories();
-        if (response) {
-          setCategories(response);
-          localStorage.setItem('categories', JSON.stringify(response));
-          localStorage.setItem('categories_updated_at', Date.now().toString());
+        const storedCart = localStorage.getItem('cart');
+        if (storedCart) {
+          const parsedCart = JSON.parse(storedCart);
+          setCart(parsedCart);
+          console.log('Đã khôi phục giỏ hàng từ localStorage:', parsedCart);
         }
+        setIsInitialized(true);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Lỗi khi lấy giỏ hàng từ localStorage:', error);
       }
-    };
+    }
+  }, [isInitialized]);
 
-    if (!cached) fetchData();
-    const lastUpdated = localStorage.getItem('categories_updated_at');
-    const expired = !lastUpdated || (Date.now() - parseInt(lastUpdated)) > 300_000; // quá 5 phút
+  // Lưu giỏ hàng vào localStorage mỗi khi giỏ hàng thay đổi
+  useEffect(() => {
+    if (typeof window !== 'undefined' && isInitialized) {
+      try {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        console.log('Đã lưu giỏ hàng vào localStorage:', cart);
+      } catch (error) {
+        console.error('Lỗi khi lưu giỏ hàng vào localStorage:', error);
+      }
+    }
+  }, [cart, isInitialized]);
 
-    if (expired) fetchData();
+  const addToCart = (item: CartItem) => {
+    setCart(prev => {
+      const existing = prev.find(p => p.id === item.id);
+      if (existing) {
+        return prev.map(p => p.id === item.id ? { ...p, quantity: p.quantity + 1 } : p);
+      }
+      return [...prev, { ...item, quantity: 1 }];
+    });
+  };
 
-  }, []);
+  const removeFromCart = (id: number) => {
+    setCart(prev => prev.filter(p => p.id !== id));
+  };
+
+  const toggleCart = () => {
+    setIsCartVisible(prev => !prev);
+  };
+
+  const updateCartItemQuantity = (id: number, quantity: number) => {
+    setCart(prev =>
+      prev.map(item => (item.id === id ? { ...item, quantity } : item))
+    );
+  };
+
+  const clearCart = () => setCart([]);
 
   return (
-    <AppContext.Provider value={{ categories, setCategories }}>
+    <AppContext.Provider value={{ cart, addToCart, removeFromCart, toggleCart, updateCartItemQuantity, clearCart, isCartVisible }}>
       {children}
     </AppContext.Provider>
   );
 };
 
-export const useApp = (): AppContextType => {
+export const useAppContext = () => {
   const context = useContext(AppContext);
-  if (!context) {
-    throw new Error('useApp must be used within an AppProvider');
-  }
+  if (!context) throw new Error('useAppContext must be used inside AppProvider');
   return context;
 };

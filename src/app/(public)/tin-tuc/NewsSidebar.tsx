@@ -20,7 +20,7 @@ export default function NewsSidebar({newsList} : NewsSidebarProps) {
     <aside className="w-full md:w-80 px-4 py-2 border-s border-gray-300 space-y-4">
       {/* Danh mục */}
       <div className=''>
-        <h2 className="text-lg font-semibold mb-1 text-gray-800">Danh mục</h2>
+        <h2 className="text-lg font-semibold mb-1 text-gray-800">Tin tức</h2>
         <div className='h-0.5 w-12 bg-black rounded-lg mb-2'></div>
         <ul className="space-y-2">
           {categories.map((cat, idx) => (
@@ -60,7 +60,7 @@ export default function NewsSidebar({newsList} : NewsSidebarProps) {
 
       {/* Tin mới nhất */}
       <div className=''>
-        <h2 className="text-lg font-semibold mb-1 text-gray-800">Tin được đọc nhiều nhất</h2>
+        <h2 className="text-lg font-semibold mb-1 text-gray-800">Giới thiệu sản phẩm</h2>
         <div className='h-0.5 w-12 bg-black rounded-lg mb-2'></div>
         <ul className="space-y-2">
           {newsList.map((news) => (

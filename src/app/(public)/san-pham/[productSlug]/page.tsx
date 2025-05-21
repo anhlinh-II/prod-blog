@@ -12,6 +12,8 @@ import { findSimilarProducts, getProductBySlug, increaseProductViews } from "@/s
 import { ProductResponse, ProductShortResponse } from "@/types/Product";
 import { formatNumberWithCommas } from "@/utils/FormatNumber";
 import Breadcrumb from "@/components/common/Breadcrumb";
+import { useAppContext } from "@/utils/AppContext";
+import Toast from "@/components/common/Toast";
 
 interface ProductPageProps {
   params: {
@@ -27,6 +29,16 @@ export default function ProductPage({ params }: ProductPageProps) {
     const [price, setPrice] = useState<number>();
     const [quantity, setQuantity] = useState(1);
     const [displayMediaIndex, setDisplayMediaIndex] = useState<number | null>(null);
+    const { addToCart } = useAppContext();
+    const [toast, setToast] = useState<{
+        message: string;
+        visible: boolean;
+        type?: 'success' | 'error' | 'warning';
+    }>({
+        message: '',
+        visible: false,
+        type: 'success',
+    });
 
     const images = ['/test4.jpg', '/test2.jpg', '/test3.jpg', '/test4.jpg', '/test5.jpg', '/test2.jpg', '/test.jpg', '/test5.jpg'];
 
@@ -36,6 +48,11 @@ export default function ProductPage({ params }: ProductPageProps) {
 
     const handleIncrease = () => {
         setQuantity(quantity + 1);
+    };
+    
+    const showToast = (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
+        setToast({ message, visible: true, type });
+        setTimeout(() => setToast({ message: '', visible: false, type }), 3000);
     };
 
     useEffect(() => {
@@ -159,7 +176,19 @@ export default function ProductPage({ params }: ProductPageProps) {
                                     Liên hệ ngay
                                 </Button>
                                 <Button className="flex-1 w-[80%] text-red-700 bg-white hover:bg-gray-100
-                                    border border-red-700">
+                                    border border-red-700"
+                                    onClick={() => {
+                                        if (product) {
+                                            addToCart({
+                                                id: product.id,
+                                                name: product.name,
+                                                price: product.specialPrice || product.price,
+                                                image: product.image || '/placeholder.png',
+                                                quantity: 1
+                                            });
+                                            showToast(`Đã thêm sản phẩm vào giỏ hàng`, 'success');
+                                        }
+                                    }}>
                                     Thêm vào giỏ hàng
                                 </Button>
                             </div>
@@ -224,6 +253,9 @@ export default function ProductPage({ params }: ProductPageProps) {
                         <h2 className="text-2xl font-bold mb-4">Sản phẩm tương tự</h2>
                         <ProductCarousel products={similarProducts}/>
                     </section>
+                    
+                    {/* Toast */}
+                    <Toast message={toast.message} visible={toast.visible} type={toast.type} />
                 </Container>
             </main>
 

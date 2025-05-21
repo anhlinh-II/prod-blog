@@ -64,10 +64,7 @@ export interface CustomerInfoRequest {
   firstName?: string;
   lastName?: string;
   phone: string;
-  email: string;
-  apartment?: string;
-  street: string;
-  province: string;
-  postalCode?: string;
+  email?: string;
+  address: string;
   note?: string;
 }

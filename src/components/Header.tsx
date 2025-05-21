@@ -337,8 +337,8 @@ const Header: React.FC = () => {
             flexGrow: { xs: 1, md: 0 }, // Logo chiếm không gian trên mobile
           }}
         >
-          <span>MUJI</span>
-          <span style={{ fontSize: '0.75rem', lineHeight: '1' }}>無印良品</span>
+          <span></span>
+          <span style={{ fontSize: '0.75rem', lineHeight: '1' }}></span>
         </Typography>
 
         {/* Navigation Menu (desktop) */}

@@ -5,10 +5,11 @@ import { Container } from "@mui/material";
 import { validateContactFormData } from "@/utils/ValidateForm";
 import { throttle } from 'lodash';
 import Breadcrumb from "@/components/common/Breadcrumb";
+import { createContact } from "@/services/ContactService";
+import Toast from "@/components/common/Toast";
 
 export interface ContactFormData {
-  firstName: string;
-  lastName: string;
+  name: string;
   phone: string;
   email: string;
   message: string;
@@ -20,41 +21,84 @@ export default function ContactPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setFormErrors] = useState<{ [key: string]: string }>({});
     const [form, setForm] = useState<ContactFormData>({
-        firstName: '',
-        lastName: '',
+        name: '',
         email: '',
         phone: '',
         message: '',
         website: '',
     });
+    const [toast, setToast] = useState<{
+        message: string;
+        visible: boolean;
+        type?: 'success' | 'error' | 'warning';
+    }>({
+        message: '',
+        visible: false,
+        type: 'success',
+    });
+    const [cooldown, setCooldown] = useState(0);
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
+        setFormErrors({});
+    };
+    
+    const showToast = (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
+        setToast({ message, visible: true, type });
+        setTimeout(() => setToast({ message: '', visible: false, type }), 3000);
     };
 
+    const throttledSubmit = useCallback(throttle(async (data: ContactFormData) => {
+        try {
+            const contactRequest = {
+                name: data.name,
+                email: data.email || undefined,
+                phone: data.phone,
+                message: data.message
+            };
 
-    const handleSubmit = useCallback(
-        throttle(async (e: React.FormEvent) => {
-            e.preventDefault();
+            const response = await createContact(contactRequest);
+            console.log('Contact created:', response);
 
-            const validationErrors = validateContactFormData(form);
-            if (Object.keys(validationErrors).length > 0) {
-                setFormErrors(validationErrors);
-                return;
-            }
-            if (isSubmitting) return;
+            showToast(`Hệ thống đã nhận được nội dung liên hệ của bạn`, 'success');
 
-            setIsSubmitting(true);
-            try {
-                console.log('Submit order with:', { form });
-                // TODO: gửi dữ liệu qua API
-            } catch (err) {
-                console.error('Order failed', err);
-            } finally {
-                setIsSubmitting(false);
-            }
-        }, 3000), [form, isSubmitting]  // User can submit every 3 seconds
-    );
+            // Reset form
+            setForm({ name: '', email: '', phone: '', message: '', website: '' });
+
+            // Cooldown 5s
+            setCooldown(5);
+            const interval = setInterval(() => {
+                setCooldown(prev => {
+                    if (prev <= 1) {
+                        clearInterval(interval);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+
+        } catch (err) {
+            console.error('Failed to create contact:', err);
+        } finally {
+            setIsSubmitting(false);
+        }
+    }, 5000), []);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const validationErrors = validateContactFormData(form);
+        if (Object.keys(validationErrors).length > 0) {
+            setFormErrors(validationErrors);
+            return;
+        }
+        if (isSubmitting || cooldown > 0) return;
+
+        setIsSubmitting(true);
+        throttledSubmit(form);
+    };
+
     
     const breadcrumbItems = [
         { label: "🏠 Trang chủ", href: "/" },
@@ -75,62 +119,50 @@ export default function ContactPage() {
                             >
                                 <h2 className="text-2xl font-semibold text-gray-800 mb-6">Liên hệ với chúng tôi</h2>
 
+                                {/* Tên */}
+                                <div className="my-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Họ và tên<span className='text-red-500'> *</span></label>
+                                    <input
+                                        name="name"
+                                        type="text"
+                                        onChange={handleChange}
+                                        placeholder="Họ và tên"
+                                        className={`w-full border p-3 rounded-lg ${
+                                            errors.name ? 'border-red-500' : 'border-gray-300'
+                                        } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                                    />
+                                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                                </div>
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {/* Tên */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Tên<span className='text-red-500'> *</span></label>
-                                        <input
-                                        name="firstName"
-                                        type="text"
-                                        onChange={handleChange}
-                                        placeholder="Tên"
-                                        className={`w-full border p-3 rounded-lg ${
-                                            errors.firstName ? 'border-red-500' : 'border-gray-300'
-                                        } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                                        />
-                                        {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
-                                    </div>
-
-                                    {/* Họ */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Họ</label>
-                                        <input
-                                        name="lastName"
-                                        type="text"
-                                        onChange={handleChange}
-                                        placeholder="Họ"
-                                        className={`w-full border p-3 rounded-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                                        />
-                                    </div>
-
-                                    {/* Email */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Email<span className='text-red-500'> *</span></label>
-                                        <input
-                                        name="email"
-                                        type="email"
-                                        onChange={handleChange}
-                                        placeholder="email@domain.com"
-                                        className={`w-full border p-3 rounded-lg ${
-                                            errors.email ? 'border-red-500' : 'border-gray-300'
-                                        } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                                        />
-                                        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                                    </div>
 
                                     {/* Số điện thoại */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại<span className='text-red-500'> *</span></label>
                                         <input
-                                        name="phone"
-                                        type="tel"
-                                        onChange={handleChange}
-                                        placeholder="0987654321"
-                                        className={`w-full border p-3 rounded-lg ${
-                                            errors.phone ? 'border-red-500' : 'border-gray-300'
-                                        } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                                            name="phone"
+                                            type="tel"
+                                            onChange={handleChange}
+                                            placeholder="0987654321"
+                                            className={`w-full border p-3 rounded-lg ${
+                                                errors.phone ? 'border-red-500' : 'border-gray-300'
+                                            } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                                         />
                                         {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                                    </div>
+
+                                    {/* Email */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <input
+                                            name="email"
+                                            type="email"
+                                            onChange={handleChange}
+                                            placeholder="email@domain.com"
+                                            className={`w-full border p-3 rounded-lg ${
+                                                errors.email ? 'border-red-500' : 'border-gray-300'
+                                            } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                                        />
                                     </div>
                                 </div>
 
@@ -152,10 +184,15 @@ export default function ContactPage() {
                                 <div className="mt-6 w-full flex justify-end">
                                     <button
                                         type="submit"
-                                        className="bg-blue-600 text-white py-3 px-4 rounded-full 
-                                            hover:bg-blue-700 transition cursor-pointer"
+                                        disabled={isSubmitting || cooldown > 0}
+                                        className={`bg-blue-600 text-white py-3 px-4 rounded-full 
+                                            transition cursor-pointer ${
+                                                (isSubmitting || cooldown > 0)
+                                                    ? 'opacity-50 cursor-not-allowed'
+                                                    : 'hover:bg-blue-700'
+                                            }`}
                                     >
-                                        Gửi liên hệ
+                                        {cooldown > 0 ? `Gửi lại sau ${cooldown}s` : 'Gửi nội dung'}
                                     </button>
                                 </div>
                             </form>
@@ -197,6 +234,8 @@ export default function ContactPage() {
                             </div>
                         </section>
                     </div>
+                    {/* Toast */}
+                    <Toast message={toast.message} visible={toast.visible} type={toast.type} />
                 </Container>
             </main>
         </div>

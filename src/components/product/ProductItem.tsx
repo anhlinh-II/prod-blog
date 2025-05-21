@@ -49,7 +49,7 @@ export default function ProductItem({ product }: ProductItemProps) {
 
         <div className="relative flex items-center justify-between">
           <span className="text-gray-500 line-through text-sm">
-            {product.price.toLocaleString()}VND
+            {product.price.toLocaleString()} VND
           </span>
           
           {product.discountPercent && product.discountPercent != 0 && (

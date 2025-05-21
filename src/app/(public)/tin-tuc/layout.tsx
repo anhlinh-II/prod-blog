@@ -31,7 +31,7 @@ export default function NewsLayout({ children }: { children: React.ReactNode }) 
 
     const breadcrumbItems = slug == undefined ? [
         { label: "🏠 Trang chủ", href: "/" },
-        { label: "Tin tức" }
+        { label: "Bảng tin V Share" }
     ] : 
     [
         { label: "🏠 Trang chủ", href: "/" },
@@ -52,19 +52,23 @@ export default function NewsLayout({ children }: { children: React.ReactNode }) 
     // }, []);
 
     return (
-        <div className="">
+        <div className="bg-gray-100">
             <Breadcrumb items={breadcrumbItems} />
             <main className="min-h-screen flex-grow py-6">
-                <Container maxWidth={"lg"}>
                     <div className="flex flex-col-reverse lg:flex-row justify-center gap-4">
+
+                        <section className={`w-full lg:w-6/25 md:sticky top-4 h-80 md:h-screen overflow-y-auto 
+                            pb-8 custom-2-scrollbar ${slug ? '' : ''}`}>
+                            <NewsSidebar newsList={newsList}/>
+                        </section>
+
                         {children}
 
-                        <section className={`w-full lg:w-2/7 md:sticky top-0 h-80 md:h-screen overflow-y-auto 
-                            pb-8 custom-2-scrollbar ${slug ? '' : 'md:mt-12'}`}>
+                        <section className={`w-full lg:w-6/25 md:sticky top-4 h-80 md:h-screen overflow-y-auto 
+                            pb-8 custom-2-scrollbar ${slug ? '' : ''}`}>
                             <NewsSidebar newsList={newsList}/>
                         </section>
                     </div>
-                </Container>
             </main>
         </div>
     );

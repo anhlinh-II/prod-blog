@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
-import { useApp } from '@/utils/AppContext';
 import { CategoryResponse } from '@/types';
 import { CategoryTreeMenuProps } from './CategoryWrapper';
+import { useProductCategories } from '@/hooks/useCategories';
 
 export default function CategoryTreeMobile({ categorySlug, setCategory }: CategoryTreeMenuProps) {
-  const { categories } = useApp();
+  const { data: categories, isLoading, isError } = useProductCategories();
   const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set());
 
   // Mở rộng theo slug đang chọn
@@ -34,11 +34,13 @@ export default function CategoryTreeMobile({ categorySlug, setCategory }: Catego
       return new Set(path);
     }
 
-    const expandedSet = expandBySlug(categories, categorySlug);
-    setExpandedCategories(expandedSet);
+    if(categories) {
+      const expandedSet = expandBySlug(categories, categorySlug);
+      setExpandedCategories(expandedSet);
 
-    const found = findCategoryBySlug(categories, categorySlug);
-    if (found) setCategory(found);
+      const found = findCategoryBySlug(categories, categorySlug);
+      if (found) setCategory(found);
+    }
 
   }, [categorySlug]);
 
@@ -57,7 +59,7 @@ export default function CategoryTreeMobile({ categorySlug, setCategory }: Catego
         🛍️ Danh mục sản phẩm
       </h2>
       <ul className="divide-y divide-gray-100">
-        {categories.map((category) => (
+        {categories && categories.map((category) => (
           <CategoryMobileItem
             key={category.id}
             category={category}

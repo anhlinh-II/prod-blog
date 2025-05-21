@@ -15,7 +15,7 @@ type ToastProps = {
 
 const Toast: React.FC<ToastProps> = ({ message, visible, type = 'success' }) => {
     const baseClass =
-        'fixed bottom-6 right-6 flex items-center gap-3 px-4 py-3 rounded shadow-lg transition-all duration-500 transform';
+        'fixed z-50 bottom-6 right-20 flex items-center gap-3 px-4 py-3 rounded shadow-lg transition-all duration-500 transform';
 
     const typeStyles = {
         success: 'bg-green-600 text-white',

@@ -23,7 +23,7 @@ export default function ProductListPage({ params }: ProductListPageProps) {
     const [products, setProducts] = useState<ProductShortResponse[]>([]);
     const [totalPages, setTotalPages] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
-    const [sortOption, setSortOption] = useState(['price-desc']);
+    const [sortOption, setSortOption] = useState(['price-asc']);
     const [currentPage, setCurrentPage] = useState(1);
     
     const productListRef = useRef<HTMLDivElement>(null);
@@ -84,7 +84,7 @@ export default function ProductListPage({ params }: ProductListPageProps) {
                 </aside>
 
                 <section className="w-full lg:w-31/40 flex flex-col gap-4">
-                    <section className="w-full">
+                    <section className="w-full" ref={productListRef}>
                         <Filterbar
                             selectedSort={sortOption}
                             setSelectedSort={setSortOption}
@@ -92,7 +92,7 @@ export default function ProductListPage({ params }: ProductListPageProps) {
                     </section>
 
                     {/* Product Grid */}
-                    <section className="w-full" ref={productListRef}>
+                    <section className="w-full">
                         <ProductGrid products={products} isLoading={isLoading}/>
                         <Pagination
                             currentPage={currentPage}

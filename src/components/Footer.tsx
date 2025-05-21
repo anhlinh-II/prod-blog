@@ -15,13 +15,12 @@ export default function Footer() {
 
         {/* Về MUJI */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold mb-3">Về MUJI</h3>
+          <h3 className="text-lg font-semibold mb-3">Về chúng tôi</h3>
           <ul className="space-y-2">
-            <li>MUJI là gì?</li>
             <li>Thông báo</li>
             <li>Cơ hội nghề nghiệp</li>
             <li>Câu hỏi thường gặp</li>
-            <li>MUJI Catalog Hàng Gia Dụng</li>
+            <li>Hàng Gia Dụng</li>
           </ul>
         </div>
 
@@ -49,7 +48,7 @@ export default function Footer() {
 
         {/* Đăng ký nhận tin + Mạng xã hội */}
         <div className="space-y-6">
-          <h3 className="text-lg font-semibold mb-3">Đăng ký nhận bản tin từ MUJI</h3>
+          <h3 className="text-lg font-semibold mb-3">Đăng ký nhận bản tin</h3>
           <div className="flex">
             <input
               type="email"

@@ -13,6 +13,7 @@ import { IoIosArrowForward } from 'react-icons/io';
 import CardLayout from '@/components/news/CardLayout';
 import { NewsResponse } from '@/types/News';
 import { getAllNews } from '@/services/NewsService';
+import Post from '@/components/news/Post';
 
 export default function Home() {
 
@@ -130,6 +131,40 @@ export default function Home() {
             </div>
           </section>
           )}
+
+
+          <section className="mb-10">
+              <h2 className="text-base md:text-2xl font-semibold mb-4">Tin tức mới nhất</h2>
+              <div className='flex flex-row flex-wrap justify-center gap-4 w-full border border-gray-300 rounded-2xl p-4'>
+                <Post
+                    avatarUrl="/test2.jpg"
+                    userName="Nguyễn Văn A"
+                    postedAt="2 giờ trước"
+                    title="Chuyến đi Đà Lạt thật tuyệt!"
+                    content="Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍"
+                    images={[
+                    '/test6.jpg',
+                    ]}
+                />
+                
+                <Post
+                    avatarUrl="/test2.jpg"
+                    userName="Nguyễn Văn A"
+                    postedAt="2 giờ trước"
+                    title="Chuyến đi Đà Lạt thật tuyệt!"
+                    content="Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍"
+                    images={[
+                    '/news.jpg',
+                    '/news.jpg',
+                    '/news.jpg',
+                    '/news.jpg',
+                    '/news.jpg',
+                    '/news.jpg',
+                    ]}
+                />
+              </div>
+
+          </section>
 
           {/* Products */}
           <section className="mb-10">
