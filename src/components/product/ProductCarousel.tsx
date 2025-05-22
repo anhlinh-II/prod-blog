@@ -67,6 +67,7 @@ export default function ProductCarousel({ products, isLoading }: ProductCarousel
             {isSliderMode && products?.length && products?.length > 5 && (
                 <button
                     onClick={prev}
+                    type='button'
                     className="hidden lg:block absolute h-fit left-24 md:-left-12 -bottom-16 md:top-1/2 -translate-y-1/2 z-10 p-2 text-2xl
                     rounded-full hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150
                     bg-red-800 text-white md:text-black md:bg-transparent"
@@ -78,6 +79,7 @@ export default function ProductCarousel({ products, isLoading }: ProductCarousel
             {isSliderMode && products?.length && products?.length > 5 && (
                 <button
                     onClick={next}
+                    type='button'
                     className="hidden lg:block absolute h-fit right-24 md:-right-12 -bottom-16 md:top-1/2 -translate-y-1/2 z-10 p-2 text-2xl
                     rounded-full hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150
                     bg-red-800 text-white md:text-black md:bg-transparent"

@@ -32,9 +32,10 @@ export default function ProductItem({ product }: ProductItemProps) {
             MỚI
           </div>
         )}
+        {product.image ? (
         <div className='overflow-hidden'>
           <Image
-            src={product.image}
+            src={`http://localhost:8080${product.image}`}
             alt={product.name}
             width={200}
             height={150}
@@ -42,6 +43,11 @@ export default function ProductItem({ product }: ProductItemProps) {
             priority={true}
           />
         </div>
+        ) : (
+        <div className='w-full h-[180px] bg-gray-100 animate-pulse'>
+          
+        </div>
+        )}
       </div>
 
       <div className="p-3 space-y-2">

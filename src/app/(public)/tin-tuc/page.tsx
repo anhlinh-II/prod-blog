@@ -1,10 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import NewsItem from "@/components/news/NewsItem";
+import { useEffect, useRef, useState } from "react";
 import Pagination from "@/components/common/Pagination";
 import '@/styles/scrollbar.css'
-import { NewsResponse, NewsType } from "@/types/News";
+import { NewsResponse } from "@/types/News";
 import { getAllNews } from "@/services/NewsService";
 import Post from "@/components/news/Post";
 
@@ -53,67 +52,16 @@ export default function NewsListPage() {
             
             <div className="flex flex-col gap-6" ref={newsListRef}>
                 <div className="flex flex-col items-center gap-6 w-full px-4">
-                    <Post
-                        avatarUrl="/test2.jpg"
-                        userName="Nguyễn Văn A"
-                        postedAt="2 giờ trước"
-                        title="Chuyến đi Đà Lạt thật tuyệt!"
-                        content="Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍"
-                        images={[
-                        '/test6.jpg',
-                        ]}
-                    />
-                    <Post
-                        avatarUrl="/test2.jpg"
-                        userName="Nguyễn Văn A"
-                        postedAt="2 giờ trước"
-                        title="Chuyến đi Đà Lạt thật tuyệt!"
-                        content="Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍"
-                        images={[
-                        '/news.jpg',
-                        '/news.jpg',
-                        ]}
-                    />
-                    <Post
-                        avatarUrl="/test2.jpg"
-                        userName="Nguyễn Văn A"
-                        postedAt="2 giờ trước"
-                        title="Chuyến đi Đà Lạt thật tuyệt!"
-                        content="Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍"
-                        images={[
-                        '/news.jpg',
-                        '/news.jpg',
-                        '/news.jpg',
-                        '/news.jpg',
-                        '/news.jpg',
-                        '/news.jpg',
-                        ]}
-                    />
-                    <Post
-                        avatarUrl="/test2.jpg"
-                        userName="Nguyễn Văn A"
-                        postedAt="2 giờ trước"
-                        title="Chuyến đi Đà Lạt thật tuyệt!"
-                        content="Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍"
-                        images={[
-                        '/news.jpg',
-                        '/news.jpg',
-                        '/news.jpg',
-                        '/news.jpg',
-                        ]}
-                    />
-                    <Post
-                        avatarUrl="/test2.jpg"
-                        userName="Nguyễn Văn A"
-                        postedAt="2 giờ trước"
-                        title="Chuyến đi Đà Lạt thật tuyệt!"
-                        content="Cảnh đẹp, không khí trong lành, đồ ăn ngon 😍"
-                        images={[
-                        '/news.jpg',
-                        '/news.jpg',
-                        '/news.jpg',
-                        ]}
-                    />
+                    {newsList.map((news) => (
+                        <Post
+                            key={news.id}
+                            createdAt={news.createdAt}
+                            title={news.title}
+                            content={news.content}
+                            images={news.images}
+                            width={500}
+                        />
+                    ))}
                 </div>
                 <Pagination
                     currentPage={currentPage}

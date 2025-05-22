@@ -1,3 +1,5 @@
+import { MediaResponse } from ".";
+
 export enum NewsType {
     NEWS = 'NEWS',
     TIPS = 'TIPS', 
@@ -17,7 +19,7 @@ export interface NewsResponse {
   id: number;
   title: string;
   slug: string;
-  imageUrl: string;
+  images: MediaResponse[];
   description: string;
   content: string;
   type: NewsType;
@@ -53,4 +55,5 @@ export interface StaticPageResponse {
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
+  images: MediaResponse[];
 }

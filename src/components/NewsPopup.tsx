@@ -4,15 +4,37 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IoClose } from 'react-icons/io5';
+import { FcNews } from "react-icons/fc";
+import Image from 'next/image';
+import { NewsResponse } from '@/types/News';
+import { getAllNews } from '@/services/NewsService';
+import Link from 'next/link';
+
+
+const API_BASE_URL = "http://localhost:8080";
 
 const NewsPopup = () => {
+  const [news, setNews] = useState<NewsResponse>();
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const res = await getAllNews(0, 1);
+        const fetchedNews = res.result.content[0];
+        console.log(fetchedNews);
+        setNews(fetchedNews);
+        setShowPopup(true);
+        sessionStorage.setItem('hasSeenPopup', 'true');
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+
     const hasSeenPopup = sessionStorage.getItem('hasSeenPopup');
+
     if (!hasSeenPopup) {
-      setShowPopup(true);
-      sessionStorage.setItem('hasSeenPopup', 'true');
+      fetchNews();
     }
   }, []);
 
@@ -34,14 +56,30 @@ const NewsPopup = () => {
             >
                 <IoClose />
             </button>
-            <h3 className="text-base font-semibold mb-1">📌 Mẹo hôm nay</h3>
+            <h3 className="text-base font-semibold mb-1 flex items-center gap-2">
+              <FcNews /> 
+              <p>Bản tin mới nhất</p>
+              </h3>
           </div>
-          <div className='p-4 text-sm text-gray-700'>
-            <p>
-              Luôn kiểm tra kỹ các email lạ — đừng nhấn vào đường link đáng ngờ để bảo vệ thông tin cá nhân!
-            </p>
-            <p>Với việc có đến cả chục đơn vị phân phối máy rửa chén siêu âm các loại trên thị trường, thì việc nhận biết loại nào tốt, loại nào kém là một vấn đề nhức nhối dành cho người mua hàng. Chính vì vậy, 6 mẹo nhận biết máy rửa bát siêu âm kém chất lượng được Bảo Việt chia sẻ sau đây sẽ là cẩm nang quan trọng để bạn có thể lựa chọn được chính xác sản phẩm xứng đáng với chi phí đầu tư của mình.</p>
+          <div className="text-gray-800 whitespace-pre-line p-4">
+              <p className={`line-clamp-6`}>{news?.content}</p>
+              <button className="text-blue-600 hover:underline text-sm cursor-pointer">
+                <Link href={`/tin-tuc`}>
+                  Xem thêm
+                </Link>
+              </button>
           </div>
+          {news?.images && news?.images?.length > 0 && news.images[0]?.url && (
+          <div className='w-[300px] h-[300px] relative'>
+            <Image
+              src={API_BASE_URL + news?.images[0].url}
+              alt="main image"
+              fill
+              priority={true}
+              className="relative z-10 object-contain cursor-pointer rounded-xl"
+            />
+          </div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

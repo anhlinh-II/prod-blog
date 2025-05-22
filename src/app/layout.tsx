@@ -1,10 +1,7 @@
 // src/app/layout.tsx
-import Header from '@/components/Header';
 import './globals.css'; // Các styles global của bạn
-import Footer from '@/components/Footer';
-import FloatingSocialIcons from '@/components/FloatingSocialIcon';
 import { Providers } from './Providers';
-import NewsPopup from '@/components/NewsPopup';
+import Head from 'next/head';
 
 export const metadata = {
   title: 'Product Blog Web',
@@ -14,6 +11,16 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <Head>
+        {/* DNS prefetch cho API server */}
+        <link rel="dns-prefetch" href="http://localhost:8080" />
+        
+        {/* Preconnect để thiết lập kết nối sớm */}
+        <link rel="preconnect" href="http://localhost:8080" crossOrigin="anonymous" />
+        
+        {/* Resource hints cho critical resources */}
+        <link rel="prefetch" href="/api/medias/images/banners" />
+      </Head>
       <body suppressHydrationWarning>
         <Providers>
           <div className="flex flex-col min-h-screen">

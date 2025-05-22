@@ -4,91 +4,119 @@ import { useState, useEffect } from 'react';
 type ImageGridProps = {
   images: string[];
   setIsDisplayMedia: (index: number | null) => void;
+  className?: string; // Cho phép custom styling từ bên ngoài
 };
 
-export default function ImageGrid({ images, setIsDisplayMedia }: ImageGridProps) {
-  const displayImages = images.length > 5 ? images.slice(0, 5) : images;
-  const extraCount = images.length - 5;
-  const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
+export default function ImageGrid({ images, setIsDisplayMedia, className = '' }: ImageGridProps) {
+  // Filter out empty/invalid images
+  const validImages = images ? images.filter(img => img && img.trim() !== '') : [];
+  
+  if (validImages.length === 0) {
+    return null;
+  }
+
+  const displayImages = validImages.length > 5 ? validImages.slice(0, 5) : validImages;
+  const extraCount = validImages.length - 5;
+  const [dimensions, setDimensions] = useState<{ aspectRatio: number } | null>(null);
 
   useEffect(() => {
-    if (images.length === 1) {
+    if (validImages.length === 1) {
       const img = new window.Image();
-      img.src = images[0];
+      img.src = validImages[0];
       img.onload = () => {
         const { naturalWidth, naturalHeight } = img;
-        const isPortrait = naturalHeight >= naturalWidth;
-
-        if (isPortrait) {
-          // ảnh dọc → set height = 450px, width cố định 500px
-          const ratio = naturalWidth / naturalHeight;
-          setDimensions({ width: 500, height: 500 });
-        } else {
-          // ảnh ngang → tính height theo tỷ lệ
-          const ratio = naturalHeight / naturalWidth;
-          setDimensions({ width: 600, height: 600 * ratio });
-        }
+        const aspectRatio = naturalWidth / naturalHeight;
+        setDimensions({ aspectRatio });
       };
     }
-  }, [images]);
+  }, [validImages]);
   
   const handleClick = (index: number) => {
     setIsDisplayMedia(index);
   };
 
-  if (images.length === 1 && dimensions) {
+  // Single image with dynamic aspect ratio
+  if (validImages.length === 1 && dimensions) {
+    const { aspectRatio } = dimensions;
+    const isPortrait = aspectRatio < 1;
+    
     return (
-        <div
-            className="relative flex items-center justify-center w-full overflow-hidden"
-            style={{
-                width: 600,
-                height: dimensions.height,
-            }}
+      <div className={`relative w-full overflow-hidden ${className}`}>
+        {/* Container với aspect ratio động */}
+        <div 
+          className="relative w-full"
+          style={{
+            aspectRatio: isPortrait ? '4/5' : aspectRatio.toString(),
+            maxHeight: isPortrait ? '500px' : '400px'
+          }}
         >
-        {/* Nền mờ */}
-        <Image
-            src={images[0]}
+          {/* Nền mờ */}
+          <Image
+            src={validImages[0]}
             alt="blur-bg"
             fill
             className="absolute top-0 left-0 object-cover filter blur-2xl"
-        />
+          />
 
-        {/* Ảnh chính */}
-        <Image
-            src={images[0]}
+          {/* Ảnh chính */}
+          <Image
+            src={validImages[0]}
             alt="main image"
-            width={dimensions.width}
-            height={dimensions.height}
-            priority
+            fill
+            priority={true}
             className="relative z-10 object-contain cursor-pointer"
             onClick={() => handleClick(0)}
-        />
+          />
         </div>
+      </div>
     );
-    }
+  }
 
-  if (images.length === 2) {
+  // Two images - side by side
+  if (validImages.length === 2) {
     return (
-      <div className="grid grid-cols-2 gap-0.5 w-[600px] h-[299px]">
-        {images.map((img, i) => (
+      <div className={`grid grid-cols-2 gap-0.5 w-full ${className}`} style={{ aspectRatio: '2/1' }}>
+        {validImages.map((img, i) => (
           <div key={i} className="relative w-full h-full overflow-hidden">
-            <Image src={img} alt={`img-${i}`} fill priority className="object-cover cursor-pointer aspect-[1/1]" onClick={() => handleClick(i)}/>
+            <Image 
+              src={img} 
+              alt={`img-${i}`} 
+              fill 
+              priority={true} 
+              className="object-cover cursor-pointer" 
+              onClick={() => handleClick(i)}
+            />
           </div>
         ))}
       </div>
     );
   }
 
-  if (images.length === 3) {
+  // Three images - one large on left, two small on right
+  if (validImages.length === 3) {
     return (
-      <div className="grid grid-cols-2 gap-0.5 h-80">
+      <div className={`grid grid-cols-2 gap-0.5 w-full ${className}`} style={{ aspectRatio: '2/1' }}>
         <div className="relative w-full h-full overflow-hidden">
-          <Image src={images[0]} alt="img-0" fill priority className="object-cover cursor-pointer" onClick={() => handleClick(0)}/>
+          <Image 
+            src={validImages[0]} 
+            alt="img-0" 
+            fill 
+            priority={true} 
+            className="object-cover cursor-pointer" 
+            onClick={() => handleClick(0)}
+          />
         </div>
-        <div className="grid grid-rows-2 gap-0.5">
-          {[images[1], images[2]].map((img, i) => (
+        <div className="grid grid-rows-2 gap-0.5 h-full">
+          {[validImages[1], validImages[2]].map((img, i) => (
             <div key={i} className="relative w-full h-full overflow-hidden">
-              <Image src={img} alt={`img-${i + 1}`} fill priority className="object-cover cursor-pointer" onClick={() => handleClick(i)}/>
+              <Image 
+                src={img} 
+                alt={`img-${i + 1}`} 
+                fill 
+                priority={true} 
+                className="object-cover cursor-pointer" 
+                onClick={() => handleClick(i + 1)}
+              />
             </div>
           ))}
         </div>
@@ -96,37 +124,59 @@ export default function ImageGrid({ images, setIsDisplayMedia }: ImageGridProps)
     );
   }
 
-  if (images.length === 4) {
+  // Four images - 2x2 grid
+  if (validImages.length === 4) {
     return (
-      <div className="grid grid-cols-2 grid-rows-2 gap-0.5 h-120">
-        {images.map((img, i) => (
+      <div className={`grid grid-cols-2 grid-rows-2 gap-0.5 w-full ${className}`} style={{ aspectRatio: '1/1' }}>
+        {validImages.map((img, i) => (
           <div key={i} className="relative w-full h-full overflow-hidden">
-            <Image src={img} alt={`img-${i}`} fill priority className="object-cover cursor-pointer" onClick={() => handleClick(i)}/>
+            <Image 
+              src={img} 
+              alt={`img-${i}`} 
+              fill 
+              priority={true} 
+              className="object-cover cursor-pointer" 
+              onClick={() => handleClick(i)}
+            />
           </div>
         ))}
       </div>
     );
   }
 
-  // 5 or more images
+  // 5 or more images - 2 on top, 3 on bottom
   return (
-    <div className="grid gap-0.5">
+    <div className={`grid gap-0.5 w-full ${className}`}>
       {/* Top row: 2 images */}
-      <div className="grid grid-cols-2 gap-0.5 h-60">
+      <div className="grid grid-cols-2 gap-0.5 w-full" style={{ aspectRatio: '2/1' }}>
         {[displayImages[0], displayImages[1]].map((img, i) => (
           <div key={i} className="relative w-full h-full overflow-hidden">
-            <Image src={img} alt={`img-${i}`} fill priority className="object-cover cursor-pointer" onClick={() => handleClick(i)}/>
+            <Image 
+              src={img} 
+              alt={`img-${i}`} 
+              fill 
+              priority={true} 
+              className="object-cover cursor-pointer" 
+              onClick={() => handleClick(i)}
+            />
           </div>
         ))}
       </div>
 
       {/* Bottom row: 3 images */}
-      <div className="grid grid-cols-3 gap-0.5 h-50">
+      <div className="grid grid-cols-3 gap-0.5 w-full" style={{ aspectRatio: '3/1' }}>
         {displayImages.slice(2).map((img, i) => (
           <div key={i} className="relative w-full h-full overflow-hidden">
-            <Image src={img} alt={`img-${i + 2}`} fill priority className="object-cover cursor-pointer" onClick={() => handleClick(i)}/>
+            <Image 
+              src={img} 
+              alt={`img-${i + 2}`} 
+              fill 
+              priority={true} 
+              className="object-cover cursor-pointer" 
+              onClick={() => handleClick(i + 2)}
+            />
             {i === 2 && extraCount > 0 && (
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer" onClick={() => handleClick(i + 2)}>
                 <span className="text-white text-xl font-semibold">+{extraCount}</span>
               </div>
             )}

@@ -126,8 +126,9 @@ export interface ContactResponse {
 
 ////////////////////////////////////// Meida
 export interface MediaResponse {
+    id: number;
     fileName: string;
-    fileDownloadUri: string;
+    url: string;
     fileType: string;
     size: number;
 }

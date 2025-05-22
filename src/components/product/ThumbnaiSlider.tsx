@@ -52,8 +52,7 @@ const ThumbnailSlider: React.FC<ThumbnailSliderProps> = ({
           <Image
             src={src}
             alt={`thumb-${i}`}
-            width={80}
-            height={80}
+            fill
             className="object-cover"
             sizes="(max-width: 768px) 80px, 72px"
           />
