@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { CategoryResponse } from '@/types';
 import { CategoryTreeMenuProps } from './CategoryWrapper';
-import { useProductCategories } from '@/hooks/useCategories';
+import { useProductCategories } from '@/hooks/ReactQueries';
 
 export default function CategoryTreeMobile({ categorySlug, setCategory }: CategoryTreeMenuProps) {
   const { data: categories, isLoading, isError } = useProductCategories();

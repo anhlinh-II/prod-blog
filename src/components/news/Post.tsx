@@ -14,8 +14,6 @@ type PostProps = {
     width?: number;
 };
 
-const API_BASE_URL = "http://localhost:8080";
-
 export default function Post({
     createdAt,
     title,
@@ -23,15 +21,20 @@ export default function Post({
     images,
     width
 }: PostProps) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const [displayMediaIndex, setDisplayMediaIndex] = useState<number | null>(null);
-    const imageUrls = images.filter(image => image && image.url).map(image => `${API_BASE_URL}${image.url}`);
+    const imageUrls = images.filter(image => image && image.url).map(image => `${apiUrl}${image.url}`);
     const [isExpanded, setIsExpanded] = useState(false);
     const contentPreviewLimit = 300;
 
     const shouldShowExpand = content.length > contentPreviewLimit;
 
     return (
-        <div className={`flex flex-col bg-white rounded-2xl overflow-auto shadow min-w-full md:min-w-[${width}px] max-w-[${width}px] h-max mb-6`}>
+        <div className={`flex flex-col bg-white rounded-2xl overflow-auto shadow min-w-full h-max mb-6`}
+            style={{
+                minWidth: window.innerWidth >= 768 ? width : '100%',
+                maxWidth: window.innerWidth >= 768 ? width : '100%',
+            }}>
             <div className='border-b border-gray-300 p-4'>
                 {/* Header */}
                 <div className="flex items-center mb-2">
@@ -44,7 +47,7 @@ export default function Post({
                     />
                     <div className="ml-3">
                         <p className="font-semibold">Điện máy V Share</p>
-                        <p className="text-sm text-gray-500">{createdAt}</p>
+                        <p className="text-sm text-gray-500">{formatDateTime(createdAt)}</p>
                     </div>
                 </div>
 
@@ -82,4 +85,13 @@ export default function Post({
             )}
         </div>
     );
+}
+
+export function formatDateTime(isoString: string): string {
+	const date = new Date(isoString);
+	return new Intl.DateTimeFormat('vi-VN', {
+		dateStyle: 'medium',
+		timeStyle: 'short',
+		hour12: false,
+	}).format(date);
 }

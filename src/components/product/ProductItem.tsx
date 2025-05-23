@@ -9,6 +9,7 @@ type ProductItemProps = {
 };
 
 export default function ProductItem({ product }: ProductItemProps) {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const [isNew, setIsNew] = useState(false);
   const [price, setPrice] = useState(0);
   
@@ -35,18 +36,16 @@ export default function ProductItem({ product }: ProductItemProps) {
         {product.image ? (
         <div className='overflow-hidden'>
           <Image
-            src={`http://localhost:8080${product.image}`}
+            src={`${apiUrl}${product.image}`}
             alt={product.name}
             width={200}
             height={150}
-            className="object-cover w-full cursor-pointer group-hover:scale-105 transition-transform duration-200"
+            className="object-cover w-full cursor-pointer aspect-[4/3] min-h-[170px] group-hover:scale-105 transition-transform duration-200"
             priority={true}
           />
         </div>
         ) : (
-        <div className='w-full h-[180px] bg-gray-100 animate-pulse'>
-          
-        </div>
+        <div className='w-full h-[170px] bg-gray-100 animate-pulse'></div>
         )}
       </div>
 

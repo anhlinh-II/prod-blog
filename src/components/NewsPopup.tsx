@@ -11,9 +11,8 @@ import { getAllNews } from '@/services/NewsService';
 import Link from 'next/link';
 
 
-const API_BASE_URL = "http://localhost:8080";
-
 const NewsPopup = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const [news, setNews] = useState<NewsResponse>();
   const [showPopup, setShowPopup] = useState(false);
 
@@ -72,7 +71,7 @@ const NewsPopup = () => {
           {news?.images && news?.images?.length > 0 && news.images[0]?.url && (
           <div className='w-[300px] h-[300px] relative'>
             <Image
-              src={API_BASE_URL + news?.images[0].url}
+              src={apiUrl + news?.images[0].url}
               alt="main image"
               fill
               priority={true}

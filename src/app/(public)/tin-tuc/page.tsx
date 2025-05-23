@@ -47,7 +47,7 @@ export default function NewsListPage() {
     }, [isLoading]);
 
     return (
-        <section className="w-full lg:w-13/25 flex flex-col">
+        <section className="w-full lg:w-19/25 flex flex-col">
             {/* <div className="text-3xl text-gray-800 border-b border-gray-300 pb-2 mb-4">Tin tức / Mẹo sử dụng, đời sống</div> */}
             
             <div className="flex flex-col gap-6" ref={newsListRef}>
@@ -59,7 +59,7 @@ export default function NewsListPage() {
                             title={news.title}
                             content={news.content}
                             images={news.images}
-                            width={500}
+                            width={600}
                         />
                     ))}
                 </div>

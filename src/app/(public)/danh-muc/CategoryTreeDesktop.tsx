@@ -6,7 +6,7 @@ import { FiChevronRight } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 import { CategoryResponse } from '@/types';
 import { CategoryTreeMenuProps } from './CategoryWrapper';
-import { useProductCategories } from '@/hooks/useCategories';
+import { useProductCategories } from '@/hooks/ReactQueries';
 
 export default function CategoryTreeDesktop({ categorySlug, setCategory }: CategoryTreeMenuProps) {
   const { data: categories, isLoading, isError } = useProductCategories();

@@ -8,40 +8,24 @@ import "swiper/css/pagination";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { MediaResponse } from "@/types";
-import { getBannerImages } from "@/services/MediaService";
+import { useBanners } from "@/hooks/ReactQueries";
 
-const API_BASE_URL = "http://localhost:8080";
 
 const BannerSlider = () => {
-	const [banners, setBanners] = useState<MediaResponse[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
+	const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+	const { data, isLoading, error } = useBanners();
 	const prevRef = useRef(null);
 	const nextRef = useRef(null);
 	
 	useEffect(() => {
-		const fetchBanners = async () => {
-			try {
-				setIsLoading(true);
-				const response = await getBannerImages();
-				setBanners(response.result);
-				
-				if (response.result?.length > 0) {
-					const preloadImages = response.result.slice(0, 2);
-					preloadImages.forEach((banner) => {
-						const img = new window.Image();
-						img.src = `${API_BASE_URL + banner.url}`;
-					});
-				}
-			} catch (error) {
-				console.error("Error fetching banners:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-		
-		fetchBanners();
-	}, []);
+		if (data?.result?.length && data.result.length > 0) {
+			const preloadImages = data.result.slice(0, 2);
+			preloadImages.forEach((banner) => {
+				const img = new window.Image();
+				img.src = `${apiUrl + banner.url}`;
+			});
+		}
+	}, [data]);
 
 	// Loading skeleton
 	if (isLoading) {
@@ -52,13 +36,15 @@ const BannerSlider = () => {
 		);
 	}
 
-	if (!banners?.length) {
+	if (error) {
 		return (
 			<div className="relative w-full aspect-[12/6] md:aspect-[16/6] overflow-hidden bg-gray-100 flex items-center justify-center">
 				<p className="text-gray-500">No banners available</p>
 			</div>
 		);
 	}
+
+	const banners = data?.result ?? [];
 
 	return (
 		<div className="relative w-full aspect-[12/6] md:aspect-[16/6] overflow-hidden">
@@ -88,7 +74,7 @@ const BannerSlider = () => {
 					<SwiperSlide key={banner.id}>
 						<div className="relative w-full h-full">
 							<Image
-								src={`${API_BASE_URL + banner.url}`}
+								src={`${apiUrl + banner.url}`}
 								alt={`banner ${banner.id}`}
 								fill
 								className="object-cover"

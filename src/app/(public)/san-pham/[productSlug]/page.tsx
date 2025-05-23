@@ -21,9 +21,8 @@ interface ProductPageProps {
   };
 }
 
-const API_BASE_URL = "http://localhost:8080";
-
 export default function ProductPage({ params }: ProductPageProps) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const { productSlug } = params;
     const [product, setProduct] = useState<ProductResponse>();
     const [similarProducts, setSimilarProducts] = useState<ProductShortResponse[]>();
@@ -64,7 +63,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
                 setProduct(product.result);
                 if(product.result.images && product.result.images.length > 0) {
-                    setImages(product.result.images.filter(image => image).map(image => `${API_BASE_URL}${image}`));
+                    setImages(product.result.images.filter(image => image).map(image => `${apiUrl}${image}`));
                     console.log(images)
                 }
                 setPrice(product.result.price * (100 - product.result.discountPercent)/100);

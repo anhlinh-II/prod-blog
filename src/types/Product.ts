@@ -58,8 +58,8 @@ export interface ProductShortResponse {
   price: number;
   discountPercent: number;
   views?: number;
-  isEnabled: boolean;
-  isActive: boolean;
+  isEnabled?: boolean;
+  isActive?: boolean;
   createdAt: string;
 
   // brandSlug?: string;

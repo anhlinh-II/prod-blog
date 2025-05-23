@@ -10,6 +10,14 @@ export const getAllNews = async (page = 0, size = 20) => {
     return response.data;
 };
 
+export const getOldNews = async (page = 0, size = 20) => {
+    const response = await instance.get<ApiResponse<Page<NewsResponse>>>(
+        `/api/news/old`,
+        { params: { page, size } }
+    );
+    return response.data;
+};
+
 export const getPopularNews = async (page = 0, size = 20) => {
     const response = await instance.get<ApiResponse<Page<NewsResponse>>>(
         `/api/news/popular`,

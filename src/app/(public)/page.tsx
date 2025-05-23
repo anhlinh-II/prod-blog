@@ -4,15 +4,13 @@ import { Container } from '@mui/material';
 import ProductCarousel from '@/components/product/ProductCarousel';
 import BannerSlider from '@/components/BannerSlider';
 import ProductGrid from '@/components/product/ProductGrid';
-import { ProductShortResponse } from '@/types/Product';
 import { useEffect, useState } from 'react';
-import { getAllProducts } from '@/services/ProductService';
 import Link from 'next/link';
 import { IoIosArrowForward } from 'react-icons/io';
-import CardLayout from '@/components/news/CardLayout';
 import { NewsResponse } from '@/types/News';
 import { getAllNews } from '@/services/NewsService';
 import Post from '@/components/news/Post';
+import { useNewProducts, useOtherProducts, usePopularProducts, useSaleProducts } from '@/hooks/ReactQueries';
 
 // Skeleton Components để giữ layout ổn định
 const SectionSkeleton = ({ title }: { title: string }) => (
@@ -60,22 +58,43 @@ const NewsSectionSkeleton = () => (
 );
 
 export default function Home() {
-
-  const [products, setProducts] = useState<ProductShortResponse[]>([]);
   const [newsList, setNewsList] = useState<NewsResponse[]>([]);
 
-  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isLoadingNews, setIsLoadingNews] = useState(true);
   const [size, setSize] = useState(10);
 
-  const half = Math.ceil(newsList.length / 2);
-  const firstHalf = newsList.slice(0, half);
-  const secondHalf = newsList.slice(half);
+  const {
+    data: popularProducts,
+    isLoading: isLoadingPopular,
+  } = usePopularProducts(size);
+
+  const {
+    data: newProducts,
+    isLoading: isLoadingNew,
+  } = useNewProducts(size);
+
+  const {
+    data: saleProducts,
+    isLoading: isLoadingSale,
+  } = useSaleProducts(size);
+
+  const {
+    data: otherProducts,
+    isLoading: isLoadingOther,
+  } = useOtherProducts(size);
+
+  const isLoadingProducts = isLoadingPopular || isLoadingNew || isLoadingSale || isLoadingOther;
+
+  const quarter = Math.ceil(newsList.length / 4);
+  const part1 = newsList.slice(0, quarter);
+  const part2 = newsList.slice(quarter, quarter * 2);
+  const part3 = newsList.slice(quarter * 2, quarter * 3);
+  const part4 = newsList.slice(quarter * 3);
 
   useEffect(() => {
     const checkMode = () => {
-      const isMobile = window.innerWidth < 640;
-      setSize(isMobile ? 8 : 20);
+      const isMobile = window.innerWidth <= 1024;
+      setSize(isMobile ? 8 : 10);
     };
 
     // Set initial size
@@ -90,28 +109,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setIsLoadingProducts(true);
-        const res = await getAllProducts(0, size);
-        setProducts(res.result.content);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setIsLoadingProducts(false);
-      }
-    };
-
-    if (size > 0) {
-      fetchProducts();
-    }
-  }, [size]);
-
-  useEffect(() => {
     const fetchNews = async () => {
       try {
         setIsLoadingNews(true);
-        const res = await getAllNews(0, 4);
+        const res = await getAllNews(0, 8);
         setNewsList(res.result.content);
       } catch (error) {
         console.error("Error fetching news:", error);
@@ -150,7 +151,7 @@ export default function Home() {
                 </Link>
               </div>
               <div className="min-h-60"> {/* Fixed min-height */}
-                <ProductCarousel products={products} isLoading={false}/>
+                <ProductCarousel products={popularProducts} isLoading={false}/>
               </div>
             </section>
           )}
@@ -172,7 +173,7 @@ export default function Home() {
                 </Link>
               </div>
               <div className="min-h-60"> {/* Fixed min-height */}
-                <ProductCarousel products={products} isLoading={false}/>
+                <ProductCarousel products={newProducts} isLoading={false}/>
               </div>
             </section>
           )}
@@ -194,11 +195,11 @@ export default function Home() {
                 </Link>
               </div>
               <div className='w-full flex items-center justify-center'>
-                <div className='flex flex-row justify-center w-full border border-gray-300 rounded-2xl p-4 min-h-64'> {/* Fixed min-height */}
+                <div className='flex flex-col lg:flex-row justify-center w-full border border-gray-300 rounded-2xl p-4 min-h-64'>
                   
                   {/* Cột bên trái */}
                   <div className='flex flex-col items-center gap-4 w-full'>
-                    {firstHalf.map((news) => (
+                    {part1.map((news) => (
                       <div key={news.id} className="w-full"> {/* Container với width cố định */}
                         <Post
                           createdAt={news.createdAt}
@@ -213,7 +214,7 @@ export default function Home() {
 
                   {/* Cột bên phải */}
                   <div className='flex flex-col items-center gap-4 w-full'>
-                    {secondHalf.map((news) => (
+                    {part2.map((news) => (
                       <div key={news.id} className="w-full"> {/* Container với width cố định */}
                         <Post
                           createdAt={news.createdAt}
@@ -247,7 +248,7 @@ export default function Home() {
                 </Link>
               </div>
               <div className="min-h-60"> {/* Fixed min-height */}
-                <ProductCarousel products={products} isLoading={false}/>
+                <ProductCarousel products={saleProducts} isLoading={false}/>
               </div>
             </section>
           )}
@@ -269,13 +270,13 @@ export default function Home() {
                 </Link>
               </div>
               <div className="min-h-96"> {/* Fixed min-height cho grid */}
-                <ProductGrid products={products} isLoading={false} />
+                <ProductGrid products={otherProducts} isLoading={false} />
               </div>
             </section>
           )}
           
           {/* Mẹo đời sống - Static content, không gây layout shift */}
-          <section className="mb-10">
+          {/* <section className="mb-10">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Mẹo đời sống</h2>
             <div className="space-y-4">
               <CardLayout
@@ -297,7 +298,60 @@ export default function Home() {
                 }
               />
             </div>
-          </section>
+          </section> */}
+          
+          {/* Tin tức */}
+          {isLoadingNews ? (
+            <NewsSectionSkeleton />
+          ) : newsList.length > 0 ? (
+            <section className="mb-10">
+              <div className='border-b border-red-700 mb-4 flex justify-between items-end'>
+                <div className='home-title w-max ps-8 pe-8 md:ps-16 md:pe-20 py-1 text-white'>
+                  <h2 className="text-base md:text-2xl font-semibold">Tin tức mới nhất</h2>
+                </div>
+                <Link href={`/tin-tuc`} className='flex items-center hover:text-red-600'>
+                  <span className="text-sm mb-1 md:text-lg md:me-2">Đi tới bảng tin</span>
+                  <span className="arrow arrow-1"><IoIosArrowForward /></span>
+                  <span className="arrow arrow-2"><IoIosArrowForward /></span>
+                  <span className="arrow arrow-3"><IoIosArrowForward /></span>
+                </Link>
+              </div>
+              <div className='w-full flex items-center justify-center'>
+                <div className='flex flex-row justify-center w-full border border-gray-300 rounded-2xl p-4 min-h-64'> {/* Fixed min-height */}
+                  
+                  {/* Cột bên trái */}
+                  <div className='flex flex-col items-center gap-4 w-full'>
+                    {part3.map((news) => (
+                      <div key={news.id} className="w-full"> {/* Container với width cố định */}
+                        <Post
+                          createdAt={news.createdAt}
+                          title={news.title}
+                          content={news.content}
+                          images={news.images}
+                          width={500}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Cột bên phải */}
+                  <div className='flex flex-col items-center gap-4 w-full'>
+                    {part4.map((news) => (
+                      <div key={news.id} className="w-full"> {/* Container với width cố định */}
+                        <Post
+                          createdAt={news.createdAt}
+                          title={news.title}
+                          content={news.content}
+                          images={news.images}
+                          width={500}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          ) : null}
 
         </Container>
       </main>

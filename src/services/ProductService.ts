@@ -17,10 +17,10 @@ export const getRandomProducts = async (page = 0, size = 12) => {
     )).data;
 };
 
-export const getSortedProducts = async (sortOption: string, categorySlug: string, page = 0, size = 12) => {
+export const getSortedProducts = async (sortOption: string, page = 0, size = 12) => {
     return (await instance.get<ApiResponse<Page<ProductShortResponse>>>(
         `/api/products/sorted`,
-        { params: { sortOption, categorySlug, page, size } }
+        { params: { sortOption, page, size } }
     )).data;
 };
 
