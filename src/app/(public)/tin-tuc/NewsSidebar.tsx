@@ -1,14 +1,15 @@
 // components/NewsSidebar.tsx
 'use client'
 
+import { useOldNews } from '@/hooks/ReactQueries';
 import { NewsResponse } from '@/types/News';
 import Link from 'next/link';
 
-interface NewsSidebarProps {
-  newsList: NewsResponse[];
-}
 
-export default function NewsSidebar({newsList} : NewsSidebarProps) {
+export default function NewsSidebar() {
+  const { data, isLoading, error } = useOldNews();
+
+  const newsList = data?.result?.content ?? [];
   return (
     <aside className="hidden md:block w-full md:w-80 px-4 py-2 border-s border-gray-300 space-y-4">
 

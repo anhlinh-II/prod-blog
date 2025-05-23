@@ -6,7 +6,6 @@ import '@/styles/scrollbar.css'
 import { NewsResponse } from "@/types/News";
 import { getAllNews } from "@/services/NewsService";
 import Post from "@/components/news/Post";
-import Head from "next/head";
 
 export default function NewsListPage() {
 	const [newsList, setNewsList] = useState<NewsResponse[]>([]);
@@ -49,14 +48,6 @@ export default function NewsListPage() {
 
     return (
         <section className="w-full lg:w-13/25 flex flex-col">
-            <Head>
-                <title>Bảng tin | Điện máy V Share</title>
-                <meta name="description" content={``} />
-                <meta property="og:title" content={`Bảng tin | Điện máy V Share`} />
-                <meta property="og:description" content={``} />
-                <meta property="og:image" content={`/logo.jpg`} />
-                <meta name="robots" content="index, follow" />
-            </Head>
             {/* <div className="text-3xl text-gray-800 border-b border-gray-300 pb-2 mb-4">Tin tức / Mẹo sử dụng, đời sống</div> */}
             
             <div className="flex flex-col gap-6" ref={newsListRef}>

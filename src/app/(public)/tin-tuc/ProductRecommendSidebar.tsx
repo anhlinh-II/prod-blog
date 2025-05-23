@@ -1,17 +1,32 @@
 // components/NewsSidebar.tsx
 'use client'
+import { getRandomProducts } from '@/services/ProductService';
 import { ProductShortResponse } from '@/types/Product';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 
-type Props = {
-	products: ProductShortResponse[];
-};
-
-const ProductRecommendSidebar: React.FC<Props> = ({ products }) => {
+const ProductRecommendSidebar = () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const [products, setProducts] = useState<ProductShortResponse[]>([]);
+
+    
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const res = await getRandomProducts(0, 12);
+                setProducts(res.result.content);
+            } catch (error) {
+                console.error("Error fetching products:", error);
+            }
+        };
+
+        if(window.innerWidth > 640) {
+            fetchProducts();
+        }
+    }, []);
+        
 
 	return (
 		<div className="w-full max-w-sm rounded-lg p-4">

@@ -1,12 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import PostViewer from "@/components/common/PostViewer";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import '@/styles/scrollbar.css'
 import { NewsResponse } from "@/types/News";
-import { getNewsBySlug, increaseNewsViews } from "@/services/NewsService";
+import { getNewsBySlug } from "@/services/NewsService";
 import Post from "@/components/news/Post";
 import Head from "next/head";
 

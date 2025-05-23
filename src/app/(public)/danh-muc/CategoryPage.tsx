@@ -76,14 +76,6 @@ export default function ProductListPage({ params }: ProductListPageProps) {
 
     return (
         <div className="min-h-screen">
-            <Head>
-                <title>Danh mục sản phẩm | Điện máy V Share</title>
-                <meta name="description" content={``} />
-                <meta property="og:title" content={`Danh mục sản phẩm | Điện máy V Share`} />
-                <meta property="og:description" content={``} />
-                <meta property="og:image" content={`/logo.jpg`} />
-                <meta name="robots" content="index, follow" />
-            </Head>
             <Breadcrumb items={breadcrumbItems} title={`${category?.name ? category?.name : 'SẢN PHẨM'}`}/>
 
             <div className="flex flex-col w-full lg:flex-row px-4 lg:px-20 py-8 gap-6">
