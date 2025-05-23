@@ -9,6 +9,7 @@ import OrderBreadcrumb from "@/components/common/OrderBreadcrumb";
 import Link from "next/link";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { useAppContext } from "@/utils/AppContext";
+import Head from "next/head";
 
 
 type CartItem = {
@@ -91,6 +92,14 @@ export default function Cart() {
 
     return (
         <div className="">
+            <Head>
+                <title>Giỏ hàng | Điện máy V Share</title>
+                <meta name="description" content={``} />
+                <meta property="og:title" content={`Giỏ hàng | Điện máy V Share`} />
+                <meta property="og:description" content={``} />
+                <meta property="og:image" content={`/logo.jpg`} />
+                <meta name="robots" content="index, follow" />
+            </Head>
             <Breadcrumb items={breadcrumbItems} />
 
             <main className="flex-grow bg-gray-50 py-6">

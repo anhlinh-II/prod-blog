@@ -21,7 +21,7 @@ export default function NewsSidebar({newsList} : NewsSidebarProps) {
             <li key={news.id} className='w-full border-b border-gray-300 pb-1'>
               <div className='hover:translate-x-2 transition-all ease-in duration-150'>
                 <Link
-                  href={`/news?category=${encodeURIComponent(news.title)}`}
+                  href={`/tin-tuc/${news.slug}`}
                   className="text-gray-800 text-lg font-light uppercase"
                 >
                   {news.title}

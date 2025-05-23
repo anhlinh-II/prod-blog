@@ -14,6 +14,7 @@ import { placeOrder } from "@/services/OrderService";
 import { OrderItemRequest, OrderRequest } from "@/types/Order";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import Link from "next/link";
+import Head from "next/head";
 
 export default function Checkout() {
     const { cart, clearCart } = useAppContext();
@@ -117,6 +118,14 @@ export default function Checkout() {
 
     return (
         <div className="">
+            <Head>
+                <title>Đơn hàng | Điện máy V Share</title>
+                <meta name="description" content={``} />
+                <meta property="og:title" content={`Đơn hàng | Điện máy V Share`} />
+                <meta property="og:description" content={``} />
+                <meta property="og:image" content={`/logo.jpg`} />
+                <meta name="robots" content="index, follow" />
+            </Head>
             <Breadcrumb items={breadcrumbItems} />
             <main className="flex-grow bg-gray-50 py-6">
                 <Container maxWidth={"lg"} >

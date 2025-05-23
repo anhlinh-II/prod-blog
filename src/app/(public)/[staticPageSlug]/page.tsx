@@ -10,6 +10,7 @@ import Link from "next/link";
 import '@/styles/scrollbar.css'
 import { StaticPageResponse } from "@/types/News";
 import { getAllStaticPages, getStaticPageBySlug, increaseStaticPageViews } from "@/services/StaticPageService";
+import Head from "next/head";
 
 
 interface StaticPageProps {
@@ -70,6 +71,14 @@ export default function StaticPage({ params }: StaticPageProps) {
 
     return (
         <div className="">
+            <Head>
+                <title>{staticPage?.title} | Điện máy V Share</title>
+                <meta name="description" content={staticPage?.content} />
+                <meta property="og:title" content={`${staticPage?.title} | Điện máy V Share`} />
+                <meta property="og:description" content={staticPage?.content} />
+                <meta property="og:image" content={`/logo.jpg`} />
+                <meta name="robots" content="index, follow" />
+            </Head>
             <Breadcrumb items={breadcrumbItems} />
             <main className="flex-grow bg-gray-50 py-6">
                 <Container maxWidth={"lg"}>

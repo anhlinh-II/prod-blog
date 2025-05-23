@@ -71,6 +71,7 @@ export default function Post({
             <div className={`w-full max-w-[${width}px]`}>
                 <ImageGrid 
                     images={imageUrls} 
+                    title={title}
                     setIsDisplayMedia={setDisplayMediaIndex}
                     className="rounded-lg"
                 />

@@ -8,12 +8,13 @@ import '../../styles/scrollbar.css'
 
 interface ProductGalleryProps {
   images: string[];
+  name: string;
   tag?: string;
   discountPercent?: number;
   setIsDisplayMedia: (index: number | null) => void;
 }
 
-const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, discountPercent, setIsDisplayMedia }) => {
+const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name, tag, discountPercent, setIsDisplayMedia }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const mainSliderRef = useRef<HTMLDivElement>(null);
   const mainImageRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -48,7 +49,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, discountPe
       {/* Thumbnails */}
       <div className="relative max-h-120">
         <div className='flex md:flex-col gap-2 max-h-120 w-full md:w-auto overflow-hidden'>
-          <ThumbnailSlider images={images} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+          <ThumbnailSlider images={images} name={name} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
         </div>
 
         {images.length > 6 && (
@@ -99,7 +100,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, discountPe
             >
               <Image
                 src={src}
-                alt={`main-${i}`}
+                alt={name}
                 fill
                 className="object-contain"
                 sizes="(max-width: 768px) 450px 450px"

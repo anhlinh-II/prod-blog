@@ -3,11 +3,12 @@ import { useState, useEffect } from 'react';
 
 type ImageGridProps = {
   images: string[];
+  title: string;
   setIsDisplayMedia: (index: number | null) => void;
   className?: string; // Cho phép custom styling từ bên ngoài
 };
 
-export default function ImageGrid({ images, setIsDisplayMedia, className = '' }: ImageGridProps) {
+export default function ImageGrid({ images, title, setIsDisplayMedia, className = '' }: ImageGridProps) {
   // Filter out empty/invalid images
   const validImages = images ? images.filter(img => img && img.trim() !== '') : [];
   
@@ -53,7 +54,7 @@ export default function ImageGrid({ images, setIsDisplayMedia, className = '' }:
           {/* Nền mờ */}
           <Image
             src={validImages[0]}
-            alt="blur-bg"
+            alt={title}
             fill
             className="absolute top-0 left-0 object-cover filter blur-2xl"
           />
@@ -61,7 +62,7 @@ export default function ImageGrid({ images, setIsDisplayMedia, className = '' }:
           {/* Ảnh chính */}
           <Image
             src={validImages[0]}
-            alt="main image"
+            alt={title}
             fill
             priority={true}
             className="relative z-10 object-contain cursor-pointer"
@@ -80,7 +81,7 @@ export default function ImageGrid({ images, setIsDisplayMedia, className = '' }:
           <div key={i} className="relative w-full h-full overflow-hidden">
             <Image 
               src={img} 
-              alt={`img-${i}`} 
+              alt={title}
               fill 
               priority={true} 
               className="object-cover cursor-pointer" 
@@ -99,7 +100,7 @@ export default function ImageGrid({ images, setIsDisplayMedia, className = '' }:
         <div className="relative w-full h-full overflow-hidden">
           <Image 
             src={validImages[0]} 
-            alt="img-0" 
+            alt={title}
             fill 
             priority={true} 
             className="object-cover cursor-pointer" 
@@ -111,7 +112,7 @@ export default function ImageGrid({ images, setIsDisplayMedia, className = '' }:
             <div key={i} className="relative w-full h-full overflow-hidden">
               <Image 
                 src={img} 
-                alt={`img-${i + 1}`} 
+                alt={title}
                 fill 
                 priority={true} 
                 className="object-cover cursor-pointer" 
@@ -132,7 +133,7 @@ export default function ImageGrid({ images, setIsDisplayMedia, className = '' }:
           <div key={i} className="relative w-full h-full overflow-hidden">
             <Image 
               src={img} 
-              alt={`img-${i}`} 
+              alt={title}
               fill 
               priority={true} 
               className="object-cover cursor-pointer" 
@@ -153,7 +154,7 @@ export default function ImageGrid({ images, setIsDisplayMedia, className = '' }:
           <div key={i} className="relative w-full h-full overflow-hidden">
             <Image 
               src={img} 
-              alt={`img-${i}`} 
+              alt={title}
               fill 
               priority={true} 
               className="object-cover cursor-pointer" 
@@ -169,7 +170,7 @@ export default function ImageGrid({ images, setIsDisplayMedia, className = '' }:
           <div key={i} className="relative w-full h-full overflow-hidden">
             <Image 
               src={img} 
-              alt={`img-${i + 2}`} 
+              alt={title}
               fill 
               priority={true} 
               className="object-cover cursor-pointer" 

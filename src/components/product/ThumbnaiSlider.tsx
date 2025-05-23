@@ -4,12 +4,14 @@ import '../../styles/scrollbar.css'
 
 type ThumbnailSliderProps = {
   images: string[]
+  name: string
   currentIndex: number
   setCurrentIndex: (index: number) => void
 }
 
 const ThumbnailSlider: React.FC<ThumbnailSliderProps> = ({
   images,
+  name,
   currentIndex,
   setCurrentIndex,
 }) => {
@@ -51,7 +53,7 @@ const ThumbnailSlider: React.FC<ThumbnailSliderProps> = ({
         >
           <Image
             src={src}
-            alt={`thumb-${i}`}
+            alt={name}
             fill
             className="object-cover"
             sizes="(max-width: 768px) 80px, 72px"

@@ -7,6 +7,7 @@ import { throttle } from 'lodash';
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { createContact } from "@/services/ContactService";
 import Toast from "@/components/common/Toast";
+import Head from "next/head";
 
 export interface ContactFormData {
   name: string;
@@ -107,6 +108,14 @@ export default function ContactPage() {
 
     return (
         <div className="">
+            <Head>
+                <title>Liên hệ | Điện máy V Share</title>
+                <meta name="description" content={``} />
+                <meta property="og:title" content={`Liên hệ | Điện máy V Share`} />
+                <meta property="og:description" content={``} />
+                <meta property="og:image" content={`/logo.jpg`} />
+                <meta name="robots" content="index, follow" />
+            </Head>
             <Breadcrumb items={breadcrumbItems} title="LIÊN HỆ VỚI CHÚNG TÔI"/>
             <main className="flex-grow py-6">
                 <Container maxWidth={"lg"}>

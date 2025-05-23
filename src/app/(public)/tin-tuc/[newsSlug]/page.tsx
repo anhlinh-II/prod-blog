@@ -7,6 +7,8 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import '@/styles/scrollbar.css'
 import { NewsResponse } from "@/types/News";
 import { getNewsBySlug, increaseNewsViews } from "@/services/NewsService";
+import Post from "@/components/news/Post";
+import Head from "next/head";
 
 
 interface NewsPageProps {
@@ -37,14 +39,6 @@ export default function NewsPage({ params }: NewsPageProps) {
         fetchNews();
     }, []);
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            increaseNewsViews(newsSlug);
-        }, 3000);
-
-        return () => clearTimeout(timeout); 
-    }, [newsSlug]);
-
     // If not desktop
     useEffect(() => {
         if (prevLoadingRef.current && !isLoading) {
@@ -56,9 +50,24 @@ export default function NewsPage({ params }: NewsPageProps) {
     }, [isLoading]);
 
     return (
-        <section className="w-full lg:w-5/7 flex flex-col gap-12" ref={newsRef}>
+        <section className="w-full lg:w-13/25 flex flex-col items-center gap-12" ref={newsRef}>
+            <Head>
+                <title>{news?.title} | Điện máy V Share</title>
+                <meta name="description" content={news?.content} />
+                <meta property="og:title" content={`${news?.title} | Điện máy V Share`} />
+                <meta property="og:description" content={news?.content} />
+                <meta property="og:image" content={news?.images && news?.images.length > 0 ? news?.images[0].url : 'logo.jpg'} />
+                <meta name="robots" content="index, follow" />
+            </Head>
         {news && (
-            <PostViewer title={""} content={news?.content} />
+            <Post
+                key={news.id}
+                createdAt={news.createdAt}
+                title={news.title}
+                content={news.content}
+                images={news.images}
+                width={600}
+            />
         )}
             <div className="flex flex-col items-center justify-center gap-4">
                 <div className='h-1 w-20 bg-black rounded-lg mb-2'></div>
@@ -66,16 +75,16 @@ export default function NewsPage({ params }: NewsPageProps) {
                     p-3 border-y border-gray-300 text-lg">
                     <div className="flex items-center gap-2 hover:-translate-x-4 transition-all ease-in duration-150">
                         <FiChevronLeft className="text-2xl"/>
-                        <Link href={`/news/slug`} className="">
-                            <p className="line-clamp-2 min-h-[3rem] font-serif">Giới thiệu sản phẩm mới: Tai nghe không dây X-Pro</p>
+                        <Link href={`/tin-tuc`} className="">
+                            <p className="line-clamp-1 min-h-[1.5rem] font-serif">Đi tới Bảng tin tức | Điện máy V Share</p>
                         </Link>
                     </div>
 
                     <div className='h-12 w-0.25 bg-gray-300 rounded-lg'></div>
 
                     <div className="flex items-center gap-2 hover:translate-x-4 transition-all ease-in duration-150">
-                        <Link href={`/news/slug`} className="">
-                            <p className="line-clamp-2 min-h-[3rem] font-serif">Giới thiệu sản phẩm mới: Tai nghe không dây Y-Pro</p>
+                        <Link href={`/danh-muc`} className="">
+                            <p className="line-clamp-1 min-h-[1.5rem] font-serif">Danh mục sản phẩm | Điện máy V Share</p>
                         </Link>
                         <FiChevronRight className="text-2xl"/>
                     </div>

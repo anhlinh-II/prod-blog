@@ -11,6 +11,7 @@ import { NewsResponse } from '@/types/News';
 import { getAllNews } from '@/services/NewsService';
 import Post from '@/components/news/Post';
 import { useNewProducts, useOtherProducts, usePopularProducts, useSaleProducts } from '@/hooks/ReactQueries';
+import Head from 'next/head';
 
 // Skeleton Components để giữ layout ổn định
 const SectionSkeleton = ({ title }: { title: string }) => (
@@ -126,6 +127,14 @@ export default function Home() {
 
   return (
     <div className="">
+      <Head>
+        <title>Điện máy V Share</title>
+        <meta name="description" content={``} />
+        <meta property="og:title" content={``} />
+        <meta property="og:description" content={``} />
+        <meta property="og:image" content={`/logo.jpg`} />
+        <meta name="robots" content="index, follow" />
+      </Head>
 
       <div className="w-full aspect-[12/6] md:aspect-[16/6]">
         <BannerSlider />

@@ -7,17 +7,37 @@ import ProductRecommendSidebar from "./ProductRecommendSidebar";
 import { getRandomProducts } from "@/services/ProductService";
 import { ProductShortResponse } from "@/types/Product";
 import { useOldNews } from "@/hooks/ReactQueries";
+import Head from "next/head";
+import { usePathname } from "next/navigation";
+
+
+const useSlugFromPath = () => {
+  const pathname = usePathname(); 
+  const segments = pathname.split('/').filter(Boolean);
+
+  if (segments[0] === 'tin-tuc' && segments.length > 1) {
+    return segments[1];
+  }
+
+  return undefined;
+};
 
 export default function NewsLayout({ children }: { children: React.ReactNode }) {
+    const slug = useSlugFromPath();
     const [products, setProducts] = useState<ProductShortResponse[]>([]);
-    //const { data, isLoading, error } = useOldNews();
+    const { data, isLoading, error } = useOldNews();
 
-    //const newsList = data?.result?.content ?? [];
+    const newsList = data?.result?.content ?? [];
 
-    const breadcrumbItems = [
+    const breadcrumbItems = slug == undefined ? [
         { label: "🏠 Trang chủ", href: "/" },
         { label: "Bảng tin V Share" }
-    ]
+    ] : 
+    [
+        { label: "🏠 Trang chủ", href: "/" },
+        { label: "Tin tức", href: "/tin-tuc" },
+        { label: slug }
+    ];
     
     useEffect(() => {
         const fetchProducts = async () => {
@@ -48,9 +68,9 @@ export default function NewsLayout({ children }: { children: React.ReactNode }) 
 
                         {children}
 
-                        <section className={`hidden  w-full lg:w-6/25 md:sticky top-4 h-80 md:h-screen overflow-y-auto 
+                        <section className={`hidden md:block w-full lg:w-6/25 md:sticky top-4 h-80 md:h-screen overflow-y-auto 
                             pb-8 custom-2-scrollbar`}>
-                            {/* <NewsSidebar newsList={newsList}/> */}
+                            <NewsSidebar newsList={newsList}/>
                         </section>
                     </div>
             </main>

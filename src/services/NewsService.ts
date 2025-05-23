@@ -56,7 +56,9 @@ export const getNewsById = async (id: number) => {
 };
 
 export const getNewsBySlug = async (slug: string) => {
-    const response = await instance.get<ApiResponse<NewsResponse>>(`/api/news/slug`, {params: slug});
+    const response = await instance.get<ApiResponse<NewsResponse>>(`/api/news/slug`, {
+        params: { slug },
+    });
     return response.data;
 };
 

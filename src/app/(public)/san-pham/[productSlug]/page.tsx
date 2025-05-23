@@ -14,6 +14,7 @@ import { formatNumberWithCommas } from "@/utils/FormatNumber";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { useAppContext } from "@/utils/AppContext";
 import Toast from "@/components/common/Toast";
+import Head from "next/head";
 
 interface ProductPageProps {
   params: {
@@ -96,6 +97,15 @@ export default function ProductPage({ params }: ProductPageProps) {
 
     return (
         <div className="">
+            <Head>
+                <title>{product?.name} | Điện máy V Share</title>
+                <meta name="description" content={product?.description} />
+                <meta property="og:title" content={`${product?.name} | Điện máy V Share`} />
+                <meta property="og:description" content={product?.description} />
+                <meta property="og:image" content={images[0]} />
+                <meta name="robots" content="index, follow" />
+            </Head>
+            
             <Breadcrumb items={breadcrumbItems}/>
             <main className="flex-grow py-6">
                 <Container maxWidth={"lg"}>
@@ -125,6 +135,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                         {images.length > 0 ? (
                         <ProductGallery 
                             images={images} 
+                            name={product.name}
                             tag="MỚI" 
                             discountPercent={product.discountPercent} 
                             setIsDisplayMedia={setDisplayMediaIndex}
