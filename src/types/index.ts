@@ -111,8 +111,8 @@ export interface CategoryResponse {
 ////////////////////////////////////// Contact
 export interface ContactRequest {
   name: string;
-  email: string;
-  phone?: string;
+  email?: string;
+  phone: string;
   message: string;
 }
 
@@ -128,8 +128,9 @@ export interface ContactResponse {
 
 ////////////////////////////////////// Meida
 export interface MediaResponse {
+    id: number;
     fileName: string;
-    fileDownloadUri: string;
+    url: string;
     fileType: string;
     size: number;
 }

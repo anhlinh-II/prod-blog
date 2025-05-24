@@ -1,3 +1,5 @@
+import { MediaResponse } from ".";
+
 export interface ProductAttributeRequest {
   specKey: string;
   value: string;
@@ -31,7 +33,6 @@ export interface ProductResponse {
   name: string;
   slug: string;
   description?: string;
-  image?: string;
   price: number;
   discountPercent: number;
   specialPrice?: number;
@@ -43,8 +44,9 @@ export interface ProductResponse {
   createdAt: string;
   updatedAt: string;
   brandSlug: string;
-  categorySlugs: Set<string>;
+  categorySlugs: string[];
   attributes: ProductAttribute[];
+  images: string[];
 }
 
 export interface ProductShortResponse {
@@ -55,8 +57,8 @@ export interface ProductShortResponse {
   price: number;
   discountPercent: number;
   views?: number;
-  isEnabled: boolean;
-  isActive: boolean;
+  isEnabled?: boolean;
+  isActive?: boolean;
   createdAt: string;
 
   // brandSlug?: string;

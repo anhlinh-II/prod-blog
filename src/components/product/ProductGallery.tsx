@@ -8,12 +8,13 @@ import '../../styles/scrollbar.css'
 
 interface ProductGalleryProps {
   images: string[];
+  name: string;
   tag?: string;
   discountPercent?: number;
   setIsDisplayMedia: (index: number | null) => void;
 }
 
-const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, discountPercent, setIsDisplayMedia }) => {
+const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name, tag, discountPercent, setIsDisplayMedia }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const mainSliderRef = useRef<HTMLDivElement>(null);
   const mainImageRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -48,7 +49,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, discountPe
       {/* Thumbnails */}
       <div className="relative max-h-120">
         <div className='flex md:flex-col gap-2 max-h-120 w-full md:w-auto overflow-hidden'>
-          <ThumbnailSlider images={images} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+          <ThumbnailSlider images={images} name={name} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
         </div>
 
         {images.length > 6 && (
@@ -81,12 +82,12 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, discountPe
           ref={mainSliderRef}
         >
           {tag && (
-            <div className="absolute top-2 left-2 bg-[#5c0a0a] text-white text-sm font-bold px-3 py-2 z-10">
+            <div className="absolute top-2 left-2 bg-[#d60000] text-white text-sm font-bold px-3 py-2 z-10">
               {tag}
             </div>
           )}
           {discountPercent && (
-            <div className="absolute top-2 right-2 bg-[#d60000] text-white text-lg font-bold px-2 py-4 z-10 rounded-full">
+            <div className="absolute top-2 right-2 bg-[#d60000] text-white text-lg font-bold px-2 py-2 z-10">
               -{discountPercent}%
             </div>
           )}
@@ -99,7 +100,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, tag, discountPe
             >
               <Image
                 src={src}
-                alt={`main-${i}`}
+                alt={name}
                 fill
                 className="object-contain"
                 sizes="(max-width: 768px) 450px 450px"

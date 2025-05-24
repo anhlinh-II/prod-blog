@@ -4,11 +4,9 @@ import instance from "./Axios-customize";
 
 
 // Đặt đơn hàng mới
-export const placeOrder = async (request: OrderRequest, userId: number) => {
+export const placeOrder = async (request: OrderRequest) => {
   return (
-    await instance.post<ApiResponse<number>>('/api/orders', request, {
-      params: { userId },
-    })
+    await instance.post<ApiResponse<number>>('/api/orders', request)
   ).data;
 };
 

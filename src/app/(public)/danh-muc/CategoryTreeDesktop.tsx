@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FiChevronRight } from 'react-icons/fi';
-import { useApp } from '@/utils/AppContext';
 import { useRouter } from 'next/navigation';
 import { CategoryResponse } from '@/types';
 import { CategoryTreeMenuProps } from './CategoryWrapper';
+import { useProductCategories } from '@/hooks/ReactQueries';
 
 export default function CategoryTreeDesktop({ categorySlug, setCategory }: CategoryTreeMenuProps) {
-  const { categories } = useApp();
+  const { data: categories, isLoading, isError } = useProductCategories();
   const router = useRouter();
   const [showCategories, setShowCategories] = useState<CategoryResponse[]>();
 
@@ -18,6 +18,7 @@ export default function CategoryTreeDesktop({ categorySlug, setCategory }: Categ
   };
 
   useEffect(() => {
+    if(categories) {
     // Tìm category phù hợp theo slug
     const filteredCategories = categories.filter((category) =>
       category.slug === categorySlug || category.children.some((child) => child.slug === categorySlug)
@@ -46,8 +47,9 @@ export default function CategoryTreeDesktop({ categorySlug, setCategory }: Categ
       return undefined;
     }
 
-    const found = findCategoryBySlug(categories, categorySlug);
-    if (found) setCategory(found);
+      const found = findCategoryBySlug(categories, categorySlug);
+      if (found) setCategory(found);
+    }
   }, [categorySlug]);
 
   return (
@@ -64,7 +66,7 @@ export default function CategoryTreeDesktop({ categorySlug, setCategory }: Categ
         </button>
       )}
       <ul className="divide-y divide-gray-100">
-        {(showCategories?.length ? showCategories : categories).map((category) => (
+        {categories && (showCategories?.length ? showCategories : categories).map((category) => (
           <CategoryItem key={category.id} category={category} level={0} />
         ))}
       </ul>

@@ -10,6 +10,14 @@ export const getAllNews = async (page = 0, size = 20) => {
     return response.data;
 };
 
+export const getOldNews = async (page = 0, size = 20) => {
+    const response = await instance.get<ApiResponse<Page<NewsResponse>>>(
+        `/api/news/old`,
+        { params: { page, size } }
+    );
+    return response.data;
+};
+
 export const getPopularNews = async (page = 0, size = 20) => {
     const response = await instance.get<ApiResponse<Page<NewsResponse>>>(
         `/api/news/popular`,
@@ -48,7 +56,9 @@ export const getNewsById = async (id: number) => {
 };
 
 export const getNewsBySlug = async (slug: string) => {
-    const response = await instance.get<ApiResponse<NewsResponse>>(`/api/news/slug`, {params: slug});
+    const response = await instance.get<ApiResponse<NewsResponse>>(`/api/news/slug`, {
+        params: { slug },
+    });
     return response.data;
 };
 
@@ -62,12 +72,9 @@ export const updateNews = async (id: number, request: NewsRequest) => {
     return response.data;
 };
 
-export const increaseNewsViews = async (id: number) => {
-    const response = await instance.put<ApiResponse<NewsResponse>>(
-        `/api/news/views/increase`,
-        null,
-        { params: { id } }
-    );
+export const increaseNewsViews = async (slug: string) => {
+    const response = await instance.post<ApiResponse<Number>>(
+        `/api/news/views/${slug}`, null);
     return response.data;
 };
 

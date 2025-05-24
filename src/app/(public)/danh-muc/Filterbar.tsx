@@ -11,14 +11,14 @@ export default function Filterbar({
 }: FilterbarProps) {
   const sortOptions = [
     { label: "Mới nhất", value: "latest" },
-    { label: "Bán chạy", value: "most-sold" },
+    { label: "Giảm giá", value: "sale" },
     { label: "Phổ biến", value: "popularity" },
-    { label: "Giá tăng dần", value: "price-asc" },
     { label: "Giá giảm dần", value: "price-desc" },
+    { label: "Giá tăng dần", value: "price-asc" },
   ];
 
   const priceOptions = ["price-asc", "price-desc"];
-  const otherOptions = ["latest", "most-sold", "popularity"];
+  const otherOptions = ["latest", "sale", "popularity"];
 
   const handleChange = (value: string) => {
     const isPrice = priceOptions.includes(value);
@@ -50,7 +50,7 @@ export default function Filterbar({
             <span
               className={`
                 inline-block px-3 py-1 rounded-full transition-all duration-300
-                cursor-pointer border border-gray-300
+                cursor-pointer border border-gray-400
                 peer-checked:bg-red-600 peer-checked:text-white peer-checked:border-red-600
                 hover:border-red-600
               `}

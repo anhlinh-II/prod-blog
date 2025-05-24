@@ -8,10 +8,12 @@ import { Container } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { FaEye } from "react-icons/fa";
-import { findSimilarProducts, getProductBySlug } from "@/services/ProductService";
+import { findSimilarProducts, getProductBySlug, increaseProductViews } from "@/services/ProductService";
 import { ProductResponse, ProductShortResponse } from "@/types/Product";
 import { formatNumberWithCommas } from "@/utils/FormatNumber";
 import Breadcrumb from "@/components/common/Breadcrumb";
+import { useAppContext } from "@/utils/AppContext";
+import Toast from "@/components/common/Toast";
 
 interface ProductPageProps {
   params: {
@@ -20,15 +22,25 @@ interface ProductPageProps {
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const { productSlug } = params;
     const [product, setProduct] = useState<ProductResponse>();
     const [similarProducts, setSimilarProducts] = useState<ProductShortResponse[]>();
+    const [images, setImages] = useState<string[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
     const [price, setPrice] = useState<number>();
     const [quantity, setQuantity] = useState(1);
     const [displayMediaIndex, setDisplayMediaIndex] = useState<number | null>(null);
-
-    const images = ['/test4.jpg', '/test2.jpg', '/test3.jpg', '/test4.jpg', '/test5.jpg', '/test2.jpg', '/test.jpg', '/test5.jpg'];
+    const { addToCart } = useAppContext();
+    const [toast, setToast] = useState<{
+        message: string;
+        visible: boolean;
+        type?: 'success' | 'error' | 'warning';
+    }>({
+        message: '',
+        visible: false,
+        type: 'success',
+    });
 
     const handleDecrease = () => {
         if (quantity > 1) setQuantity(quantity - 1);
@@ -37,25 +49,42 @@ export default function ProductPage({ params }: ProductPageProps) {
     const handleIncrease = () => {
         setQuantity(quantity + 1);
     };
+    
+    const showToast = (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
+        setToast({ message, visible: true, type });
+        setTimeout(() => setToast({ message: '', visible: false, type }), 3000);
+    };
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 setIsLoading(true);
                 const product = await getProductBySlug(productSlug);
+
                 setProduct(product.result);
-                
+                if(product.result.images && product.result.images.length > 0) {
+                    setImages(product.result.images.filter(image => image).map(image => `${apiUrl}${image}`));
+                    console.log(images)
+                }
                 setPrice(product.result.price * (100 - product.result.discountPercent)/100);
                 
                 const similarPs = await findSimilarProducts(productSlug);
                 setSimilarProducts(similarPs.result);
             } catch (error) {
-                console.error("Error fetching products:", error);
+                console.error("Error fetching product:", error);
             } finally {
                 setIsLoading(false);
             }
         };
         fetchProduct();
+    }, [productSlug]);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            increaseProductViews(productSlug);
+        }, 3000);
+
+        return () => clearTimeout(timeout); 
     }, [productSlug]);
 
     
@@ -67,6 +96,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
     return (
         <div className="">
+            
             <Breadcrumb items={breadcrumbItems}/>
             <main className="flex-grow py-6">
                 <Container maxWidth={"lg"}>
@@ -93,12 +123,17 @@ export default function ProductPage({ params }: ProductPageProps) {
                     ) : (
                     <section className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 p-2 max-w-6xl mb-10">
                         {/* Left Images */}
+                        {images.length > 0 ? (
                         <ProductGallery 
                             images={images} 
+                            name={product.name}
                             tag="MỚI" 
                             discountPercent={product.discountPercent} 
                             setIsDisplayMedia={setDisplayMediaIndex}
                         />
+                        ) : (
+                            <div className="text-gray-500">Lỗi tải ảnh</div>
+                        )}
 
                         {/* Product Info */}
                         <div className="space-y-4 border border-gray-300 rounded-xl p-4">
@@ -151,7 +186,19 @@ export default function ProductPage({ params }: ProductPageProps) {
                                     Liên hệ ngay
                                 </Button>
                                 <Button className="flex-1 w-[80%] text-red-700 bg-white hover:bg-gray-100
-                                    border border-red-700">
+                                    border border-red-700"
+                                    onClick={() => {
+                                        if (product) {
+                                            addToCart({
+                                                id: product.id,
+                                                name: product.name,
+                                                price: product.specialPrice || product.price,
+                                                image: product.images[0] || '/placeholder.png',
+                                                quantity: 1
+                                            });
+                                            showToast(`Đã thêm sản phẩm vào giỏ hàng`, 'success');
+                                        }
+                                    }}>
                                     Thêm vào giỏ hàng
                                 </Button>
                             </div>
@@ -162,49 +209,67 @@ export default function ProductPage({ params }: ProductPageProps) {
                     <section className="col-span-2 my-10">
                     {/* Thông số kỹ thuật */}
                     {product?.attributes && product?.attributes.length > 0 && (
-                        <>
-                        <h2 className="text-xl font-semibold mb-4">Thông số kỹ thuật</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {[0, 1].map((colIdx) => {
-                            const filtered = Object.entries(product.attributes).filter((_, idx) => idx % 2 === colIdx);
-                            const needPaddingRow =
-                                Object.entries(product.attributes).length % 2 !== 0 && colIdx === 1;
+                    <>
+                        <h2 className="text-2xl font-bold mb-4">Thông số kỹ thuật</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2">
+                        
+                        <div className="md:hidden col-span-1">
+                            <table className="w-full text-left border border-gray-300 table-fixed">
+                            <tbody>
+                                {Object.entries(product.attributes).map(([key, value], idx) => (
+                                <tr key={key} className={`h-12 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
+                                    <th className="px-4 py-2 text-center border border-gray-300 font-bold 
+                                    text-gray-700 w-1/3 align-middle bg-inherit">
+                                    {value.specKey}
+                                    </th>
+                                    <td className="px-4 py-2 border text-center border-gray-300 align-middle">
+                                    {value.value}
+                                    </td>
+                                </tr>
+                                ))}
+                            </tbody>
+                            </table>
+                        </div>
 
-                            return (
-                                <table
-                                key={colIdx}
-                                className="w-full text-left border border-gray-300 table-fixed"
-                                >
-                                <tbody>
+                        {[0, 1].map((colIdx) => {
+                        const filtered = Object.entries(product.attributes).filter((_, idx) => idx % 2 === colIdx);
+                        const needPaddingRow =
+                            Object.entries(product.attributes).length % 2 !== 0 && colIdx === 1;
+
+                        return (
+                            <div key={colIdx} className="hidden md:block">
+                                <table className="w-full text-left border border-gray-300 table-fixed">
+                                    <tbody>
                                     {filtered.map(([key, value], rowIdx) => (
-                                    <tr key={key} className={`h-12 ${rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
+                                        <tr key={key} className={`h-12 ${rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
                                         <th className="px-4 py-2 text-center border border-gray-300 font-bold 
                                         text-gray-700 w-1/3 align-middle bg-inherit">
-                                        {value.specKey}
+                                            {value.specKey}
                                         </th>
                                         <td className="px-4 py-2 border text-center border-gray-300 align-middle">
-                                        {value.value}
+                                            {value.value}
                                         </td>
-                                    </tr>
+                                        </tr>
                                     ))}
                                     {needPaddingRow && (
-                                    <tr className="h-12">
+                                        <tr className="h-12">
                                         <th className="px-4 py-2 border border-gray-300 bg-gray-50"></th>
                                         <td className="px-4 py-2 border border-gray-300"></td>
-                                    </tr>
+                                        </tr>
                                     )}
-                                </tbody>
+                                    </tbody>
                                 </table>
-                            );
-                            })}
+                            </div>
+                        );
+                        })}
                         </div>
-                        </>
+                    </>
                     )}
 
                     {/* Mô tả sản phẩm */}
                     {product?.description && product?.description != "" && (
                         <div className="mt-10">
-                        <h2 className="text-xl font-semibold mb-4">Mô tả sản phẩm</h2>
+                        <h2 className="text-2xl font-bold mb-4">Mô tả sản phẩm</h2>
                         <PostViewer title={""} content={product.description} />
                         </div>
                     )}
@@ -215,6 +280,9 @@ export default function ProductPage({ params }: ProductPageProps) {
                         <h2 className="text-2xl font-bold mb-4">Sản phẩm tương tự</h2>
                         <ProductCarousel products={similarProducts}/>
                     </section>
+                    
+                    {/* Toast */}
+                    <Toast message={toast.message} visible={toast.visible} type={toast.type} />
                 </Container>
             </main>
 

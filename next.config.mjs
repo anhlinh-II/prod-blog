@@ -1,6 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
      allowedDevOrigins: ['172.27.16.1'],
+     images: {
+        remotePatterns: [
+          {
+            protocol: 'http',
+            hostname: 'localhost',
+            port: '8080',
+            pathname: '/uploads/images/**',
+          },
+        ],
+        minimumCacheTTL: 86400,
+      },
    };
    
    export default nextConfig;

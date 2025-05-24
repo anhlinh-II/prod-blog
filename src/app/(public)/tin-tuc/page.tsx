@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import NewsItem from "@/components/news/NewsItem";
+import { useEffect, useRef, useState } from "react";
 import Pagination from "@/components/common/Pagination";
-import '../../styles/scrollbar.css'
+import '@/styles/scrollbar.css'
 import { NewsResponse } from "@/types/News";
 import { getAllNews } from "@/services/NewsService";
+import Post from "@/components/news/Post";
 
 export default function NewsListPage() {
 	const [newsList, setNewsList] = useState<NewsResponse[]>([]);
@@ -47,14 +47,21 @@ export default function NewsListPage() {
     }, [isLoading]);
 
     return (
-        <section className="w-full lg:w-5/7 flex flex-col">
-            <div className="text-3xl text-gray-800 border-b border-gray-300 pb-2 mb-4">Tin tức / Mẹo sử dụng, đời sống</div>
+        <section className="w-full lg:w-13/25 flex flex-col">
+            {/* <div className="text-3xl text-gray-800 border-b border-gray-300 pb-2 mb-4">Tin tức / Mẹo sử dụng, đời sống</div> */}
             
             <div className="flex flex-col gap-6" ref={newsListRef}>
-                <div className="flex flex-col gap-6">
-                {newsList.map((news) => (
-                    <NewsItem key={news.id} news={news} orientation="row"/>
-                ))}
+                <div className="flex flex-col items-center gap-6 w-full px-4">
+                    {newsList.map((news) => (
+                        <Post
+                            key={news.id}
+                            createdAt={news.createdAt}
+                            title={news.title}
+                            content={news.content}
+                            images={news.images}
+                            width={600}
+                        />
+                    ))}
                 </div>
                 <Pagination
                     currentPage={currentPage}

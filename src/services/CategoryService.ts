@@ -11,6 +11,11 @@ export const getCategoryById = async (id: number) => {
     return (await instance.get<ApiResponse<CategoryResponse>>(`/api/categories/${id}`)).data;
 };
 
+// Lấy danh mục theo Slug
+export const getCategoryBySlug = async (slug: string) => {
+    return (await instance.get<ApiResponse<CategoryResponse>>(`/api/categories/slug/${slug}`)).data;
+};
+
 // Tạo danh mục mới
 export const createCategory = async (request: CategoryRequest) => {
     return (await instance.post<ApiResponse<CategoryResponse>>('/api/categories', request)).data;

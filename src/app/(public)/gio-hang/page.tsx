@@ -5,9 +5,11 @@ import CartItem from "@/components/product/CartItem";
 import { Container } from "@mui/material";
 import Toast from "@/components/common/Toast";
 import ConfirmModal from "@/components/common/ConfirmModal";
-import BreadcrumbStep from "@/components/common/OrderBreadcrumb";
+import OrderBreadcrumb from "@/components/common/OrderBreadcrumb";
 import Link from "next/link";
 import Breadcrumb from "@/components/common/Breadcrumb";
+import { useAppContext } from "@/utils/AppContext";
+import Head from "next/head";
 
 
 type CartItem = {
@@ -19,46 +21,8 @@ type CartItem = {
 };
 
 export default function Cart() {
-    const [cartItems, setCartItems] = useState<CartItem[]>([
-        {
-            id: 1,
-            name: 'Quạt Bàn Usb Xoay Ít Ồn - Xanh Lá',
-            price: 699_000,
-            quantity: 1,
-            image: '/test.jpg',
-        },
-        {
-            id: 2,
-            name: 'Đèn Bàn Mini Có Điều Chỉnh Sáng - Trắng',
-            price: 459_000,
-            quantity: 2,
-            image: '/test.jpg',
-        },
-        {
-            id: 3,
-            name: 'Đèn Bàn Mini Có Điều Chỉnh Sáng - Trắng',
-            price: 459_000,
-            quantity: 2,
-            image: '/test.jpg',
-        },
-        {
-            id: 4,
-            name: 'Đèn Bàn Mini Có Điều Chỉnh Sáng - Trắng',
-            price: 459_000,
-            quantity: 2,
-            image: '/test.jpg',
-        },
-        {
-            id: 5,
-            name: 'Đèn Bàn Mini Có Điều Chỉnh Sáng - Trắng',
-            price: 459_000,
-            quantity: 2,
-            image: '/test.jpg',
-        },
-    ]);
-
+    const { cart, removeFromCart, updateCartItemQuantity } = useAppContext();
     
-    // trong Cart.tsx
     const [toast, setToast] = useState<{
         message: string;
         visible: boolean;
@@ -83,46 +47,41 @@ export default function Cart() {
       };
       
     const confirmRemove = () => {
-    if (itemToRemove) {
-        setCartItems((prev) => prev.filter((item) => item.id !== itemToRemove.id));
-        showToast(`Đã xóa "${itemToRemove.name}" khỏi giỏ hàng`, 'warning');
-        setItemToRemove(null);
-        setShowConfirm(false);
-    }
-    };
-
-    const increaseQty = (id: number) => {
-        setCartItems((prev) =>
-            prev.map((item) =>
-                item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-            )
-        );
-    };
-
-    const decreaseQty = (id: number) => {
-        const item = cartItems.find((i) => i.id === id);
-        if (!item) return;
-      
-        if (item.quantity <= 1) {
-          setItemToRemove(item);
-          setShowConfirm(true);
-        } else {
-          setCartItems((prev) =>
-            prev.map((item) =>
-              item.id === id ? { ...item, quantity: item.quantity - 1 } : item
-            )
-          );
+        if (itemToRemove) {
+            removeFromCart(itemToRemove.id);
+            showToast(`Đã xóa "${itemToRemove.name}" khỏi giỏ hàng`, 'warning');
+            setItemToRemove(null);
+            setShowConfirm(false);
         }
     };
 
-    const subtotal = cartItems.reduce(
+    const increaseQty = (id: number) => {
+        const item = cart.find(i => i.id === id);
+        if (!item) return;
+
+        updateCartItemQuantity(id, item.quantity + 1);
+    };
+
+    const decreaseQty = (id: number) => {
+        const item = cart.find(i => i.id === id);
+        if (!item) return;
+
+        if (item.quantity <= 1) {
+            setItemToRemove(item);
+            setShowConfirm(true);
+        } else {
+            updateCartItemQuantity(id, item.quantity - 1);
+        }
+    };
+
+    const subtotal = cart.reduce(
         (sum, item) => sum + item.price * item.quantity,
         0
     );
 
     const steps = [
         { label: 'GIỎ HÀNG', url: '/gio-hang', isActive: true },
-        { label: 'TẠO ĐƠN HÀNG', url: '/thanh-toan', isActive: false },
+        { label: 'TẠO ĐƠN HÀNG', url: cart.length < 1 ? '' : '/don-hang', isActive: false },
         { label: 'HOÀN THÀNH', url: '', isActive: false },
     ];
     
@@ -133,21 +92,29 @@ export default function Cart() {
 
     return (
         <div className="">
+            <Head>
+                <title>Giỏ hàng | Điện máy V Share</title>
+                <meta name="description" content={``} />
+                <meta property="og:title" content={`Giỏ hàng | Điện máy V Share`} />
+                <meta property="og:description" content={``} />
+                <meta property="og:image" content={`/logo.jpg`} />
+                <meta name="robots" content="index, follow" />
+            </Head>
             <Breadcrumb items={breadcrumbItems} />
 
             <main className="flex-grow bg-gray-50 py-6">
                 <Container maxWidth={"lg"}>
-                    <BreadcrumbStep steps={steps} />
+                    <OrderBreadcrumb steps={steps} />
                     <h1 className="text-2xl font-bold ms-2 mb-2">Giỏ Hàng</h1>
                     <div className="grid grid-cols-1 md:grid-cols-[9fr_5fr] gap-8 p-2 max-w-6xl mb-10">
                         {/* Giỏ hàng */}
                         <div className="space-y-4">
-                            <p className="mb-4 font-semibold border-b border-gray-300 pb-4">Mặt Hàng ({cartItems.length})</p>
+                            <p className="mb-4 font-semibold border-b border-gray-300 pb-4">Mặt Hàng ({cart.length})</p>
 
-                            {cartItems.length === 0 ? (
+                            {cart.length == 0 ? (
                                 <p className="text-gray-500">Giỏ hàng của bạn đang trống.</p>
                             ) : (
-                                cartItems.map((item) => (
+                                cart.map((item) => (
                                     <CartItem
                                     key={item.id}
                                     {...item}
@@ -162,7 +129,7 @@ export default function Cart() {
                         {/* Thông tin đơn hàng */}
                         <div className="p-6 rounded-xl h-max border border-gray-300">
                             <h2 className="text-lg font-bold mb-4">
-                                Thông tin đơn hàng ({cartItems.length})
+                                Thông tin đơn hàng ({cart.length})
                             </h2>
                             <div className="flex justify-between mb-2">
                                 <span>Tạm tính</span>
@@ -180,12 +147,16 @@ export default function Cart() {
                                 <span>{subtotal.toLocaleString()} VND</span>
                             </div>
                             <p className="text-sm text-gray-500">(Đã bao gồm VAT)</p>
+                            <p className="text-base my-4 text-red-700">Khi tạo đơn hàng, nhân viên sẽ liên hệ và trao đổi với bạn thông qua số điện thoại</p>
+                            <p className="text-base text-red-700">(Tuyệt đối không thanh toán trực tuyến)</p>
 
-                                <Link href={`/thanh-toan`}>
-                            <button className="w-full bg-black text-white py-2 rounded mt-4 font-bold cursor-pointer">
-                                    Tạo đơn hàng
-                            </button>
-                                </Link>
+                            <Link href={`/don-hang`}>
+                                <button className={`w-full bg-red-700 text-white py-2 rounded mt-4 font-bold 
+                                    ${cart.length < 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                    disabled={cart.length < 1}>
+                                        Tạo đơn hàng
+                                </button>
+                            </Link>
                             <button className="w-full mt-2 text-center text-gray-700 underline cursor-pointer">
                                 <Link href={`/`}>
                                     Tiếp tục xem sản phẩm khác
