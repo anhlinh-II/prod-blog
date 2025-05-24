@@ -16,7 +16,7 @@ export interface ProductRequest {
   isEnabled?: boolean;
   isActive?: boolean;
   brandId?: number;
-  categoryIds?: Set<number>;
+  categoryIds?: number[]; // Đổi từ Set<number> sang number[]
   attributes?: ProductAttributeRequest[];
 }
 
@@ -42,7 +42,6 @@ export interface ProductResponse {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-
   brandSlug: string;
   categorySlugs: Set<string>;
   attributes: ProductAttribute[];

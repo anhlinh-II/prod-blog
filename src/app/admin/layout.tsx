@@ -40,8 +40,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             title: 'Danh mục',
             icon: <CategoryIcon />,
             subMenu: [
-                { title: 'Danh mục sản phẩm', path: '/admin/categories/products', icon: <ProductIcon /> },
-                { title: 'Sản phẩm chi tiết', path: '/admin/categories/product-details', icon: <ProductDetailIcon /> },
+                { title: 'Danh mục sản phẩm', path: '/admin/categories/product-categories', icon: <ProductIcon /> },
+                { title: 'Sản phẩm chi tiết', path: '/admin/categories/products-details', icon: <ProductDetailIcon /> },
                 { title: 'Thông số kỹ thuật', path: '/admin/categories/specs', icon: <SpecsIcon /> },
             ],
         },
@@ -72,35 +72,51 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <html lang="vi" suppressHydrationWarning style={{ height: '100%', width: '100%', overflow: 'hidden' }}>
             <head>
                 <title>Trang Quản Trị</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta name="robots" content="noindex, nofollow" />
             </head>
-            {/* Quan trọng: Ngăn cuộn ở body, set height/width 100% */}
             <body suppressHydrationWarning style={{ margin: 0, padding: 0, boxSizing: 'border-box', height: '100%', width: '100%', overflow: 'hidden' }}>
                 <CssBaseline />
-                {/* Box này cũng cần height/width 100% và overflow hidden */}
-                <Box sx={{ display: 'flex', height: '100%', width: '100%', overflow: 'hidden' }}>
+                <Box sx={{
+                    display: 'flex',
+                    height: '100%',
+                    width: '100%',
+                    overflow: 'hidden',
+                    flexDirection: { xs: 'column', md: 'row' }
+                }}>
+                    {/* Sidebar responsive */}
                     <Sidebar
                         collapsed={collapsed}
                         toggled={toggled}
                         onBackdropClick={() => setToggled(false)}
-                        onBreakPoint={(broken) => {
-                            // Logic cho breakpoint
-                        }}
                         breakPoint="md"
                         backgroundColor="#ffffff"
                         width={collapsed ? "80px" : "270px"}
-                        // Sidebar sẽ co giãn theo chiều cao của Box cha (100vh)
-                        // Không cần set height ở đây nếu cha đã là 100%
-                        style={{ position: 'relative', borderRight: '1px solid #e0e0e0', height: '100%' }}
+                        style={{
+                            position: typeof window !== 'undefined' && window.innerWidth < 900 ? (toggled ? 'fixed' : 'relative') : 'relative',
+                            zIndex: 1400,
+                            borderRight: '1px solid #e0e0e0',
+                            height: '100%',
+                            display: typeof window !== 'undefined' && window.innerWidth < 900 ? (toggled ? 'block' : 'none') : 'block',
+                            left: 0,
+                            top: 0,
+                        }}
                     >
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'space-between', p: '16px', height: '64px', borderBottom: '1px solid #e0e0e0', flexShrink: 0 /* Ngăn co lại */ }}>
+                        <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: collapsed ? 'center' : 'space-between',
+                            p: '16px',
+                            height: '64px',
+                            borderBottom: '1px solid #e0e0e0',
+                            flexShrink: 0
+                        }}>
                             {!collapsed && <Typography variant="h6" fontWeight="bold" noWrap>Admin Panel</Typography>}
-                            <IconButton onClick={() => setCollapsed(!collapsed)} sx={{ display: { xs: 'none', md: 'inline-flex' }}}>
+                            <IconButton onClick={() => setCollapsed(!collapsed)} sx={{ display: { xs: 'none', md: 'inline-flex' } }}>
                                 <MenuIconLib />
                             </IconButton>
                         </Box>
-                        {/* Box chứa Menu sẽ có cuộn nội bộ */}
-                        <Box sx={{ overflowY: 'auto', height: 'calc(100% - 64px)' /* Chiều cao còn lại sau header của sidebar */ }}>
+                        <Box sx={{ overflowY: 'auto', height: 'calc(100% - 64px)' }}>
                             <Menu
                                 menuItemStyles={{
                                     button: ({ level, active }) => ({
@@ -110,10 +126,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                             backgroundColor: '#f0f0f0',
                                             color: '#d32f2f',
                                         },
-                                        paddingLeft: collapsed && level === 0 ? '22px': undefined,
+                                        paddingLeft: collapsed && level === 0 ? '22px' : undefined,
                                     }),
                                     icon: ({ level }) => ({
-                                        marginLeft: collapsed && level === 0 ? '0': undefined,
+                                        marginLeft: collapsed && level === 0 ? '0' : undefined,
                                     }),
                                 }}
                             >
@@ -149,23 +165,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             </Menu>
                         </Box>
                     </Sidebar>
-                    {/* Box Main Content cũng sẽ có cuộn nội bộ */}
+                    {/* Main content responsive */}
                     <Box component="main" sx={{
                         flexGrow: 1,
-                        p: { xs: 2, md: 3 },
+                        p: { xs: 1, md: 3 },
                         backgroundColor: '#f4f6f8',
                         position: 'relative',
-                        height: '100%', // Chiếm 100% chiều cao của cha
-                        overflowY: 'auto' // Cho phép cuộn nội bộ
+                        height: '100%',
+                        overflowY: 'auto'
                     }}>
+                        {/* Toggle sidebar button for mobile */}
                         <IconButton
                             onClick={() => setToggled(!toggled)}
                             sx={{
                                 display: { xs: 'inline-flex', md: 'none' },
-                                position: 'absolute', // Hoặc 'fixed' nếu muốn nó cố định khi cuộn nội dung bên trong main
+                                position: 'fixed',
                                 top: 16,
                                 left: 16,
-                                zIndex: 1300,
+                                zIndex: 1500,
                                 backgroundColor: 'white',
                                 boxShadow: 3
                             }}

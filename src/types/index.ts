@@ -103,6 +103,8 @@ export interface CategoryResponse {
      name: string;
      slug: string;
      description: string;
+     parentCategoryName: string | null;
+     parentId: number;
      children: CategoryResponse[];
 }
 

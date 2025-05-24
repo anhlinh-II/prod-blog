@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
+import { Popper } from '@mui/material';
 import {
   AppBar,
   Toolbar,
@@ -8,534 +9,517 @@ import {
   IconButton,
   Button,
   Box,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-  Paper,
-  Grow,
-  Popper,
-  List,
-  ListItemButton,
-  Collapse,
-  Drawer,
+  Menu, // Quan trọng cho dropdown
+  MenuItem, // Quan trọng cho các mục trong dropdown
+  Paper,  // Có thể dùng để tùy chỉnh giao diện Menu
+  Slide,  // Cho hiệu ứng
+  List, // Không bắt buộc nếu dùng Menu/MenuItem trực tiếp
+  ListItemButton, // Tương tự List
+  ListItemText, // Thêm để fix lỗi không tìm thấy ListItemText
+  Collapse, // Dùng cho mobile
+  Drawer,   // Dùng cho mobile
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import MenuIcon from '@mui/icons-material/Menu';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; // Cho button cha trên header
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'; // Cho mục menu có con
 import { IoMdCloseCircleOutline } from 'react-icons/io';
-import { ApiResponse, CategoryResponse } from '@/types';
+import { CategoryResponse } from '@/types'; // Đảm bảo type này đúng
 import { fetchCategories } from '@/services';
+import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 
-
-
-
+const MENU_HIDE_DELAY = 300; // Thời gian trễ (ms)
 
 const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-  const [anchorElSubMobile, setAnchorElSubMobile] = useState<{ [key: string]: HTMLElement | null }>({});
-  const [categories, setCategories] = useState<CategoryResponse[]>([]);
+  const router = useRouter();
 
+  // State quản lý các menu đang mở và anchor của chúng
+  // key: một ID duy nhất cho menu (ví dụ: navItem.key hoặc category.id)
+  // value: HTMLElement dùng để neo menu
+  const [openMenuAnchors, setOpenMenuAnchors] = useState<Record<string, HTMLElement | null>>({});
+  const menuTimers = useRef<Record<string, NodeJS.Timeout>>({});
+
+  const { data: categories = [], isLoading, error } = useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategories,
+  });
+
+  // Cleanup timers khi component unmount
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetchCategories();
-      console.log('Fetched categories:', response);
-      if (response) {
-        setCategories(response);
-        console.log("categories", response);
-      }
+    const currentTimers = menuTimers.current;
+    return () => {
+      Object.values(currentTimers).forEach(clearTimeout);
     };
-    fetchData();
   }, []);
 
   const navItems = [
     {
       label: 'Hàng Mới',
       key: 'new-arrivals',
-      subItems: [],
+      subItems: [
+        {
+          id: 1,
+          name: 'Quần Áo Mới',
+          slug: 'quan-ao-moi',
+          description: '',
+          parentCategoryName: null,
+          parentId: 0,
+          children: [
+            { id: 11, name: 'Áo Mới', slug: 'ao-moi', description: '', parentCategoryName: 'Quần Áo Mới', parentId: 1, children: [] },
+            { id: 12, name: 'Quần Mới', slug: 'quan-moi', description: '', parentCategoryName: 'Quần Áo Mới', parentId: 1, children: [] }
+          ]
+        },
+        {
+          id: 2,
+          name: 'Giày Dép Mới',
+          slug: 'giay-dep-moi',
+          description: '',
+          parentCategoryName: null,
+          parentId: 0,
+          children: []
+        }
+      ] as CategoryResponse[],
     },
     {
       label: 'Bán Chạy',
       key: 'best-sellers',
-      subItems: [],
+      subItems: [] as CategoryResponse[],
     },
     {
       label: 'Danh mục sản phẩm',
-      key: 'clothing',
-      subItems: categories
+      key: 'product-categories',
+      subItems: categories,
     },
-    // {
-    //   label: 'Sức Khỏe & Làm Đẹp',
-    //   key: 'health-beauty',
-    //   subItems: [
-    //     { title: 'CHĂM SÓC DA', items: ['Kem Dưỡng', 'Sữa Rửa Mặt', 'Toner', 'Tinh Chất'] },
-    //     { title: 'MỸ PHẨM', items: ['Son Môi', 'Phấn Nền', 'Kem Che Khuyết Điểm', 'Mascara'] },
-    //     { title: 'CHĂM SÓC TÓC', items: ['Dầu Gội', 'Dầu Xả', 'Mặt Nạ Tóc'] },
-    //     { title: 'ƯU ĐÃI ĐẶC BIỆT', items: ['Hàng Mới', 'Bán Chạy'] },
-    //   ],
-    // },
-    // {
-    //   label: 'Gia Dụng',
-    //   key: 'home-goods',
-    //   subItems: [
-    //     { title: 'ĐỒ BẾP', items: ['Nồi', 'Chảo', 'Dụng Cụ Nấu Ăn', 'Hộp Đựng Thực Phẩm'] },
-    //     { title: 'ĐỒ GIA DỤNG', items: ['Quạt', 'Bàn Ủi', 'Máy Hút Bụi', 'Đèn Bàn'] },
-    //     { title: 'ĐỒ TRANG TRÍ', items: ['Khung Ảnh', 'Nến Thơm', 'Bình Hoa'] },
-    //     { title: 'ƯU ĐÃI ĐẶC BIỆT', items: ['Hàng Mới', 'Bán Chạy'] },
-    //   ],
-    // },
-    // {
-    //   label: 'Thực Phẩm',
-    //   key: 'food',
-    //   subItems: [
-    //     { title: 'ĐỒ ĂN NHẸ', items: ['Bánh', 'Snack', 'Hạt', 'Kẹo'] },
-    //     { title: 'ĐỒ UỐNG', items: ['Nước Ngọt', 'Trà', 'Cà Phê', 'Sữa'] },
-    //     { title: 'THỰC PHẨM ĐÓNG GÓI', items: ['Mì Gói', 'Đồ Hộp', 'Gia Vị'] },
-    //     { title: 'ƯU ĐÃI ĐẶC BIỆT', items: ['Hàng Mới', 'Bán Chạy'] },
-    //   ],
-    // },
   ];
 
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-  const [openMobileSubmenuKey, setOpenMobileSubmenuKey] = useState<string | null>(null);
+  // Hàm mở menu
+  const handleOpenMenu = (key: string, anchorEl: HTMLElement, parentKey?: string) => {
+    if (menuTimers.current[key]) clearTimeout(menuTimers.current[key]);
+    if (parentKey && menuTimers.current[parentKey]) clearTimeout(menuTimers.current[parentKey]);
 
-  const desktopNavContainerRef = useRef<HTMLDivElement | null>(null); // Ref cho vùng chứa các mục nav cha
-  const [desktopSubmenuAnchor, setDesktopSubmenuAnchor] = useState<null | HTMLElement>(null);
-  const [isDesktopSubmenuOpen, setIsDesktopSubmenuOpen] = useState(false);
-  const [currentDesktopSubmenuData, setCurrentDesktopSubmenuData] = useState<CategoryResponse[]>([]);
-  const [activeDesktopNavKey, setActiveDesktopNavKey] = useState<string | null>(null);
-  const [animationKey, setAnimationKey] = useState(0); // Để trigger animation khi nội dung thay đổi
-  const [slideAnimation, setSlideAnimation] = useState<string>('');
 
-  const popperHideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    // Đóng các menu "anh em" ở cùng cấp và các menu con của chúng
+    const newAnchors: Record<string, HTMLElement | null> = {};
+    if (parentKey) { // Nếu là submenu
+      // Giữ lại các menu cha và menu hiện tại/anh em của menu cha
+      Object.keys(openMenuAnchors).forEach(openKey => {
+        if (!openKey.startsWith(parentKey + "_") || openKey.startsWith(parentKey + "_" + key.split('_').slice(-2, -1)[0])) { // Giữ menu cha và anh em của menu cha
+          if (openKey === parentKey || !openMenuAnchors[openKey]?.id.startsWith(parentKey + "_")) {
+            newAnchors[openKey] = openMenuAnchors[openKey];
+          }
+        }
+      });
+    } else { // Nếu là menu cấp 1 từ header
+      // Đóng tất cả các menu cấp 1 khác
+    }
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Search:', searchQuery);
-  };
 
-  // Mobile Nav Menu Handlers (giữ nguyên logic hiện tại của bạn)
-  const handleOpenNavMenuMobile = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-
-  const handleCloseNavMenuMobile = () => {
-    setAnchorElNav(null);
-    setAnchorElSubMobile({}); // Đóng tất cả submenu con của mobile
-  };
-
-  const handleOpenSubMenuMobile = (event: React.MouseEvent<HTMLElement>, key: string) => {
-    setAnchorElSubMobile((prev) => ({ ...prev, [key]: event.currentTarget }));
-  };
-
-  const handleCloseSubMenuMobile = (key: string) => {
-    setAnchorElSubMobile((prev) => {
-      const newState = { ...prev };
-      delete newState[key];
-      return newState;
+    setOpenMenuAnchors(prev => {
+      const updatedAnchors = { ...prev };
+      // Tìm các key con của parentKey nhưng không phải là con của key hiện tại (để đóng các nhánh khác)
+      if (parentKey) {
+        const prefixCurrentSubmenu = parentKey + "_" + key.substring(parentKey.length + 1).split('_')[0];
+        Object.keys(prev).forEach(k => {
+          if (k.startsWith(parentKey + "_") && !k.startsWith(prefixCurrentSubmenu)) {
+            delete updatedAnchors[k];
+          }
+        });
+      } else { // Đang mở menu cấp 1 từ header, đóng các menu cấp 1 khác
+        Object.keys(prev).forEach(k => {
+          if (k !== key && !k.includes("_child_")) delete updatedAnchors[k];
+        });
+      }
+      updatedAnchors[key] = anchorEl;
+      return updatedAnchors;
     });
   };
 
+  // Hàm chuẩn bị đóng menu (sau một khoảng trễ)
+  const handleCloseMenuIntent = (key: string, isSubmenu: boolean = false) => {
+    if (menuTimers.current[key]) clearTimeout(menuTimers.current[key]);
+    menuTimers.current[key] = setTimeout(() => {
+      setOpenMenuAnchors(prev => {
+        const newState = { ...prev };
+        // Đóng menu này và tất cả các menu con của nó
+        Object.keys(newState).forEach(openKey => {
+          if (openKey === key || openKey.startsWith(key + "_child_")) {
+            delete newState[openKey];
+          }
+        });
+        return newState;
+      });
+    }, MENU_HIDE_DELAY);
+  };
+
+  // Hủy ý định đóng menu (khi chuột vào lại menu hoặc menu con)
+  const cancelCloseMenuIntent = (key: string) => {
+    if (menuTimers.current[key]) {
+      clearTimeout(menuTimers.current[key]);
+    }
+  };
+
+  // Component đệ quy cho các mục menu (desktop)
+  const RecursiveMenuItem: React.FC<{ category: CategoryResponse; parentKey: string }> = ({ category, parentKey }) => {
+    const subMenuKey = `${parentKey}_child_${category.id}`;
+    const hasChildren = category.children && category.children.length > 0;
+    const menuItemRef = useRef<HTMLLIElement>(null);
+
+    const handleOpenSubMenu = () => {
+      if (menuItemRef.current) {
+        handleOpenMenu(subMenuKey, menuItemRef.current, parentKey);
+      } else {
+        console.warn(`menuItemRef is null for subMenuKey: ${subMenuKey}`);
+      }
+    };
+
+    return (
+      <div
+        style={{ position: 'relative' }}
+        onMouseEnter={() => {
+          cancelCloseMenuIntent(parentKey);
+          if (hasChildren) handleOpenSubMenu();
+        }}
+        onMouseLeave={() => {
+          if (hasChildren) handleCloseMenuIntent(subMenuKey, true);
+        }}
+      >
+        {/* Move the ref to MenuItem */}
+        <MenuItem
+          ref={menuItemRef}
+          onClick={() => {
+            router.push(`/danh-muc/${category.slug}`);
+            setOpenMenuAnchors({});
+          }}
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            minWidth: 180,
+            padding: '8px 16px',
+          }}
+        >
+          {category.name}
+          {hasChildren && <ChevronRightIcon fontSize="small" />}
+        </MenuItem>
+        {hasChildren && (
+          <Popper
+            open={Boolean(openMenuAnchors[subMenuKey])}
+            anchorEl={openMenuAnchors[subMenuKey]}
+            placement="right-start"
+            disablePortal={false}
+            modifiers={[
+              { name: 'offset', options: { offset: [0, 8] } },
+              { name: 'preventOverflow', options: { boundariesElement: 'viewport' } },
+              { name: 'flip', options: { enabled: true } },
+            ]}
+            sx={{
+              zIndex: 1300,
+            }}
+          >
+            <Paper
+              elevation={3}
+              sx={{
+                minWidth: 180,
+                bgcolor: 'background.paper',
+                borderRadius: 1,
+                overflow: 'hidden',
+              }}
+              onMouseEnter={() => cancelCloseMenuIntent(subMenuKey)}
+              onMouseLeave={() => handleCloseMenuIntent(subMenuKey, true)}
+            >
+              {category.children!.map(child => (
+                <RecursiveMenuItem
+                  key={child.id}
+                  category={child}
+                  parentKey={subMenuKey}
+                />
+              ))}
+            </Paper>
+          </Popper>
+        )}
+      </div>
+    );
+  };
+
+  // --- Mobile Drawer --- (recursive version)
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  // Change to array to support multiple open submenus at different levels
+  const [openMobileSubmenuKeys, setOpenMobileSubmenuKeys] = useState<string[]>([]);
+
   const toggleMobileDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-    if (
-      event.type === 'keydown' &&
-      ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')
-    ) {
+    if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
       return;
     }
     setMobileDrawerOpen(open);
-    if (!open) { // Khi đóng Drawer, reset luôn submenu đang mở bên trong
-      setOpenMobileSubmenuKey(null);
+    if (!open) {
+      setOpenMobileSubmenuKeys([]);
     }
   };
 
-  const handleMobileNavItemClick = (itemKey: string) => {
-    const navItem = navItems.find(it => it.key === itemKey);
-    if (navItem && navItem.subItems && navItem.subItems.length > 0) {
-      // Nếu mục có submenu, toggle mở/đóng submenu đó
-      setOpenMobileSubmenuKey(prevKey => (prevKey === itemKey ? null : itemKey));
-    } else {
-      // Nếu là mục không có con (link lá), đóng Drawer và thực hiện hành động (ví dụ: điều hướng)
-      setMobileDrawerOpen(false);
-      setOpenMobileSubmenuKey(null); // Reset submenu
-      console.log('Mobile Navigating to:', itemKey);
-    }
+  const handleMobileCategoryClick = (key: string, parentKey: string | null = null) => {
+    setOpenMobileSubmenuKeys(prev => {
+      // If already open, close this and all children
+      if (prev.includes(key)) {
+        return prev.filter(k => k !== key && !k.startsWith(key + '_'));
+      }
+      // If parentKey is null, it's a root menu, so only open this root
+      if (!parentKey) {
+        return [key];
+      }
+      // Otherwise, keep all ancestors and open this submenu
+      const parentKeys = prev.filter(k => key.startsWith(k));
+      return [...parentKeys, key];
+    });
   };
 
-  const handleMobileSubItemLeafClick = (mainItemKey: string, subCategoryTitle: string, subItemText: string) => {
-    // Khi click vào một mục con cuối cùng trong Drawer
-    console.log('Mobile Clicked Sub Item Leaf:', { mainItemKey, subCategoryTitle, subItemText });
+  const handleMobileLeafClick = (categoryPath: string[]) => {
+    console.log('Mobile Navigating to:', categoryPath.join(' > '));
     setMobileDrawerOpen(false);
-    setOpenMobileSubmenuKey(null);
-    // Thêm logic điều hướng ở đây nếu cần
+    setOpenMobileSubmenuKeys([]);
   };
 
+  // Recursive component for mobile categories
+  const MobileRecursiveCategory: React.FC<{
+    category: CategoryResponse;
+    categoryPath: string[];
+    parentKey: string;
+  }> = ({ category, categoryPath, parentKey }) => {
+    const hasChildren = category.children && category.children.length > 0;
+    const thisKey = parentKey + '_' + category.id;
+    const isOpen = openMobileSubmenuKeys.includes(thisKey);
 
-  // Desktop Nav Menu Handlers
-  const handleDesktopNavItemMouseEnter = (event: React.MouseEvent<HTMLElement>, item: (typeof navItems)[0]) => {
-    if (popperHideTimeoutRef.current) {
-      clearTimeout(popperHideTimeoutRef.current);
-    }
-
-    if (item.subItems && item.subItems.length > 0) {
-      // Đặt anchor cho Popper là vùng chứa các mục nav
-      if (desktopNavContainerRef.current && !desktopSubmenuAnchor) {
-        setDesktopSubmenuAnchor(desktopNavContainerRef.current);
-      }
-
-      // Xác định hướng animation
-      if (activeDesktopNavKey && item.key !== activeDesktopNavKey) {
-        const currentIndex = navItems.findIndex(nav => nav.key === item.key);
-        const prevIndex = navItems.findIndex(nav => nav.key === activeDesktopNavKey);
-        if (currentIndex > prevIndex) {
-          setSlideAnimation('slideInFromRightMUI');
-        } else {
-          setSlideAnimation('slideInFromLeftMUI');
-        }
-      } else if (!activeDesktopNavKey) { // Mở lần đầu
-        setSlideAnimation('slideInFromRightMUI'); // Mặc định trượt từ phải
-      } else {
-        setSlideAnimation(''); // Cùng một mục, không có animation trượt
-      }
-
-      // setPreviousDesktopNavKey(activeDesktopNavKey);
-      setActiveDesktopNavKey(item.key);
-      setCurrentDesktopSubmenuData(item.subItems);
-      setIsDesktopSubmenuOpen(true);
-      setAnimationKey(prev => prev + 1); // Thay đổi key để trigger animation nếu nội dung thay đổi
-    } else {
-      // Nếu mục không có submenu, có thể chọn đóng submenu đang mở hoặc không làm gì
-      // Để giữ submenu mở khi di chuột qua mục không có con, không gọi setIsDesktopSubmenuOpen(false) ở đây
-      if (isDesktopSubmenuOpen && activeDesktopNavKey !== null) {
-        // Vẫn giữ submenu mở, nhưng không có nội dung mới
-      }
-    }
-  };
-
-  const startHideDesktopSubmenuTimer = () => {
-    if (popperHideTimeoutRef.current) clearTimeout(popperHideTimeoutRef.current);
-    popperHideTimeoutRef.current = setTimeout(() => {
-      setIsDesktopSubmenuOpen(false);
-    }, 200);
-  };
-
-  const clearHideDesktopSubmenuTimer = () => {
-    if (popperHideTimeoutRef.current) clearTimeout(popperHideTimeoutRef.current);
+    return (
+      <>
+        <ListItemButton
+          onClick={() => {
+            if (hasChildren) {
+              handleMobileCategoryClick(thisKey, parentKey);
+            } else {
+              router.push(`/danh-muc/${category.slug}`);
+              setMobileDrawerOpen(false);
+              setOpenMobileSubmenuKeys([]);
+            }
+          }}
+          sx={{ pl: categoryPath.length * 2, py: 1 }}
+        >
+          <ListItemText
+            primary={category.name}
+            primaryTypographyProps={{
+              fontWeight: isOpen ? '700' : '500',
+              fontSize: '0.95rem'
+            }}
+          />
+          {hasChildren && (
+            <ExpandMoreIcon
+              sx={{
+                transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: (theme) => theme.transitions.create('transform', { duration: theme.transitions.duration.short })
+              }}
+            />
+          )}
+        </ListItemButton>
+        {hasChildren && (
+          <Collapse in={isOpen} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {category.children.map(child => (
+                <MobileRecursiveCategory
+                  key={child.id}
+                  category={child}
+                  categoryPath={[...categoryPath, category.name]}
+                  parentKey={thisKey}
+                />
+              ))}
+            </List>
+          </Collapse>
+        )}
+      </>
+    );
   };
 
   const mobileDrawerList = (
-    <Box
-      sx={{ width: 280 }} // Đặt chiều rộng cho Drawer
-      role="presentation"
-    >
+    <Box sx={{ width: 280 }} role="presentation">
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1.5, borderBottom: 1, borderColor: 'divider' }}>
-        <Typography variant="h6" component="div" sx={{ ml: 1 }}>
-          Danh Mục
-        </Typography>
+        <Typography variant="h6" component="div" sx={{ ml: 1 }}>Danh Mục</Typography>
         <IconButton onClick={toggleMobileDrawer(false)} aria-label="close drawer">
           <IoMdCloseCircleOutline />
         </IconButton>
       </Box>
       <List component="nav" sx={{ p: 0 }}>
-        {navItems.map((item) => {
-          const hasSubItems = item.subItems && item.subItems.length > 0;
-          const isParentSubmenuOpen = openMobileSubmenuKey === item.key;
-
-          return (
-            <React.Fragment key={`mobile-drawer-${item.key}`}>
-              <ListItemButton
-                onClick={() => handleMobileNavItemClick(item.key)}
-                sx={{ py: 1.2, px: 2 }}
-              >
-                <ListItemText
-                  primary={item.label}
-                  primaryTypographyProps={{
-                    fontWeight: isParentSubmenuOpen ? '700' : '500', // In đậm khi mở
-                    fontSize: '0.95rem',
+        {navItems.map((item) => (
+          <React.Fragment key={`mobile-drawer-${item.key}`}>
+            <ListItemButton
+              onClick={() => {
+                if (item.subItems && item.subItems.length > 0) {
+                  handleMobileCategoryClick(item.key, null);
+                } else {
+                  handleMobileLeafClick([item.label]);
+                }
+              }}
+              sx={{ py: 1.2, px: 2 }}
+            >
+              <ListItemText
+                primary={item.label}
+                primaryTypographyProps={{
+                  fontWeight: openMobileSubmenuKeys.includes(item.key) ? '700' : '500',
+                  fontSize: '0.95rem'
+                }}
+              />
+              {item.subItems && item.subItems.length > 0 && (
+                <ExpandMoreIcon
+                  sx={{
+                    transform: openMobileSubmenuKeys.includes(item.key) ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: (theme) => theme.transitions.create('transform', { duration: theme.transitions.duration.short })
                   }}
                 />
-                {hasSubItems && (
-                  <ExpandMoreIcon
-                    sx={{
-                      transform: isParentSubmenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                      transition: (theme) => theme.transitions.create('transform', {
-                        duration: theme.transitions.duration.short,
-                      }),
-                    }}
-                  />
-                )}
-              </ListItemButton>
-              {hasSubItems && (
-                <Collapse in={isParentSubmenuOpen} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
-                    {item.subItems.map((subCategory, subIndex) => (
-                      <Box key={`mobile-subcat-${item.key}-${subIndex}`} sx={{ pt: 1, pb: 0.5 }}>
-                        <Typography
-                          variant="caption"
-                          fontWeight="600"
-                          sx={{
-                            display: 'block',
-                            color: 'text.secondary', // Màu nhạt hơn
-                            px: 3.5, // Thụt lề cho tiêu đề nhóm
-                            py: 0.5,
-                            textTransform: 'uppercase',
-                            fontSize: '0.7rem'
-                          }}
-                        >
-                          {subCategory.name}
-                        </Typography>
-                        <List component="div" disablePadding>
-                          {subCategory.children?.map((child: CategoryResponse, textIndex: number) => (
-                            <ListItemButton
-                              key={`mobile-subitem-${item.key}-${subIndex}-${textIndex}`}
-                              sx={{ pl: 3.5, py: 0.8 }} // Thụt lề sâu hơn cho mục con
-                              onClick={() => handleMobileSubItemLeafClick(item.key, subCategory.name, child.name)}
-                            >
-                              <ListItemText
-                                primary={child.name}
-                                primaryTypographyProps={{ fontSize: '0.875rem', color: 'text.primary' }}
-                              />
-                            </ListItemButton>
-                          ))}
-                        </List>
-                      </Box>
-                    ))}
-                  </List>
-                </Collapse>
               )}
-            </React.Fragment>
-          );
-        })}
+            </ListItemButton>
+            {item.subItems && item.subItems.length > 0 && (
+              <Collapse in={openMobileSubmenuKeys.includes(item.key)} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  {item.subItems.map((subCategory) => (
+                    <MobileRecursiveCategory
+                      key={subCategory.id}
+                      category={subCategory}
+                      categoryPath={[item.label]}
+                      parentKey={item.key}
+                    />
+                  ))}
+                </List>
+              </Collapse>
+            )}
+          </React.Fragment>
+        ))}
       </List>
     </Box>
   );
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Search:', searchQuery);
+  };
 
   return (
-    <AppBar position="static" className="bg-sky-600" sx={{ zIndex: 1201 }}> {/* AppBar cần zIndex cao hơn Popper */}
+    <AppBar position="static" className="bg-sky-600" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar>
-        {/* Mobile: Nút mở Drawer (Hamburger Icon) */}
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          edge="start"
-          onClick={toggleMobileDrawer(true)}
-          sx={{ mr: 2, display: { md: 'none' } }} // Chỉ hiển thị trên màn hình < md
-        >
+        <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={toggleMobileDrawer(true)} sx={{ mr: 2, display: { md: 'none' } }} >
           <MenuIcon />
         </IconButton>
-
-        {/* Logo */}
-        <Typography
-          variant="h6"
-          component="div" // Thêm component="div" để tránh warning khi có con là span
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            mr: { xs: 1, md: 4 },
-            flexGrow: { xs: 1, md: 0 }, // Logo chiếm không gian trên mobile
-          }}
-        >
+        <Typography variant="h6" component="div" sx={{ display: 'flex', flexDirection: 'column', mr: { xs: 1, md: 4 }, flexGrow: { xs: 1, md: 0 } }}>
           <span>MUJI</span>
           <span style={{ fontSize: '0.75rem', lineHeight: '1' }}>無印良品</span>
         </Typography>
 
         {/* Navigation Menu (desktop) */}
-        <Box
-          ref={desktopNavContainerRef}
-          sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1 }}
-          onMouseLeave={startHideDesktopSubmenuTimer} // Bắt đầu timer khi rời vùng nav cha
-        >
-          {navItems.map((item) => (
-            <Box
-              key={item.key}
-              sx={{ position: 'relative', mx: 0.5 }} // Giảm mx một chút
-              onMouseEnter={(e) => handleDesktopNavItemMouseEnter(e, item)}
-            // onMouseLeave không cần ở đây nữa vì được quản lý bởi container và Popper
-            >
-              <Button
-                color="inherit"
-                // endIcon={item.subItems && item.subItems.length > 0 ? <ExpandMoreIcon /> : null} // Bỏ icon ở đây để giống yêu cầu hơn
-                sx={{
-                  textTransform: 'none',
-                  fontWeight: 'bold',
-                  py: 2.2, // Tăng padding cho dễ hover
-                  px: 1.5,
-                  '&::after': { // Gạch chân khi hover
-                    content: '""',
-                    position: 'absolute',
-                    width: '0%',
-                    height: '2px',
-                    bottom: '10px', // Điều chỉnh vị trí gạch chân
-                    left: '50%',
-                    backgroundColor: 'white',
-                    transition: 'width 0.3s ease, left 0.3s ease',
-                  },
-                  '&:hover::after': {
-                    width: 'calc(100% - 16px)', // Gạch chân không sát mép
-                    left: '8px',
-                  },
+
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1 }}>
+          {navItems.map((item) => {
+            const menuKey = item.key;
+            const hasSubItems = item.subItems && item.subItems.length > 0;
+            const buttonRef = useRef<HTMLButtonElement>(null);
+
+            return (
+              <Box
+                key={menuKey}
+                onMouseEnter={(event) => {
+                  if (hasSubItems) {
+                    handleOpenMenu(menuKey, event.currentTarget as HTMLElement);
+                  }
+                  Object.keys(openMenuAnchors).forEach(k => {
+                    if (k !== menuKey && !k.includes("_child_")) {
+                      if (menuTimers.current[k]) clearTimeout(menuTimers.current[k]);
+                      setOpenMenuAnchors(prev => {
+                        const newState = { ...prev };
+                        delete newState[k];
+                        Object.keys(newState).forEach(openSubKey => {
+                          if (openSubKey.startsWith(k + "_child_")) {
+                            delete newState[openSubKey];
+                          }
+                        });
+                        return newState;
+                      });
+                    }
+                  });
                 }}
+                onMouseLeave={() => {
+                  if (hasSubItems) {
+                    handleCloseMenuIntent(menuKey);
+                  }
+                }}
+                sx={{ position: 'relative' }}
               >
-                {item.label}
-              </Button>
-            </Box>
-          ))}
+                <Button
+                  ref={buttonRef}
+                  color="inherit"
+                  aria-haspopup="true"
+                  aria-expanded={Boolean(openMenuAnchors[menuKey])}
+                  endIcon={hasSubItems ? <ExpandMoreIcon /> : null}
+                  sx={{
+                    textTransform: 'none', fontWeight: 'bold', py: 2.2, px: 1.5,
+                    '&::after': { content: '""', position: 'absolute', width: '0%', height: '2px', bottom: '10px', left: '50%', backgroundColor: 'white', transition: 'width 0.3s ease, left 0.3s ease', },
+                    '&:hover::after': { width: 'calc(100% - 16px)', left: '8px', },
+                  }}
+                  onClick={() => {
+                    if (hasSubItems && buttonRef.current) {
+                      handleOpenMenu(menuKey, buttonRef.current);
+                    }
+                  }}
+                >
+                  {item.label}
+                </Button>
+                {hasSubItems && (
+                  <Popper
+                    open={Boolean(openMenuAnchors[menuKey])}
+                    anchorEl={openMenuAnchors[menuKey]}
+                    placement="bottom-start"
+                    disablePortal={false}
+                    modifiers={[
+                      { name: 'offset', options: { offset: [0, 8] } },
+                      { name: 'preventOverflow', options: { boundariesElement: 'viewport' } },
+                      { name: 'flip', options: { enabled: true } },
+                    ]}
+                    sx={{ zIndex: 1300 }}
+                  >
+                    <Paper
+                      elevation={3}
+                      sx={{
+                        minWidth: 180,
+                        bgcolor: 'background.paper',
+                        borderRadius: 1,
+                        overflow: 'hidden',
+                      }}
+                      onMouseEnter={() => cancelCloseMenuIntent(menuKey)}
+                      onMouseLeave={() => handleCloseMenuIntent(menuKey)}
+                    >
+                      {item.subItems.map(category => (
+                        <RecursiveMenuItem
+                          key={category.id}
+                          category={category}
+                          parentKey={menuKey}
+                        />
+                      ))}
+                    </Paper>
+                  </Popper>
+                )}
+              </Box>
+            );
+          })}
         </Box>
 
         {/* Search Bar and Cart */}
-        <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}> {/* Thêm ml để không quá sát nav */}
-          <Box component="form" onSubmit={handleSearch} sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
-            <IconButton color="inherit" size="small"> {/* Giảm size icon */}
-              <SearchIcon />
-            </IconButton>
-            <TextField
-              variant="outlined"
-              placeholder="Tìm kiếm..." // Ngắn gọn hơn
-              size="small"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              sx={{
-                bgcolor: 'rgba(255,255,255,0.15)', // Nền mờ hơn
-                borderRadius: '4px',
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '4px',
-                  color: 'white',
-                  fontSize: '0.875rem',
-                  '& fieldset': { borderColor: 'transparent' },
-                  '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
-                  '&.Mui-focused fieldset': { borderColor: 'white' },
-                },
-                '& .MuiInputBase-input::placeholder': { color: 'rgba(255,255,255,0.7)' },
-                width: { sm: '180px', md: '250px' }, // Responsive width
-              }}
-            />
-          </Box>
-          <IconButton color="inherit">
-            <ShoppingCartIcon />
-          </IconButton>
+        <Box component="form" onSubmit={handleSearch} sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
+          <IconButton type="submit" color="inherit" size="small" aria-label="search"> <SearchIcon /> </IconButton>
+          <TextField variant="outlined" placeholder="Tìm kiếm..." size="small" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{ bgcolor: 'rgba(255,255,255,0.15)', borderRadius: '4px', '& .MuiOutlinedInput-root': { borderRadius: '4px', color: 'white', fontSize: '0.875rem', '& fieldset': { borderColor: 'transparent' }, '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' }, '&.Mui-focused fieldset': { borderColor: 'white' }, }, '& .MuiInputBase-input::placeholder': { color: 'rgba(255,255,255,0.7)' }, width: { sm: '180px', md: '250px' }, }}
+          />
         </Box>
+        <IconButton color="inherit" aria-label="shopping cart"> <ShoppingCartIcon /> </IconButton>
       </Toolbar>
 
       {/* --- Mobile Drawer --- */}
-      <Drawer
-        anchor="left"
-        open={mobileDrawerOpen}
-        onClose={toggleMobileDrawer(false)}
-        ModalProps={{ keepMounted: true }} // Cải thiện hiệu suất mở trên mobile
-        sx={{
-          display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': {
-            boxSizing: 'border-box',
-            width: 280, // Chiều rộng của Drawer
-          },
-        }}
-      >
+      <Drawer anchor="left" open={mobileDrawerOpen} onClose={toggleMobileDrawer(false)} ModalProps={{ keepMounted: true }} sx={{ display: { xs: 'block', md: 'none' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 280 } }}>
         {mobileDrawerList}
       </Drawer>
-
-      {/* --- Desktop Submenu Popper --- */}
-      <Popper
-        open={isDesktopSubmenuOpen}
-        anchorEl={desktopSubmenuAnchor} // Neo vào vùng chứa nav cha
-        placement="bottom-start" // Sẽ xổ từ bên trái của vùng nav
-        modifiers={[
-          { name: 'offset', options: { offset: [0, 1] } }, // Điều chỉnh vị trí
-          { name: 'preventOverflow', options: { padding: 0 } }, // Cho phép tràn nếu cần thiết
-        ]}
-        style={{ zIndex: 1200 }} // Popper phải có zIndex thấp hơn AppBar một chút, hoặc AppBar cao hơn
-        onMouseEnter={clearHideDesktopSubmenuTimer} // Hủy timer khi chuột vào Popper
-        onMouseLeave={startHideDesktopSubmenuTimer} // Bắt đầu timer khi rời Popper
-        transition // Cho phép hiệu ứng Grow
-      >
-        {({ TransitionProps }) => (
-          <Grow {...TransitionProps} timeout={250}>
-            <Paper
-              elevation={6} // Tăng độ nổi khối
-              className="custom-submenu-scroll" // Class cho thanh cuộn tùy chỉnh
-              sx={{
-                width: '100vw', // Chiếm toàn bộ chiều rộng viewport
-                // Để Paper bắt đầu từ lề trái của viewport:
-                // Cần đảm bảo AppBar hoặc parent của nó không có transform làm thay đổi context của position fixed/absolute.
-                // Nếu AppBar là static, và Toolbar là con trực tiếp thì `left: 0` của Popper (so với viewport) là mục tiêu.
-                // Cách đơn giản là để Popper tự tính vị trí dựa trên anchorEl và placement.
-                // Nếu anchorEl là `desktopNavContainerRef`, `placement="bottom-start"` sẽ căn Popper với bên trái của container đó.
-                // Để nó full-width, chúng ta cần điều chỉnh sau khi nó render hoặc set width cố định lớn.
-                // Hoặc, neo nó vào AppBar và dùng `width: '100%'`.
-                // Giả sử AppBar full width, Popper cũng nên như vậy.
-                // left: desktopSubmenuAnchor ? `-${desktopSubmenuAnchor.getBoundingClientRect().left}px` : '0',
-                // Nếu AppBar là static, không cần left âm.
-                // position: 'relative', // không cần thiết cho popper paper
-                minHeight: '250px', // Chiều cao tối thiểu
-                maxHeight: { xs: '70vh', md: '500px' }, // Giới hạn chiều cao, responsive
-                overflowY: 'auto', // Cho phép cuộn dọc
-                overflowX: 'hidden', // Quan trọng: Ngăn thanh cuộn ngang do animation
-                // Nền trắng đã có mặc định từ Paper
-                // display & flexbox cho nội dung bên trong sẽ nằm ở Box con
-              }}
-            >
-              <Box
-                key={animationKey} // Quan trọng: Thay đổi key để React re-render và chạy lại animation
-                sx={{
-                  width: '100%',
-                  display: 'flex',
-                  flexDirection: 'row', // Các nhóm submenu sẽ xếp ngang
-                  flexWrap: 'wrap',     // Cho phép xuống dòng
-                  padding: { xs: 1, sm: 2, md: 3 }, // Responsive padding
-                  animation: slideAnimation ? `${slideAnimation} 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards` : 'none',
-                }}
-              >
-                {currentDesktopSubmenuData.length > 0 ? (
-                  currentDesktopSubmenuData.map((subCategory, index) => (
-                    <Box
-                      key={`${activeDesktopNavKey}-cat-${index}`} // Key cần duy nhất và thay đổi khi nội dung thay đổi
-                      sx={{
-                        padding: { xs: 1, sm: 1.5, md: 2 },
-                        minWidth: { xs: '150px', sm: '180px', md: '220px' }, // Responsive minWidth
-                        flexGrow: 1, // Cho phép các cột co giãn
-                        // borderRight: index < currentDesktopSubmenuData.length - 1 ? '1px solid #eee' : 'none', // Ngăn cách giữa các cột
-                      }}
-                    >
-                      <Typography
-                        variant="subtitle1" // To hơn một chút
-                        fontWeight="600" // Đậm hơn
-                        gutterBottom
-                        sx={{ color: 'text.primary', mb: 1.5 }} // Màu chữ chính, margin bottom
-                      >
-                        {subCategory.name}
-                      </Typography>
-                      {subCategory.children?.map((itemText: CategoryResponse, itemIndex: number) => (
-                        <MenuItem
-                          key={`${activeDesktopNavKey}-item-${index}-${itemIndex}`}
-                          onClick={() => {
-                            console.log('Clicked:', itemText, subCategory.name);
-                            setIsDesktopSubmenuOpen(false); // Đóng submenu khi click
-                          }}
-                          sx={{
-                            padding: '8px 12px', // Padding tùy chỉnh
-                            minHeight: 'auto',
-                            borderRadius: '4px', // Bo góc nhẹ
-                            '&:hover': {
-                              backgroundColor: 'action.hover', // Màu hover của MUI
-                            }
-                          }}
-                        >
-                          <Typography variant="body2" sx={{ color: 'text.secondary' }}> {/* Màu chữ phụ */}
-                            {itemText.name}
-                          </Typography>
-                        </MenuItem>
-                      ))}
-                    </Box>
-                  ))
-                ) : (
-                  isDesktopSubmenuOpen && <Typography sx={{ p: 3, color: 'text.secondary' }}>Không có danh mục con.</Typography>
-                )}
-              </Box>
-            </Paper>
-          </Grow>
-        )}
-      </Popper>
     </AppBar>
   );
 };
