@@ -53,16 +53,15 @@ const ProductRecommendSidebar = () => {
 						<span className="text-base font-semibold line-clamp-2">{product.name}</span>
 						{product.image && product.image != '' ? (
                         <Image
-							src={apiUrl + product.image}
-							alt={product.name}
+                            src={apiUrl + product.image}
+                            alt={product.name}
                             width={64}
                             height={64}
-							className="w-16 h-16 object-cover rounded"
-						/>
+                            className="object-contain min-w-16 min-h-16"
+                            sizes="(max-width: 64px) 64px 64px"
+                            />
                         ) : (
-                        <div className='min-w-16 max-w-16 h-16 bg-gray-200 animate-pulse'>
-                        
-                        </div>
+                        <div className='min-w-16 max-w-16 h-16 bg-gray-200 animate-pulse'></div>
                         )}
 					</div>
                     </Link>

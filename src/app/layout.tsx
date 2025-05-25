@@ -1,7 +1,6 @@
 // src/app/layout.tsx
 import './globals.css'; // Các styles global của bạn
 import { Providers } from './Providers';
-import Head from 'next/head';
 
 export const metadata = {
   title: 'Product Blog Web',
@@ -9,18 +8,19 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   return (
     <html lang="en" suppressHydrationWarning>
-      <Head>
+      <head>
         {/* DNS prefetch cho API server */}
-        <link rel="dns-prefetch" href="http://localhost:8080" />
+        <link rel="dns-prefetch" href={apiUrl} />
         
         {/* Preconnect để thiết lập kết nối sớm */}
-        <link rel="preconnect" href="http://localhost:8080" crossOrigin="anonymous" />
+        <link rel="preconnect" href={apiUrl} crossOrigin="anonymous" />
         
         {/* Resource hints cho critical resources */}
-        <link rel="prefetch" href="/api/medias/images/banners" />
-      </Head>
+        <link rel="prefetch" href={`${apiUrl}/api/medias/images/banner`} />
+      </head>
       <body suppressHydrationWarning>
         <Providers>
           <div className="flex flex-col min-h-screen">

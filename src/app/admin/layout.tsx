@@ -69,132 +69,118 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     ];
 
     return (
-        <html lang="vi" suppressHydrationWarning style={{ height: '100%', width: '100%', overflow: 'hidden' }}>
-            <head>
-                <title>Trang Quản Trị</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <meta name="robots" content="noindex, nofollow" />
-            </head>
-            <body suppressHydrationWarning style={{ margin: 0, padding: 0, boxSizing: 'border-box', height: '100%', width: '100%', overflow: 'hidden' }}>
-                <CssBaseline />
-                <Box sx={{
-                    display: 'flex',
-                    height: '100%',
-                    width: '100%',
-                    overflow: 'hidden',
-                    flexDirection: { xs: 'column', md: 'row' }
-                }}>
-                    {/* Sidebar responsive */}
-                    <Sidebar
-                        collapsed={collapsed}
-                        toggled={toggled}
-                        onBackdropClick={() => setToggled(false)}
-                        breakPoint="md"
-                        backgroundColor="#ffffff"
-                        width={collapsed ? "80px" : "270px"}
-                        style={{
-                            position: typeof window !== 'undefined' && window.innerWidth < 900 ? (toggled ? 'fixed' : 'relative') : 'relative',
-                            zIndex: 1400,
-                            borderRight: '1px solid #e0e0e0',
-                            height: '100%',
-                            display: typeof window !== 'undefined' && window.innerWidth < 900 ? (toggled ? 'block' : 'none') : 'block',
-                            left: 0,
-                            top: 0,
-                        }}
-                    >
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: collapsed ? 'center' : 'space-between',
-                            p: '16px',
-                            height: '64px',
-                            borderBottom: '1px solid #e0e0e0',
-                            flexShrink: 0
-                        }}>
-                            {!collapsed && <Typography variant="h6" fontWeight="bold" noWrap>Admin Panel</Typography>}
-                            <IconButton onClick={() => setCollapsed(!collapsed)} sx={{ display: { xs: 'none', md: 'inline-flex' } }}>
-                                <MenuIconLib />
-                            </IconButton>
-                        </Box>
-                        <Box sx={{ overflowY: 'auto', height: 'calc(100% - 64px)' }}>
-                            <Menu
-                                menuItemStyles={{
-                                    button: ({ level, active }) => ({
-                                        color: active ? '#f50057' : '#333',
-                                        backgroundColor: active ? '#fce4ec' : 'transparent',
-                                        '&:hover': {
-                                            backgroundColor: '#f0f0f0',
-                                            color: '#d32f2f',
-                                        },
-                                        paddingLeft: collapsed && level === 0 ? '22px' : undefined,
-                                    }),
-                                    icon: ({ level }) => ({
-                                        marginLeft: collapsed && level === 0 ? '0' : undefined,
-                                    }),
-                                }}
-                            >
-                                {menuItems.map((item) => (
-                                    item.subMenu ? (
-                                        <SubMenu
-                                            key={item.path || item.title}
-                                            label={item.title}
-                                            icon={item.icon}
-                                        >
-                                            {item.subMenu.map((subItem) => (
-                                                <MenuItem
-                                                    key={subItem.path}
-                                                    icon={subItem.icon}
-                                                    active={pathname === subItem.path}
-                                                    component={<Link href={subItem.path} />}
-                                                >
-                                                    {subItem.title}
-                                                </MenuItem>
-                                            ))}
-                                        </SubMenu>
-                                    ) : (
-                                        <MenuItem
-                                            key={item.path}
-                                            icon={item.icon}
-                                            active={pathname === item.path}
-                                            component={<Link href={item.path} />}
-                                        >
-                                            {item.title}
-                                        </MenuItem>
-                                    )
-                                ))}
-                            </Menu>
-                        </Box>
-                    </Sidebar>
-                    {/* Main content responsive */}
-                    <Box component="main" sx={{
-                        flexGrow: 1,
-                        p: { xs: 1, md: 3 },
-                        backgroundColor: '#f4f6f8',
-                        position: 'relative',
+        <div style={{ margin: 0, padding: 0, boxSizing: 'border-box', height: '100%', width: '100%', overflow: 'hidden' }}>
+            <CssBaseline />
+            <Box sx={{
+                display: 'flex',
+                height: '100vh',
+                width: '100%',
+                overflow: 'hidden',
+                flexDirection: { xs: 'column', md: 'row' }
+            }}>
+                <Sidebar
+                    collapsed={collapsed}
+                    toggled={toggled}
+                    onBackdropClick={() => setToggled(false)}
+                    breakPoint="md"
+                    backgroundColor="#ffffff"
+                    width={collapsed ? "80px" : "270px"}
+                    style={{
+                        zIndex: 1400,
+                        borderRight: '1px solid #e0e0e0',
                         height: '100%',
-                        overflowY: 'auto'
+                        display: typeof window !== 'undefined' && window.innerWidth < 900 ? (toggled ? 'block' : 'none') : 'block',
+                        left: 0,
+                        top: 0,
+                    }}
+                >
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: collapsed ? 'center' : 'space-between',
+                        p: '16px',
+                        height: '64px',
+                        borderBottom: '1px solid #e0e0e0',
+                        flexShrink: 0
                     }}>
-                        {/* Toggle sidebar button for mobile */}
-                        <IconButton
-                            onClick={() => setToggled(!toggled)}
-                            sx={{
-                                display: { xs: 'inline-flex', md: 'none' },
-                                position: 'fixed',
-                                top: 16,
-                                left: 16,
-                                zIndex: 1500,
-                                backgroundColor: 'white',
-                                boxShadow: 3
-                            }}
-                        >
+                        {!collapsed && <Typography variant="h6" fontWeight="bold" noWrap>Admin Panel</Typography>}
+                        <IconButton onClick={() => setCollapsed(!collapsed)} sx={{ display: { xs: 'none', md: 'inline-flex' } }}>
                             <MenuIconLib />
                         </IconButton>
-                        <Box sx={{ mt: { xs: 6, md: 0 } }}>
-                            {children}
-                        </Box>
+                    </Box>
+                    <Box sx={{ overflowY: 'auto', height: 'calc(100% - 64px)' }}>
+                        <Menu
+                            menuItemStyles={{
+                                button: ({ level, active }) => ({
+                                    color: active ? '#f50057' : '#333',
+                                    backgroundColor: active ? '#fce4ec' : 'transparent',
+                                    '&:hover': {
+                                        backgroundColor: '#f0f0f0',
+                                        color: '#d32f2f',
+                                    },
+                                    paddingLeft: collapsed && level === 0 ? '22px' : undefined,
+                                }),
+                                icon: ({ level }) => ({
+                                    marginLeft: collapsed && level === 0 ? '0' : undefined,
+                                }),
+                            }}
+                        >
+                            {menuItems.map((item) =>
+                                item.subMenu ? (
+                                    <SubMenu key={item.title} label={item.title} icon={item.icon}>
+                                        {item.subMenu.map((subItem) => (
+                                            <MenuItem
+                                                key={subItem.path}
+                                                icon={subItem.icon}
+                                                active={pathname === subItem.path}
+                                                component={<Link href={subItem.path} />}
+                                            >
+                                                {subItem.title}
+                                            </MenuItem>
+                                        ))}
+                                    </SubMenu>
+                                ) : (
+                                    <MenuItem
+                                        key={item.path}
+                                        icon={item.icon}
+                                        active={pathname === item.path}
+                                        component={<Link href={item.path} />}
+                                    >
+                                        {item.title}
+                                    </MenuItem>
+                                )
+                            )}
+                        </Menu>
+                    </Box>
+                </Sidebar>
+
+                <Box component="main" sx={{
+                    flexGrow: 1,
+                    p: { xs: 1, md: 3 },
+                    backgroundColor: '#f4f6f8',
+                    position: 'relative',
+                    height: '100%',
+                    overflowY: 'auto'
+                }}>
+                    <IconButton
+                        onClick={() => setToggled(!toggled)}
+                        sx={{
+                            display: { xs: 'inline-flex', md: 'none' },
+                            position: 'fixed',
+                            top: 16,
+                            left: 16,
+                            zIndex: 1500,
+                            backgroundColor: 'white',
+                            boxShadow: 3
+                        }}
+                    >
+                        <MenuIconLib />
+                    </IconButton>
+                    <Box sx={{ mt: { xs: 6, md: 0 } }}>
+                        {children}
                     </Box>
                 </Box>
-            </body>
-        </html>
+            </Box>
+        </div>
     );
 }

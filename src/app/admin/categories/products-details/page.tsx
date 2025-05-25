@@ -40,6 +40,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import InfoIcon from '@mui/icons-material/Info';
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useQuery as useQueryCategories } from '@tanstack/react-query';
 import { getProductCategoryTree } from '@/services/CategoryService';
 
@@ -91,8 +92,33 @@ export default function AdminProductDetailsPage() {
                // Gọi getAllProducts với page, size, ép kiểu cho đúng Page<ProductResponse>
                const res = await getAllProducts(page, size);
                // Nếu res.result.content là ProductShortResponse[] thì cần map sang ProductResponse[] nếu cần
-               // Ở đây giả sử API trả về đúng ProductResponse[]
-               return res.result as PageType<ProductResponse>;
+               // Chuyển đổi từng phần tử nếu thiếu field
+               const pageResult = res.result as any;
+               if (pageResult && Array.isArray(pageResult.content)) {
+                    pageResult.content = pageResult.content.map((item: any) => ({
+                         // Copy all existing fields
+                         ...item,
+                         // Add missing fields with default values if not present
+                         stockQuantity: item.stockQuantity ?? 0,
+                         quantitySold: item.quantitySold ?? 0,
+                         updatedAt: item.updatedAt ?? '',
+                         brandSlug: item.brandSlug ?? '',
+                         images: item.images ?? [],
+                         attributes: item.attributes ?? [],
+                         createdAt: item.createdAt ?? '',
+                         isActive: item.isActive ?? true,
+                         isEnabled: item.isEnabled ?? true,
+                         price: item.price ?? 0,
+                         discountPercent: item.discountPercent ?? 0,
+                         specialPrice: item.specialPrice ?? undefined,
+                         description: item.description ?? '',
+                         name: item.name ?? '',
+                         slug: item.slug ?? '',
+                         id: item.id,
+                         categorySlugs: item.categorySlugs ?? [],
+                    }));
+               }
+               return pageResult as PageType<ProductResponse>;
           },
      });
 
@@ -216,11 +242,11 @@ export default function AdminProductDetailsPage() {
                     const hasSiblingSelected = siblings.some(sib => newIds.includes(sib.id));
                     if (!hasSiblingSelected && current && current.parentId !== undefined) {
                          if (current && typeof current.parentId !== 'undefined') {
-                              newIds = newIds.filter(id => id !== current.parentId);
+                              newIds = newIds.filter(id => id !== current?.parentId);
                          }
                     }
                     current = (current && current.parentId !== undefined && current.parentId !== null)
-                         ? allCategories.find(c => c.id === current.parentId)
+                         ? allCategories.find(c => c.id === current?.parentId)
                          : undefined;
                }
                return { ...f, categoryIds: newIds };
@@ -261,7 +287,6 @@ export default function AdminProductDetailsPage() {
                id: detailData.id,
                name: detailData.name,
                description: detailData.description,
-               image: detailData.image,
                price: detailData.price,
                discountPercent: detailData.discountPercent,
                specialPrice: detailData.specialPrice,
@@ -367,7 +392,6 @@ export default function AdminProductDetailsPage() {
                id: attrEditProductId,
                name: currentProduct.name,
                description: currentProduct.description,
-               image: currentProduct.image,
                price: currentProduct.price,
                discountPercent: currentProduct.discountPercent,
                specialPrice: currentProduct.specialPrice,
@@ -410,20 +434,20 @@ export default function AdminProductDetailsPage() {
           const res = await getProductById(id);
           // Nếu image là mảng MediaResponse hoặc url, chuẩn hóa về mảng url
           let images: string[] = [];
-          if (Array.isArray(res.result.image)) {
-               // Nếu backend trả về mảng MediaResponse
-               images = (res.result.image as MediaResponse[]).map(img =>
-                    img.fileDownloadUri
-                         ? (img.fileDownloadUri.startsWith('http') ? img.fileDownloadUri : `http://localhost:8080${img.fileDownloadUri}`)
+          if (Array.isArray(res.result.images)) {
+               images = res.result.images.map(img =>
+                    img
+                         ? (img.startsWith('http') ? img : `http://localhost:8080${img}`)
                          : ''
                );
-          } else if (typeof res.result.image === 'string') {
-               images = res.result.image
-                    ? res.result.image.split(',').map(url =>
-                         url.startsWith('http') ? url : `http://localhost:8080${url}`
-                    )
-                    : [];
-          }
+          } 
+          // else if (typeof res.result.image === 'string') {
+          //      images = res.result.image
+          //           ? res.result.image.split(',').map(url =>
+          //                url.startsWith('http') ? url : `http://localhost:8080${url}`
+          //           )
+          //           : [];
+          // }
           setImageList(images.filter(Boolean));
           setImageProductId(id);
           setOpenImageDialog(true);
@@ -437,8 +461,8 @@ export default function AdminProductDetailsPage() {
                const res = await uploadProductImages(imageProductId, files);
                // Chuẩn hóa lấy url từ MediaResponse
                const newUrls = (res.result || []).map((img: MediaResponse) =>
-                    img.fileDownloadUri
-                         ? (img.fileDownloadUri.startsWith('http') ? img.fileDownloadUri : `http://localhost:8080${img.fileDownloadUri}`)
+                    img.url
+                         ? (img.url.startsWith('http') ? img.url : `http://localhost:8080${img.url}`)
                          : ''
                );
                setImageList(list => [...list, ...newUrls.filter(Boolean)]);
@@ -928,7 +952,13 @@ export default function AdminProductDetailsPage() {
                               {imageList.length === 0 && <Typography>Không có ảnh</Typography>}
                               {imageList.map((url, idx) => (
                                    <Box key={idx} sx={{ position: 'relative', width: 100, height: 100 }}>
-                                        <img src={url} alt={`product-img-${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 4, border: '1px solid #eee' }} />
+                                        <Image
+                                             src={url}
+                                             alt={``}
+                                             fill
+                                             className="object-contain"
+                                             sizes="(max-width: 768px) 450px 450px"
+                                        />
                                         <IconButton
                                              size="small"
                                              color="error"
@@ -961,7 +991,7 @@ export default function AdminProductDetailsPage() {
                                    <Typography><b>Tên:</b> {detailProduct.name}</Typography>
                                    <Typography><b>Slug:</b> {detailProduct.slug}</Typography>
                                    <Typography><b>Mô tả:</b> {detailProduct.description}</Typography>
-                                   <Typography><b>Ảnh:</b> {detailProduct.image}</Typography>
+                                   <Typography><b>Ảnh:</b> {detailProduct.images[0]}</Typography>
                                    <Typography><b>Giá:</b> {detailProduct.price}</Typography>
                                    <Typography><b>Phần trăm giảm giá:</b> {detailProduct.discountPercent}</Typography>
                                    <Typography><b>Giá đặc biệt:</b> {detailProduct.specialPrice}</Typography>
