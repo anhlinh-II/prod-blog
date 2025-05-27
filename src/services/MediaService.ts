@@ -63,3 +63,4 @@ export const getBannerImages = async () => {
 
     return response.data;
 };
+

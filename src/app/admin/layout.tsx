@@ -42,7 +42,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             subMenu: [
                 { title: 'Danh mục sản phẩm', path: '/admin/categories/product-categories', icon: <ProductIcon /> },
                 { title: 'Sản phẩm chi tiết', path: '/admin/categories/products-details', icon: <ProductDetailIcon /> },
-                { title: 'Thông số kỹ thuật', path: '/admin/categories/specs', icon: <SpecsIcon /> },
             ],
         },
         {
