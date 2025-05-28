@@ -19,9 +19,15 @@ import {
     Image as BannerIcon,
     PostAdd as PostIcon,
     Person as AuthorIcon,
-    Receipt as OrderIcon
+    Receipt as OrderIcon,
+    Policy
 } from '@mui/icons-material';
 import { ContactIcon } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { callFetchAccount, callLogout } from '@/services/AuthService';
+import Avatar from '@mui/material/Avatar';
+import MenuMui from '@mui/material/Menu';
+import MenuItemMui from '@mui/material/MenuItem';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const [collapsed, setCollapsed] = useState(false);
@@ -65,10 +71,36 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 { title: 'Quản lý bài viết', path: '/admin/content/news', icon: <PostIcon /> },
                 { title: 'Quản lý tác giả', path: '/admin/content/authors', icon: <AuthorIcon /> },
                 { title: 'Quản lý liên lạc', path: '/admin/content/contact', icon: <ContactIcon /> },
+                { title: 'Quản lý trang tĩnh', path: '/admin/content/static-pages', icon: <Policy /> },
 
             ],
         },
     ];
+
+    // Fetch account info
+    const { data: accountData } = useQuery({
+        queryKey: ['account'],
+        queryFn: callFetchAccount,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const user = accountData?.data.result.user;
+    const userName = user ? user.username : 'Người dùng';
+    const avatarUrl = user?.avatarUrl || '/avatar-default.png';
+
+    // Avatar menu state
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const openMenu = Boolean(anchorEl);
+
+    const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleMenuClose = () => setAnchorEl(null);
+
+    const handleLogout = async () => {
+        await callLogout();
+        window.location.href = '/auth/login';
+    };
 
     return (
         <div style={{ margin: 0, padding: 0, boxSizing: 'border-box', height: '100%', width: '100%', overflow: 'hidden' }}>
@@ -160,6 +192,35 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             )}
                         </Menu>
                     </Box>
+                    <Box sx={{ flexGrow: 1 }} />
+                    {/* User info at bottom */}
+                    <Box sx={{
+                        p: 2,
+                        borderTop: '1px solid #e0e0e0',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        cursor: 'pointer',
+                        minHeight: 64,
+                    }}
+                        onClick={handleAvatarClick}
+                    >
+                        <Avatar src={avatarUrl} alt={userName} sx={{ width: 36, height: 36 }} />
+                        {!collapsed && (
+                            <Typography variant="subtitle2" fontWeight="bold" sx={{ ml: 1 }}>
+                                {userName}
+                            </Typography>
+                        )}
+                    </Box>
+                    <MenuMui
+                        anchorEl={anchorEl}
+                        open={openMenu}
+                        onClose={handleMenuClose}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        transformOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    >
+                        <MenuItemMui onClick={handleLogout}>Đăng xuất</MenuItemMui>
+                    </MenuMui>
                 </Sidebar>
 
                 <Box component="main" sx={{

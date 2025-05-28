@@ -11,7 +11,7 @@ interface AccessTokenResponse {
  */
 
 const instance = axiosClient.create({
-    baseURL: 'http://localhost:8080',
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
     withCredentials: true
 });
 
@@ -19,74 +19,75 @@ const instance = axiosClient.create({
 const mutex = new Mutex();
 const NO_RETRY_HEADER = 'x-no-retry';
 
-// const handleRefreshToken = async (): Promise<string | null | undefined> => {
-//     return await mutex.runExclusive(async () => {
-//         const res = await instance.get<ApiResponse<AccessTokenResponse>>('/api/auth/refresh');
-//         if (res && res.data) return res.data?.result?.access_token;
-//         else return null;
-//     });
-// };
+const handleRefreshToken = async (): Promise<string | null | undefined> => {
+    return await mutex.runExclusive(async () => {
+        const res = await instance.get<ApiResponse<AccessTokenResponse>>('/api/auth/refresh');
+        if (res && res.data) return res.data?.result?.access_token;
+        else return null;
+    });
+};
 
-// instance.interceptors.request.use(function (config) {
-//     const excludedEndpoints = ['/api/auth/login', '/api/auth/register', '/api/auth/logout', '/api/auth/account'];
-//     const shouldExcludeToken = excludedEndpoints.some(endpoint =>
-//         config.url?.endsWith(endpoint)
-//     );
+instance.interceptors.request.use(function (config) {
+    const excludedEndpoints = ['/api/auth/login', '/api/auth/register', '/api/auth/logout'];
+    const shouldExcludeToken = excludedEndpoints.some(endpoint =>
+        config.url?.endsWith(endpoint)
+    );
 
-//     if (!shouldExcludeToken && typeof window !== "undefined" && window.localStorage.getItem('access_token')) {
-//         const token = window.localStorage.getItem('access_token');
-//         if (token) {
-//             config.headers.Authorization = `Bearer ${token.trim()}`;
-//         }
-//     }
+    if (!shouldExcludeToken && typeof window !== "undefined" && window.localStorage.getItem('jwt')) {
+        const token = window.localStorage.getItem('jwt');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token.trim()}`;
+        }
+        console.log("token >> ", token);
+    }
 
-//     if (!config.headers.Accept && config.headers["Content-Type"]) {
-//         config.headers.Accept = "application/json";
-//         config.headers["Content-Type"] = "application/json; charset=utf-8";
-//     }
-//     return config;
-// });
+    if (!config.headers.Accept && config.headers["Content-Type"]) {
+        config.headers.Accept = "application/json";
+        config.headers["Content-Type"] = "application/json; charset=utf-8";
+    }
+    return config;
+});
 
 // /**
 //  * Handle all responses. It is possible to add handlers
 //  * for requests, but it is omitted here for brevity.
 //  */
-// instance.interceptors.response.use(
-//     (res) => res,
-//     async (error) => {
+instance.interceptors.response.use(
+    (res) => res,
+    async (error) => {
 
-//         if (error.config && error.response
-//             && +error.response.status === 401
-//             && error.config.url !== '/api/auth/login'
-//             && !error.config.headers[NO_RETRY_HEADER]
-//         ) {
-//             const access_token = await handleRefreshToken();
-//             error.config.headers[NO_RETRY_HEADER] = 'true'
-//             if (access_token) {
-//                 error.config.headers['Authorization'] = `Bearer ${access_token}`;
-//                 localStorage.setItem('access_token', access_token)
-//                 return instance.request(error.config);
-//             }
-//         }
+        if (error.config && error.response
+            && +error.response.status === 401
+            && error.config.url !== '/api/auth/login'
+            && !error.config.headers[NO_RETRY_HEADER]
+        ) {
+            const access_token = await handleRefreshToken();
+            error.config.headers[NO_RETRY_HEADER] = 'true'
+            if (access_token) {
+                error.config.headers['Authorization'] = `Bearer ${access_token}`;
+                localStorage.setItem('access_token', access_token)
+                return instance.request(error.config);
+            }
+        }
 
-//         if (
-//             error.config && error.response
-//             && +error.response.status === 400
-//             && error.config.url === '/api/auth/refresh'
-//             && location.pathname.startsWith("/admin")
-//         ) {
-//             const message = error?.response?.data?.error ?? "Có lỗi xảy ra, vui lòng login.";
-//             alert(message)
-//             window.location.href = '/login';
-//         }
+        if (
+            error.config && error.response
+            && +error.response.status === 400
+            && error.config.url === '/api/auth/refresh'
+            && location.pathname.startsWith("/admin")
+        ) {
+            const message = error?.response?.data?.error ?? "Có lỗi xảy ra, vui lòng login.";
+            alert(message)
+            window.location.href = '/auth/login';
+        }
 
-//         if (+error.response.status === 403) {
-//             console.log(error?.response?.data?.error ?? "Bạn không được phần quyền để làm việc đó");
-//         }
+        if (+error.response.status === 403) {
+            console.log(error?.response?.data?.error ?? "Bạn không được phần quyền để làm việc đó");
+        }
 
-//         return error?.response?.data ?? Promise.reject(error);
-//     }
-// );
+        return error?.response?.data ?? Promise.reject(error);
+    }
+);
 
 /**
  * Replaces main `axios` instance with the custom-one.
