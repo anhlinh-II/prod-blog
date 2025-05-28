@@ -12,7 +12,7 @@ type Props = {
 
 const OrderBreadcrumb: React.FC<Props> = ({ steps }) => {
   return (
-    <div className="flex items-center justify-center space-x-2 text-sm font-medium text-gray-400 border-b border-gray-300 pb-6 my-4">
+    <div className="hidden md:flex items-center justify-center space-x-2 text-sm font-medium text-gray-400 border-b border-gray-300 pb-6 my-4">
       {steps.map((step, index) => (
         <div key={step.label} className="flex items-center text-base md:text-2xl md:space-x-2">
           <span className={`${step.isActive ? 'text-black' : 'text-gray-400'}

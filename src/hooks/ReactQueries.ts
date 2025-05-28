@@ -79,7 +79,7 @@ export const useOtherProducts = (size: number) =>
 export const useOldNews = () => {
 	return useQuery({
 		queryKey: ['oldNews'],
-		queryFn: () => getOldNews(0, 10),
+		queryFn: () => getOldNews(12),
 	});
 };
 

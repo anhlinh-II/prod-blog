@@ -11,7 +11,6 @@ import { NewsResponse } from '@/types/News';
 import { getAllNews } from '@/services/NewsService';
 import Post from '@/components/news/Post';
 import { useNewProducts, useOtherProducts, usePopularProducts, useSaleProducts } from '@/hooks/ReactQueries';
-import Head from 'next/head';
 
 // Skeleton Components để giữ layout ổn định
 const SectionSkeleton = ({ title }: { title: string }) => (
@@ -127,14 +126,6 @@ export default function Home() {
 
   return (
     <div className="">
-      <Head>
-        <title>Điện máy V Share</title>
-        <meta name="description" content={``} />
-        <meta property="og:title" content={``} />
-        <meta property="og:description" content={``} />
-        <meta property="og:image" content={`/logo.jpg`} />
-        <meta name="robots" content="index, follow" />
-      </Head>
 
       <div className="w-full aspect-[12/6] md:aspect-[16/6]">
         <BannerSlider />
@@ -209,7 +200,7 @@ export default function Home() {
                   {/* Cột bên trái */}
                   <div className='flex flex-col items-center gap-4 w-full'>
                     {part1.map((news) => (
-                      <div key={news.id} className="w-full"> {/* Container với width cố định */}
+                      <div key={news.id} className="w-full flex items-center justify-center">
                         <Post
                           createdAt={news.createdAt}
                           title={news.title}
@@ -224,7 +215,7 @@ export default function Home() {
                   {/* Cột bên phải */}
                   <div className='flex flex-col items-center gap-4 w-full'>
                     {part2.map((news) => (
-                      <div key={news.id} className="w-full"> {/* Container với width cố định */}
+                      <div key={news.id} className="w-full flex items-center justify-center">
                         <Post
                           createdAt={news.createdAt}
                           title={news.title}
@@ -284,30 +275,6 @@ export default function Home() {
             </section>
           )}
           
-          {/* Mẹo đời sống - Static content, không gây layout shift */}
-          {/* <section className="mb-10">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Mẹo đời sống</h2>
-            <div className="space-y-4">
-              <CardLayout
-                mainCard={
-                  <div className="h-full bg-red-100 rounded-xl p-6 shadow hover:shadow-lg transition-all">
-                    <h2 className="text-xl font-bold mb-2">Mẹo nổi bật</h2>
-                    <p className="text-gray-700">Đây là mẹo chính có nhiều nội dung và hình ảnh nổi bật...</p>
-                  </div>
-                }
-                sideCards={
-                  <>
-                    {[1, 2, 3, 4].map((item) => (
-                      <div key={item} className="bg-blue-100 rounded-xl p-4 shadow hover:shadow-md transition-all">
-                        <h3 className="text-md font-semibold">Mẹo #{item}</h3>
-                        <p className="text-sm text-gray-600">Mô tả ngắn cho mẹo này...</p>
-                      </div>
-                    ))}
-                  </>
-                }
-              />
-            </div>
-          </section> */}
           
           {/* Tin tức */}
           {isLoadingNews ? (
@@ -326,12 +293,12 @@ export default function Home() {
                 </Link>
               </div>
               <div className='w-full flex items-center justify-center'>
-                <div className='flex flex-row justify-center w-full border border-gray-300 rounded-2xl p-4 min-h-64'> {/* Fixed min-height */}
+                <div className='flex flex-col lg:flex-row justify-center w-full border border-gray-300 rounded-2xl p-4 min-h-64'> {/* Fixed min-height */}
                   
                   {/* Cột bên trái */}
                   <div className='flex flex-col items-center gap-4 w-full'>
                     {part3.map((news) => (
-                      <div key={news.id} className="w-full"> {/* Container với width cố định */}
+                      <div key={news.id} className="w-full flex items-center justify-center">
                         <Post
                           createdAt={news.createdAt}
                           title={news.title}
@@ -346,7 +313,7 @@ export default function Home() {
                   {/* Cột bên phải */}
                   <div className='flex flex-col items-center gap-4 w-full'>
                     {part4.map((news) => (
-                      <div key={news.id} className="w-full"> {/* Container với width cố định */}
+                      <div key={news.id} className="w-full flex items-center justify-center">
                         <Post
                           createdAt={news.createdAt}
                           title={news.title}

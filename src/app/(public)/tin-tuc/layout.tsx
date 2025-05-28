@@ -28,17 +28,17 @@ export default function NewsLayout({ children }: { children: React.ReactNode }) 
     return (
         <div className="bg-gray-100">
             <Breadcrumb items={breadcrumbItems} />
-            <main className="min-h-screen flex-grow py-6">
+            <main className="min-h-screen flex-grow py-4">
                     <div className="flex flex-col-reverse lg:flex-row justify-center gap-4">
 
-                        <section className={`hidden md:block w-full lg:w-6/25 md:sticky top-4 h-80 md:h-screen overflow-y-auto 
+                        <section className={`hidden md:block w-full lg:w-6/25 md:sticky top-20 h-80 md:h-screen overflow-y-auto 
                             pb-8 custom-2-scrollbar`}>
                             <ProductRecommendSidebar />
                         </section>
 
                         {children}
 
-                        <section className={`hidden md:block w-full lg:w-6/25 md:sticky top-4 h-80 md:h-screen overflow-y-auto 
+                        <section className={`hidden md:block w-full lg:w-6/25 md:sticky top-20 h-80 md:h-screen overflow-y-auto 
                             pb-8 custom-2-scrollbar`}>
                             <NewsSidebar />
                         </section>

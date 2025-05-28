@@ -64,7 +64,7 @@ const NewsPopup = () => {
               <p className={`line-clamp-6`}>{news?.content}</p>
               <button className="text-blue-600 hover:underline text-sm cursor-pointer">
                 <Link href={`/tin-tuc`}>
-                  Xem thêm
+                  Xem thêm ở bảng tin
                 </Link>
               </button>
           </div>

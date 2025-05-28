@@ -9,7 +9,6 @@ export const validateOrderFormData = (data: CheckoutFormData) => {
     }
 
     if (!data.firstName.trim()) newErrors.firstName = 'Vui lòng nhập tên';
-    if (!data.lastName.trim()) newErrors.lastName = 'Vui lòng nhập họ';
     if (!data.address.trim()) newErrors.address = 'Vui lòng nhập địa chỉ';
 
     const phoneRegex = /^(0|\+84)(\d{9})$/;

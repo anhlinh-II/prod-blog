@@ -10,7 +10,6 @@ import ProductGrid from "@/components/product/ProductGrid";
 import { CategoryResponse } from "@/types";
 import CategoryTreeMenuWrapper from "./CategoryWrapper";
 import Filterbar from "./Filterbar";
-import Head from "next/head";
 
 interface ProductListPageProps {
   params: {

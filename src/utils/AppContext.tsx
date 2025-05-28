@@ -56,12 +56,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [cart, isInitialized]);
 
   const addToCart = (item: CartItem) => {
+    if(cart.length >= 5 ) return;
+    
     setCart(prev => {
       const existing = prev.find(p => p.id === item.id);
       if (existing) {
-        return prev.map(p => p.id === item.id ? { ...p, quantity: p.quantity + 1 } : p);
+        return prev.map(p => p.id === item.id ? { ...p, quantity: p.quantity + item.quantity } : p);
       }
-      return [...prev, { ...item, quantity: 1 }];
+      return [...prev, { ...item, quantity: item.quantity }];
     });
   };
 

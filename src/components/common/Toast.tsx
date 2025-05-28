@@ -37,7 +37,7 @@ const Toast: React.FC<ToastProps> = ({ message, visible, type = 'success' }) => 
                 }`}
         >
             {icons[type]}
-            <span className="text-sm font-medium">{message}</span>
+            <span className="text-base font-medium">{message}</span>
         </div>
     );
 };

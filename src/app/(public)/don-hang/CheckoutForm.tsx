@@ -57,7 +57,7 @@ const CheckoutForm:React.FC<Props> = ({ onChange, errors }) => {
         {errors?.firstName && <p className="text-red-500 text-sm mt-1">{errors?.firstName}</p>}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1 ms-1">Họ<span className='text-red-500'> *</span></label>
+          <label className="block text-sm font-medium text-gray-700 mb-1 ms-1">Họ</label>
           <input
             name="lastName"
             type="text"
@@ -67,8 +67,6 @@ const CheckoutForm:React.FC<Props> = ({ onChange, errors }) => {
                 errors?.lastName ? 'border-red-500' : 'border-gray-300'
             } focus:outline-none focus:ring-2 focus:ring-blue-500`}
         />
-        {errors?.lastName && <p className="text-red-500 text-sm mt-1">{errors?.lastName}</p>}
-
         </div>
       </div>
 

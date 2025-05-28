@@ -68,15 +68,15 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         </div>
       )}
       <div className="my-4 text-sm">
-        <p className="text-base my-4 text-red-700">Khi tạo đơn hàng, nhân viên sẽ liên hệ và trao đổi với bạn thông qua số điện thoại</p>
+        <p className="text-base my-4 text-red-700">Khi tạo đơn hàng, nhân viên sẽ tiếp nhận thông tin và sẽ liên hệ, trao đổi với quý khách thông qua số điện thoại</p>
         <p className="text-base text-red-700">(Tuyệt đối không thanh toán trực tuyến)</p>
       </div>
 
-      <button className={`w-full bg-red-600 text-white py-3 rounded-lg text-sm font-semibold hover:bg-red-700 transition 
+      <button className={`w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition 
           ${isSubmitting || products.length < 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         onClick={onSubmit}
         disabled={isSubmitting || products.length < 1}>
-        {isSubmitting ? 'Đang xử lý...' : 'ĐẶT HÀNG'}
+        {isSubmitting ? 'Đang xử lý...' : 'TẠO ĐƠN HÀNG'}
       </button>
       <button className="w-full mt-2 text-center text-gray-700 underline cursor-pointer">
           <Link href={`/`}>
