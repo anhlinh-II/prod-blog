@@ -25,8 +25,10 @@ import {
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { uploadPageContentImages } from '@/services/MediaService';
+import { uploadPageContentImages, deleteImage } from '@/services/MediaService';
 import 'react-quill/dist/quill.snow.css';
+import { Global } from '@emotion/react';
+import { v4 as uuidv4 } from 'uuid';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -42,7 +44,7 @@ const defaultForm: StaticPageRequest = {
 const quillFormats = [
      'header',
      'bold', 'italic', 'underline', 'strike',
-     'list', 'bullet',
+     'list', 'bullet', 'indent',
      'align',
      'link', 'image',
 ];
@@ -57,6 +59,8 @@ export default function StaticPagesPage() {
      const [form, setForm] = useState<StaticPageRequest>(defaultForm);
      const [deleteId, setDeleteId] = useState<number | null>(null);
      const [previewOpen, setPreviewOpen] = useState(false);
+     const [pendingImages, setPendingImages] = useState<{ tempId: string, file: File }[]>([]);
+     const [editingPageImages, setEditingPageImages] = useState<string[]>([]); // lưu url ảnh cũ khi edit
      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
      // Fetch static pages
@@ -122,6 +126,8 @@ export default function StaticPagesPage() {
           });
           setEditingId(page.id);
           setOpenDialog(true);
+          // Lưu lại danh sách url ảnh cũ
+          setEditingPageImages(page.images?.map(img => img.url ? img.url : '') ?? []);
      };
 
      const handleCloseDialog = () => {
@@ -130,52 +136,47 @@ export default function StaticPagesPage() {
           setEditingId(null);
      };
 
-     // Before sending the request, ensure type is sent as enum string
-     const handleSubmit = (e: React.FormEvent) => {
-          e.preventDefault();
-          const requestData = {
-               ...form
-          };
-          
-          if (editingId) {
-               updateMutation.mutate({ id: editingId, data: requestData });
-          } else {
-               createMutation.mutate(requestData);
-          }
-     };
-
-     // Define imageHandler first
-     const imageHandler = React.useCallback(async () => {
+     // Custom image handler for Quill
+     const imageHandler = React.useCallback(function imageHandler(this: any) {
           const input = document.createElement('input');
           input.setAttribute('type', 'file');
           input.setAttribute('accept', 'image/*');
           input.click();
 
-          input.onchange = async () => {
+          input.onchange = () => {
                if (!input.files?.length) return;
-               try {
-                    const file = input.files[0];
+               const file = input.files[0];
+               const tempId = uuidv4();
+               setPendingImages(prev => [...prev, { tempId, file }]);
+               // Get editor instance
+               const quillObj = this.quill || (document.querySelector('.quill') as any)?.getEditor?.();
+               if (!quillObj) return;
+               const range = quillObj.getSelection(true);
 
-                    // Get editor instance
-                    const quillObj = (document.querySelector('.quill') as any)?.getEditor();
-                    if (!quillObj) return;
-
-                    // Add loading placeholder
-                    const range = quillObj.getSelection(true);
-                    quillObj.insertText(range.index, 'Đang tải ảnh...', { 'color': '#999' });
-
-                    // Upload image
-                    const res = await uploadPageContentImages(editingId || 0, [file]);
-                    const imageUrl = `${apiUrl}${res.result[0].url}`;
-
-                    // Remove loading text and insert image
-                    quillObj.deleteText(range.index, 'Đang tải ảnh...'.length);
-                    quillObj.insertEmbed(range.index, 'image', imageUrl);
-               } catch (error) {
-                    console.error('Error uploading image:', error);
-               }
+               // Preview image using FileReader
+               const reader = new FileReader();
+               reader.onload = (e) => {
+                    const previewUrl = e.target?.result as string;
+                    // Insert preview image with tempId in data-tempid attribute
+                    quillObj.insertEmbed(range.index, 'image', previewUrl, 'user');
+                    // Mark the image for later replacement (add data-tempid attribute)
+                    setTimeout(() => {
+                         // Find the image just inserted and set data-tempid
+                         const editor = document.querySelector('.ql-editor');
+                         if (editor) {
+                              const imgs = editor.querySelectorAll('img');
+                              imgs.forEach(img => {
+                                   if (img.getAttribute('src') === previewUrl) {
+                                        img.setAttribute('data-tempid', tempId);
+                                   }
+                              });
+                         }
+                    }, 10);
+                    quillObj.setSelection(range.index + 1);
+               };
+               reader.readAsDataURL(file);
           };
-     }, [editingId, apiUrl]);
+     }, []);
 
      // Then define quillModules using the imageHandler
      const quillModules = React.useMemo(() => ({
@@ -183,7 +184,7 @@ export default function StaticPagesPage() {
                container: [
                     [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
                     ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
                     [{ 'align': [] }],
                     ['link', 'image'],
                     ['clean']
@@ -198,6 +199,91 @@ export default function StaticPagesPage() {
      const handleEditorChange = React.useCallback((value: string) => {
           setForm(prev => ({ ...prev, content: value }));
      }, []);
+
+     // Helper to replace all preview images (data-tempid) with real urls
+     const replaceImagePlaceholders = (content: string, replacements: { tempId: string, url: string }[]) => {
+          let newContent = content;
+          for (const { tempId, url } of replacements) {
+               // Replace <img ... data-tempid="tempId" ... src="data:..."> with src="url"
+               // Use regex to match img tag with data-tempid
+               newContent = newContent.replace(
+                    new RegExp(`<img([^>]+)data-tempid="${tempId}"([^>]*)src="[^"]+"([^>]*)>`, 'g'),
+                    `<img$1data-tempid="${tempId}"$2src="${url}"$3>`
+               );
+          }
+          return newContent;
+     };
+
+     // Helper: lấy tất cả url ảnh trong content
+     const extractImageUrls = (html: string): string[] => {
+          const urls: string[] = [];
+          const imgRegex = /<img[^>]+src="([^">]+)"/g;
+          let match;
+          while ((match = imgRegex.exec(html)) !== null) {
+               urls.push(match[1]);
+          }
+          return urls;
+     };
+
+     // Submit handler
+     const handleSubmit = async (e: React.FormEvent) => {
+          e.preventDefault();
+          const requestData = { ...form };
+
+          if (editingId) {
+               // Edit mode: upload new images if any, then update
+               let updatedContent = form.content;
+               if (pendingImages.length > 0) {
+                    const res = await uploadPageContentImages(editingId, pendingImages.map(i => i.file));
+                    const replacements = pendingImages.map((img, idx) => ({
+                         tempId: img.tempId,
+                         url: `${apiUrl}${res.result[idx].url}`
+                    }));
+                    updatedContent = replaceImagePlaceholders(form.content, replacements);
+               }
+               // Lấy danh sách url ảnh cũ và mới
+               const oldUrls = editingPageImages;
+               const newUrls = extractImageUrls(updatedContent);
+               // Tìm các url ảnh cũ không còn trong content mới
+               const unusedUrls = oldUrls.filter(url => !newUrls.includes(url));
+               // Gọi API xóa các ảnh không còn dùng
+               for (const url of unusedUrls) {
+                    // Tìm mediaId từ url (nếu backend trả về mediaId trong images thì nên lưu lại id thay vì url)
+                    // Ở đây giả sử url có dạng /api/medias/images/page/{pageId}/{mediaId}_{filename}
+                    const match = url.match(/\/(\d+)_/);
+                    if (match) {
+                         const mediaId = Number(match[1]);
+                         if (!isNaN(mediaId)) {
+                              try {
+                                   await deleteImage(mediaId);
+                              } catch (e) {
+                                   // ignore error
+                              }
+                         }
+                    }
+               }
+               updateMutation.mutate({ id: editingId, data: { ...requestData, content: updatedContent } });
+               setPendingImages([]);
+          } else {
+               // Create mode: create page first, then upload images, then update content
+               const createRes = await createStaticPage(requestData);
+               const newId = createRes.result.id;
+               let updatedContent = form.content;
+               if (pendingImages.length > 0) {
+                    const res = await uploadPageContentImages(newId, pendingImages.map(i => i.file));
+                    const replacements = pendingImages.map((img, idx) => ({
+                         tempId: img.tempId,
+                         url: `${apiUrl}${res.result[idx].url}`
+                    }));
+                    updatedContent = replaceImagePlaceholders(form.content, replacements);
+                    // Update page with new content
+                    await updateStaticPage(newId, { ...requestData, content: updatedContent });
+               }
+               queryClient.invalidateQueries({ queryKey: ['static-pages'] });
+               handleCloseDialog();
+               setPendingImages([]);
+          }
+     };
 
      // Preview component
      const PagePreview = () => (
@@ -225,8 +311,9 @@ export default function StaticPagesPage() {
                     <Box sx={{ p: 3 }}>
                          <Typography variant="h4" gutterBottom>{form.title}</Typography>
                          <div
+                              className="ql-editor static-page-content"
+                              style={{ fontSize: 16, lineHeight: 1.7 }}
                               dangerouslySetInnerHTML={{ __html: form.content }}
-                              className="static-page-content ql-editor"
                          />
                     </Box>
                </DialogContent>
@@ -235,6 +322,12 @@ export default function StaticPagesPage() {
 
      return (
           <Box>
+               <Global styles={{
+                    '.ql-editor': {
+                         fontSize: '16px',
+                         lineHeight: 1.7,
+                    }
+               }} />
                <Typography variant="h5" fontWeight="bold" mb={2}>
                     Quản lý trang tĩnh
                </Typography>
@@ -359,7 +452,7 @@ export default function StaticPagesPage() {
                                              modules={quillModules}
                                              formats={quillFormats}
                                              className="quill"
-                                             style={{ height: '400px', marginBottom: '50px' }}
+                                             style={{ height: '400px', marginBottom: '50px', fontSize: 16, lineHeight: 1.7 }}
                                         />
                                    </Box>
 

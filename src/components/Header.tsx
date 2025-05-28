@@ -171,7 +171,7 @@ const CategorySkeleton: React.FC = () => (
 );
 
 // Main Header Component
-const Header: React.FC = () => {
+export default function Header() {
   const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

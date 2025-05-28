@@ -4,8 +4,34 @@ import Image from 'next/image';
 import React from 'react';
 import { FaFacebookF, FaInstagram, FaTiktok } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { getAllStaticPages } from '@/services/StaticPageService';
+import { StaticPageResponse, StaticPageType } from '@/types/News';
 
 export default function Footer() {
+  const [pagesByType, setPagesByType] = useState<Record<StaticPageType, StaticPageResponse[]>>({
+    ABOUT: [],
+    POLICY: [],
+    GUIDE: [],
+  });
+
+  useEffect(() => {
+    async function fetchPages() {
+      const res = await getAllStaticPages(0, 100);
+      const grouped: Record<StaticPageType, StaticPageResponse[]> = {
+        ABOUT: [],
+        POLICY: [],
+        GUIDE: [],
+      };
+      res.result.content.forEach((page: StaticPageResponse) => {
+        if (grouped[page.type]) grouped[page.type].push(page);
+      });
+      setPagesByType(grouped);
+    }
+    fetchPages();
+  }, []);
+
   return (
     <footer className="sticky top-full bg-gray-100 text-sm text-gray-800 py-10 px-4 md:px-16">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12">
@@ -17,32 +43,44 @@ export default function Footer() {
         <div className="space-y-4">
           <h3 className="text-lg font-semibold mb-3">Về chúng tôi</h3>
           <ul className="space-y-2">
-            <li>Thông báo</li>
-            <li>Cơ hội nghề nghiệp</li>
-            <li>Câu hỏi thường gặp</li>
-            <li>Hàng Gia Dụng</li>
+            {/* Static pages ABOUT */}
+            {pagesByType.ABOUT.map(page => (
+              <li key={page.id}>
+                <Link href={`/${page.slug}`} className="hover:text-red-800 transition-colors">
+                  {page.title}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
         {/* Cửa hàng bán lẻ */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold mb-3">Cửa hàng Bán lẻ</h3>
+          <h3 className="text-lg font-semibold mb-3">Chính sách</h3>
           <ul className="space-y-2">
-            <li>Chính sách Đổi, Trả, Hoàn tiền</li>
-            <li>Danh sách cửa hàng</li>
+            {/* Static pages POLICY */}
+            {pagesByType.POLICY.map(page => (
+              <li key={page.id}>
+                <Link href={`/${page.slug}`} className="hover:text-red-800 transition-colors">
+                  {page.title}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
         {/* Cửa hàng trực tuyến */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold mb-3">Cửa hàng Trực tuyến</h3>
+          <h3 className="text-lg font-semibold mb-3">Hướng dẫn</h3>
           <ul className="space-y-2">
-            <li>Chính sách Bán hàng</li>
-            <li>Chính sách Giao hàng</li>
-            <li>Chính sách Trả hàng, Hoàn tiền</li>
-            <li>Chính sách Đổi hàng</li>
-            <li>Chính sách Bảo hành</li>
-            <li>Chính sách Bảo mật</li>
+            {/* Static pages GUIDE */}
+            {pagesByType.GUIDE.map(page => (
+              <li key={page.id}>
+                <Link href={`/${page.slug}`} className="hover:text-red-800 transition-colors">
+                  {page.title}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 

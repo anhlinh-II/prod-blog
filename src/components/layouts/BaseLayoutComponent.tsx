@@ -5,7 +5,7 @@ import React, { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { LinearProgress } from '@mui/material';
 
-const Header = dynamic(() => import('@/components/Header').then(mod => mod.default), {
+const Header = dynamic(() => import('@/components/Header'), {
   ssr: false,
   loading: () => <LinearProgress sx={{ position: 'sticky', top: 0, zIndex: 1201 }} />
 });
