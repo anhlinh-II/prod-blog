@@ -26,7 +26,7 @@ export default function Breadcrumb({ items, title }: BreadcrumbProps) {
                   <div key={index} className="flex items-center gap-2">
                       {index > 0 && <ChevronRight size={16} />}
                         {item.href && !isLast ? (
-                        <Link href={item.href} className="hover:text-red-600 text-gray-600 text-base">
+                        <Link href={item.href} className="hover:text-red-600 text-gray-600 text-base w-max">
                             {item.label}
                         </Link>
                         ) : (

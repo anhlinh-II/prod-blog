@@ -193,7 +193,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                                                 id: product.id,
                                                 name: product.name,
                                                 price: product.specialPrice || product.price,
-                                                image: product.images[0] || '/placeholder.png',
+                                                image: product.images && product.images.length > 0 ? product.images[0] : '',
                                                 quantity: 1
                                             });
                                             showToast(`Đã thêm sản phẩm vào giỏ hàng`, 'success');

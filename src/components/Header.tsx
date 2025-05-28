@@ -1,448 +1,362 @@
 'use client';
-import React, { useState, useMemo, memo, useCallback } from 'react';
-import { debounce } from 'lodash';
-import {
-  AppBar, Toolbar, Typography, IconButton, Box, Drawer, List, ListItem, ListItemButton, ListItemText,
-  Collapse, InputBase, Badge, Popover, Button,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { FiChevronRight } from 'react-icons/fi';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchCategories } from '@/services';
-import { CategoryResponse } from '@/types';
+
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { ChevronDown, Search, ShoppingCart, Menu, X } from 'lucide-react';
+import { useProductCategories } from '@/hooks/ReactQueries';
+import { useAppContext } from '@/utils/AppContext';
+import CartSidebar from '@/app/(public)/gio-hang/CartSidebar';
+import Image from 'next/image';
+import { CategoryResponse } from '@/types';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
-const MENU_SLIDE_DURATION = 200;
-
-function flattenCategories(categories: CategoryResponse[], parentPath: string[] = []): { id: number, name: string, slug: string, path: string[] }[] {
-  let result: { id: number, name: string, slug: string, path: string[] }[] = [];
-  for (const cat of categories) {
-    result.push({ id: cat.id, name: cat.name, slug: cat.slug, path: [...parentPath, cat.name] });
-    if (cat.children && cat.children.length > 0) {
-      result = result.concat(flattenCategories(cat.children, [...parentPath, cat.name]));
-    }
-  }
-  return result;
+// Dropdown Component
+interface DropdownProps {
+  categories: CategoryResponse[];
+  level: number;
+  parentHovered: boolean;
 }
 
-const DesktopCategoryMenu = memo(({
-  categories,
-  onClose,
-  anchorEl,
-  open,
-  router,
-}: {
-  categories: CategoryResponse[];
-  onClose: () => void;
-  anchorEl: HTMLElement | null;
-  open: boolean;
-  router: ReturnType<typeof useRouter>;
-}) => {
-  const [hovered, setHovered] = useState<{ cat: CategoryResponse | null, anchor: HTMLElement | null }>({ cat: null, anchor: null });
-
-  const debouncedSetHovered = useMemo(
-    () => debounce((newHovered: { cat: CategoryResponse | null, anchor: HTMLElement | null }) => {
-      setHovered(newHovered);
-    }, 100),
-    []
-  );
-
-  const handleMouseEnter = useCallback(
-    (cat: CategoryResponse, anchor: HTMLElement) => {
-      debouncedSetHovered({ cat, anchor });
-    },
-    [debouncedSetHovered]
-  );
-
-  const handleMouseLeave = useCallback(() => {
-    debouncedSetHovered({ cat: null, anchor: null });
-  }, [debouncedSetHovered]);
-
-  const renderCategory = (cat: CategoryResponse, level = 0) => {
-    const hasChildren = cat.children && cat.children.length > 0;
-    const isHovered = hovered.cat?.id === cat.id;
-
-    return (
-      <li
-        key={cat.id}
-        style={{ position: 'relative', listStyle: 'none', minWidth: 220, zIndex: 1202 }}
-        onMouseEnter={e => {
-          if (hasChildren) {
-            handleMouseEnter(cat, e.currentTarget);
-          }
-        }}
-      >
-        <Link
-          href={`/danh-muc/${cat.slug}`}
-          onClick={onClose}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '10px 20px',
-            fontWeight: level === 0 ? 600 : 500,
-            color: isHovered ? '#d32f2f' : '#222',
-            textDecoration: 'none',
-            background: isHovered ? 'rgba(0,0,0,0.04)' : 'none',
-            cursor: 'pointer',
-            minWidth: 200,
-            borderRadius: 4,
-            transition: 'background 0.2s ease, color 0.2s ease',
-          }}
-          onMouseDown={e => e.preventDefault()}
-        >
-          <span>{cat.name}</span>
-          {hasChildren && (
-            <FiChevronRight
-              className="ml-2 text-xl"
-              style={{ color: isHovered ? '#d32f2f' : '#888', transition: 'color 0.2s ease' }}
-            />
-          )}
-        </Link>
-
-        {hasChildren && isHovered && (
-          <Popover
-            id={`submenu-${cat.id}`}
-            open={Boolean(hovered.anchor)}
-            anchorEl={hovered.anchor}
-            onClose={handleMouseLeave}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-            PaperProps={{
-              sx: {
-                minWidth: 220,
-                mt: 0,
-                ml: -0.5,
-                p: 0,
-                borderRadius: 2,
-                boxShadow: 3,
-                zIndex: 1300,
-              },
-              onMouseEnter: () => {
-                handleMouseEnter(cat, hovered.anchor!);
-              },
-              onMouseLeave: handleMouseLeave
-            }}
-            disableRestoreFocus
-            keepMounted
-          >
-            <ul style={{ margin: 0, padding: 0 }}>
-              {cat.children.map(child => renderCategory(child, level + 1))}
-            </ul>
-          </Popover>
-        )}
-      </li>
-    );
-  };
+const Dropdown: React.FC<DropdownProps> = ({ categories, level, parentHovered }) => {
+  const [hoveredCategory, setHoveredCategory] = useState<number | null>(null);
+  
+  if (!parentHovered) return null;
 
   return (
-    <Popover
-      open={open}
-      anchorEl={anchorEl}
-      onClose={onClose}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-      transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-      PaperProps={{
-        sx: {
-          minWidth: 260,
-          p: 0,
-          borderRadius: 2,
-          boxShadow: 3,
-          zIndex: 1201,
-        },
-        onMouseLeave: () => {
-          handleMouseLeave();
-          onClose();
-        }
-      }}
-      disableRestoreFocus
-      keepMounted
-    >
-      <ul style={{ margin: 0, padding: 0 }}>
-        {categories.map(cat => renderCategory(cat, 0))}
-      </ul>
-    </Popover>
+    <div className={`
+      absolute bg-white shadow-lg border rounded-xl min-w-48 z-50
+      ${level === 0 ? 'top-[80%] left-0 mt-1' : 'top-0 left-full -ml-1'}
+    `}>
+      {categories.map((category) => (
+        <div
+          key={category.id}
+          className="relative"
+          onMouseEnter={() => setHoveredCategory(category.id)}
+          onMouseLeave={() => setHoveredCategory(null)}
+        >
+          <Link
+            href={`/danh-muc/${category.slug}`}
+            className=" flex items-center justify-between px-4 py-2.5 text-gray-700 hover:bg-blue-50 
+            hover:text-blue-600 transition-colors rounded-xl"
+          >
+            <span className='w-max'>{category.name}</span>
+            {category.children && category.children.length > 0 && (
+              <ChevronDown className="w-4 h-4 rotate-[-90deg]" />
+            )}
+          </Link>
+          
+          {category.children && category.children.length > 0 && (
+            <Dropdown
+              categories={category.children}
+              level={level + 1}
+              parentHovered={hoveredCategory === category.id}
+            />
+          )}
+        </div>
+      ))}
+    </div>
   );
-});
+};
 
-export default function Header() {
-  const queryClient = useQueryClient();
-  const cachedCategories = queryClient.getQueryData<CategoryResponse[]>(['categories']);
-  const { data: categories = cachedCategories || [] } = useQuery({
-    queryKey: ['categories'],
-    queryFn: fetchCategories,
-    initialData: cachedCategories,
-  });
-  const router = useRouter();
+// Mobile Menu Component
+interface MobileMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+  categories: CategoryResponse[];
+}
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [catMenuAnchor, setCatMenuAnchor] = useState<null | HTMLElement>(null);
-  const [catMenuOpen, setCatMenuOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const [searchFocus, setSearchFocus] = useState(false);
-  const [openMobileCat, setOpenMobileCat] = useState<{ [id: number]: boolean }>({});
+const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, categories }) => {
+  const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set());
 
-  const flatCats = flattenCategories(categories);
-
-  const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
-  const handleMobileCatToggle = (id: number) => {
-    setOpenMobileCat((prev) => ({ ...prev, [id]: !prev[id] }));
+  const toggleCategory = (categoryId: number) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(categoryId)) {
+      newExpanded.delete(categoryId);
+    } else {
+      newExpanded.add(categoryId);
+    }
+    setExpandedCategories(newExpanded);
   };
-  const handleSearchSubmit = (e: React.FormEvent) => {
+
+  const renderMobileCategory = (category: CategoryResponse, level: number = 0) => (
+    <div key={category.id} className={`${level > 0 ? 'ml-4' : ''}`}>
+      <div className="flex items-center justify-between py-2">
+        <Link
+          href={`/danh-muc/${category.slug}`}
+          className="flex-1 text-gray-700 hover:text-blue-600 transition-colors"
+          onClick={onClose}
+        >
+          {category.name}
+        </Link>
+        {category.children && category.children.length > 0 && (
+          <button
+            onClick={() => toggleCategory(category.id)}
+            className="p-1 text-gray-500 hover:text-gray-700"
+          >
+            <ChevronDown
+              className={`w-4 h-4 transform transition-transform ${
+                expandedCategories.has(category.id) ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+        )}
+      </div>
+      {category.children && category.children.length > 0 && expandedCategories.has(category.id) && (
+        <div className="border-l-2 border-gray-200 ml-2">
+          {category.children.map((child) => renderMobileCategory(child, level + 1))}
+        </div>
+      )}
+    </div>
+  );
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 lg:hidden">
+      <div className="fixed inset-0 bg-opacity-50" onClick={onClose} />
+      <div className="fixed top-0 left-0 w-80 h-full bg-white shadow-lg">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="text-lg font-semibold text-gray-800">Menu</h2>
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-500 hover:text-gray-700"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        
+        <div className="p-4 space-y-2 overflow-y-auto h-full pb-20">
+        <Link
+            href="/tin-tuc"
+            className="font-semibold block text-gray-700 hover:text-blue-600 transition-colors py-2"
+            onClick={onClose}
+        >
+            Bảng tin
+        </Link>
+          <div className="space-y-1">
+            <h3 className="font-semibold text-gray-800 mb-2">Danh mục sản phẩm</h3>
+            {categories.map((category) => renderMobileCategory(category))}
+          </div>
+          
+          <div className="border-t border-gray-300 pt-4 mt-4 space-y-3">
+            <Link
+              href="/ve-chung-toi"
+              className="block text-gray-700 hover:text-blue-600 transition-colors py-2"
+              onClick={onClose}
+            >
+              Về chúng tôi
+            </Link>
+            <Link
+              href="/lien-he"
+              className="block text-gray-700 hover:text-blue-600 transition-colors py-2"
+              onClick={onClose}
+            >
+              Liên hệ
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Loading Skeleton Component
+const CategorySkeleton: React.FC = () => (
+  <div className="flex items-center text-gray-400">
+    <div className="animate-pulse flex items-center">
+      <div className="h-4 bg-gray-300 rounded w-32"></div>
+      <ChevronDown className="ml-1 w-4 h-4" />
+    </div>
+  </div>
+);
+
+// Main Header Component
+const Header: React.FC = () => {
+  const isMobile = useIsMobile();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Fetch categories
+  const { data: categories = [], isLoading: categoriesLoading, error: categoriesError } = useProductCategories();
+  
+  // Cart context
+  const { cart, toggleCart } = useAppContext();
+  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (search.trim()) {
-      router.push(`/tim-kiem?keyword=${encodeURIComponent(search.trim())}`);
-      setSearch('');
-      setSearchFocus(false);
+    if (searchQuery.trim()) {
+      const encodedKeyword = encodeURIComponent(searchQuery.trim());
+      window.location.href = `/tim-kiem/${encodedKeyword}`;
     }
   };
 
-  const renderMobileCategories = (cats: CategoryResponse[], level = 0) => (
-    cats.map(cat => (
-      <React.Fragment key={cat.id}>
-        <ListItem disablePadding>
-          <ListItemButton
-            sx={{ pl: 2 + level * 2 }}
-            onClick={() => {
-              if (cat.children && cat.children.length > 0) {
-                handleMobileCatToggle(cat.id);
-              } else {
-                setDrawerOpen(false);
-                router.push(`/danh-muc/${cat.slug}`);
-              }
-            }}
-          >
-            <ListItemText primary={cat.name} />
-            {cat.children && cat.children.length > 0 && (
-              <ExpandMoreIcon
-                sx={{
-                  transform: openMobileCat[cat.id] ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.2s',
-                }}
-              />
-            )}
-          </ListItemButton>
-        </ListItem>
-        {cat.children && cat.children.length > 0 && (
-          <Collapse in={openMobileCat[cat.id]} timeout="auto" unmountOnExit>
-            {renderMobileCategories(cat.children, level + 1)}
-          </Collapse>
-        )}
-      </React.Fragment>
-    ))
-  );
-
-  const searchSuggestions = searchFocus && search.trim()
-    ? flatCats.filter(cat => cat.name.toLowerCase().includes(search.trim().toLowerCase())).slice(0, 6)
-    : [];
+  const handleCartClick = () => {
+    toggleCart();
+  };
 
   return (
     <>
-      <AppBar position="sticky" color="primary" sx={{ zIndex: 1201 }}>
-        <Toolbar sx={{ minHeight: 64, px: { xs: 1, md: 3 } }}>
-          <IconButton
-            color="inherit"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component={Link}
-            href="/"
-            sx={{
-              color: 'white',
-              textDecoration: 'none',
-              fontWeight: 700,
-              letterSpacing: 1,
-              mr: 3,
-              fontSize: { xs: '1.1rem', md: '1.3rem' }
-            }}
-          >
-            VShare <span style={{ fontWeight: 400, fontSize: '0.8em' }}>Năng lượng</span>
-          </Typography>
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', flexGrow: 1 }}>
-            <Button
-              color="inherit"
-              sx={{ mx: 1, fontWeight: 500 }}
-              component={Link}
-              href="/"
-            >
-              Trang chủ
-            </Button>
-            <Button
-              color="inherit"
-              sx={{ mx: 1, fontWeight: 500 }}
-              onMouseEnter={e => {
-                setCatMenuAnchor(e.currentTarget);
-                setCatMenuOpen(true);
-              }}
-              onMouseLeave={() => {
-                setCatMenuOpen(false);
-              }}
-              endIcon={<ExpandMoreIcon />}
-              aria-haspopup="true"
-              aria-expanded={catMenuOpen ? 'true' : undefined}
-            >
-              Danh mục
-            </Button>
-            <DesktopCategoryMenu
-              categories={categories}
-              onClose={() => setCatMenuOpen(false)}
-              anchorEl={catMenuAnchor}
-              open={catMenuOpen}
-              router={router}
-            />
-            <Button
-              color="inherit"
-              sx={{ mx: 1, fontWeight: 500 }}
-              component={Link}
-              href="/san-pham"
-            >
-              Sản phẩm
-            </Button>
-            <Button
-              color="inherit"
-              sx={{ mx: 1, fontWeight: 500 }}
-              component={Link}
-              href="/bai-viet"
-            >
-              Bài viết
-            </Button>
-            <Button
-              color="inherit"
-              sx={{ mx: 1, fontWeight: 500 }}
-              component={Link}
-              href="/lien-he"
-            >
-              Liên hệ
-            </Button>
-          </Box>
-          <Box
-            component="form"
-            onSubmit={handleSearchSubmit}
-            sx={{
-              ml: { xs: 0, md: 2 },
-              flexGrow: { xs: 1, md: 0 },
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              bgcolor: 'rgba(255,255,255,0.12)',
-              borderRadius: 2,
-              px: 1,
-              minWidth: { xs: 0, md: 220 },
-              maxWidth: 320,
-            }}
-          >
-            <InputBase
-              placeholder="Tìm kiếm danh mục..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              onFocus={() => setSearchFocus(true)}
-              onBlur={() => setTimeout(() => setSearchFocus(false), 200)}
-              sx={{
-                color: 'white',
-                width: '100%',
-                fontSize: '0.95rem',
-                px: 1,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-            <IconButton type="submit" color="inherit" size="small" sx={{ p: 0.5 }}>
-              <SearchIcon />
-            </IconButton>
-            {searchSuggestions.length > 0 && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: '110%',
-                  left: 0,
-                  width: '100%',
-                  bgcolor: 'background.paper',
-                  boxShadow: 3,
-                  borderRadius: 1,
-                  zIndex: 2000,
-                  maxHeight: 260,
-                  overflowY: 'auto',
-                }}
+      <header className="bg-gradient-to-r from-[#00A650] to-[#47b180] shadow-md sticky top-0 z-40" >
+        <div className="px-4 sm:px-6 lg:px-8">
+          <div className="w-full flex items-center justify-between h-16">
+            <div className='flex items-center justify-start gap-4'>
+            {/* Logo */}
+            <div className="flex-shrink-0">
+              <Link href="/" className="flex items-center">
+                {!isMobile ? (
+                    <Image src={`/logo-long.jpg`} alt='Điện máy V Share' width={200} height={64} priority={true}/>
+                ) : (
+                    <Image src={`/logo.jpg`} alt='Điện máy V Share' width={64} height={64} priority={true} className='rounded-full'/>
+                )}
+              </Link>
+            </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex space-x-6">
+              {/* Categories Dropdown */}
+              <div
+                ref={dropdownRef}
+                className="relative"
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
               >
-                {searchSuggestions.map(sug => (
-                  <ListItemButton
-                    key={sug.id}
-                    onMouseDown={() => {
-                      setSearch('');
-                      setSearchFocus(false);
-                      router.push(`/danh-muc/${sug.slug}`);
-                    }}
+                <Link
+                href="/danh-muc" className="flex items-center py-3 text-gray-100 hover:text-gray-3000 font-medium 
+                transition-colors cursor-pointer">
+                    Danh mục sản phẩm
+                    <ChevronDown className="ml-1 w-4 h-4" />
+                </Link>
+                {categoriesError ? (
+                  <span className="text-red-500 font-medium">Lỗi tải danh mục</span>
+                ) : (
+                  <>
+                    <Dropdown
+                      categories={categories}
+                      level={0}
+                      parentHovered={isDropdownOpen}
+                    />
+                  </>
+                )}
+              </div>
+
+              <Link
+                href="/tin-tuc"
+                className="text-gray-100 py-3 hover:text-gray-300 font-medium transition-colors"
+              >
+                Bảng tin
+              </Link>
+              
+              <Link
+                href="/ve-chung-toi"
+                className="text-gray-100 py-3 hover:text-gray-300 font-medium transition-colors"
+              >
+                Về chúng tôi
+              </Link>
+              
+              <Link
+                href="/lien-he"
+                className="text-gray-100 py-3 hover:text-gray-300 font-medium transition-colors"
+              >
+                Liên hệ
+              </Link>
+            </nav>
+            </div>
+
+            {/* Search Bar & Cart & Mobile Menu */}
+            <div className="flex items-center space-x-4 ml-auto">
+              {/* Search Bar */}
+              <div className="hidden sm:block flex-shrink-0 md:w-80 max-w-lg">
+                <form onSubmit={handleSearch} className="relative">
+                  <input
+                    type="text"
+                    placeholder="Bạn tìm sản phẩm gì..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 
+                    focus:ring-blue-500 focus:border-transparent text-gray-200"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
-                    {sug.path.join(' > ')}
-                  </ListItemButton>
-                ))}
-              </Box>
-            )}
-          </Box>
-          <IconButton color="inherit" sx={{ ml: 1 }}>
-            <Badge badgeContent={0} color="error">
-              <ShoppingCartIcon />
-            </Badge>
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        anchor="left"
-        open={drawerOpen}
-        onClose={handleDrawerToggle}
-        sx={{ '& .MuiDrawer-paper': { width: 260 } }}
-      >
-        <Box sx={{ p: 2, pb: 0 }}>
-          <Typography variant="h6" fontWeight={700} color="primary" mb={1}>
-            VShare Năng lượng
-          </Typography>
-        </Box>
-        <List>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} href="/" onClick={handleDrawerToggle}>
-              <ListItemText primary="Trang chủ" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => handleMobileCatToggle(-1)}>
-              <ListItemText primary="Danh mục" />
-              <ExpandMoreIcon
-                sx={{
-                  transform: openMobileCat[-1] ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.2s',
-                }}
-              />
-            </ListItemButton>
-          </ListItem>
-          <Collapse in={openMobileCat[-1]} timeout="auto" unmountOnExit>
-            {renderMobileCategories(categories)}
-          </Collapse>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} href="/san-pham" onClick={handleDrawerToggle}>
-              <ListItemText primary="Sản phẩm" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} href="/bai-viet" onClick={handleDrawerToggle}>
-              <ListItemText primary="Bài viết" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} href="/lien-he" onClick={handleDrawerToggle}>
-              <ListItemText primary="Liên hệ" />
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </Drawer>
+                    <Search className="w-5 h-5" />
+                  </button>
+                </form>
+              </div>
+
+              {/* Cart */}
+              <button
+                onClick={handleCartClick}
+                className="flex items-center gap-2 relative p-2 text-gray-100 hover:text-gray-300 transition-colors cursor-pointer"
+              >
+                <div className='relative p-2'>
+                <ShoppingCart className="w-6 h-6" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
+                </div>
+                {!isMobile && (
+                <p>Giỏ hàng</p>
+                )}
+              </button>
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="lg:hidden p-2 text-gray-100 hover:text-gray-300 transition-colors"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+      {isMobile && (
+        <div className="bg-white px-4 py-2 shadow-md sticky top-16 z-30">
+            <form onSubmit={handleSearch} className="relative">
+            <input
+                type="text"
+                placeholder="Tìm kiếm sản phẩm..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
+            />
+            <button
+                type="submit"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+                <Search className="w-5 h-5" />
+            </button>
+            </form>
+        </div>
+        )}
+
+
+      {/* Mobile Menu */}
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        categories={categories}
+      />
+
+      {/* Cart Sidebar */}
+      <CartSidebar />
     </>
   );
 }

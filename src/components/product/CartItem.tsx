@@ -9,7 +9,7 @@ type CartItemProps = {
     name: string;
     price: number;
     quantity: number;
-    image: string;
+    image?: string;
     onIncrease: (id: number) => void;
     onDecrease: (id: number) => void;
     onRemove: (id: number) => void;
@@ -27,7 +27,11 @@ const CartItem: React.FC<CartItemProps> = ({
 }) => {
     return (
         <div className="relative border-b border-gray-300 pb-4 mb-4 flex flex-col sm:flex-row items-center gap-4">
-            <Image src={image} alt={name} width={112} height={112} className="w-28 h-28 object-cover" />
+            {image && image != '' ? (
+                <Image src={image} alt={name} width={112} height={112} className="w-28 h-28 object-cover" />
+            ) : (
+                <div className="w-28 h-28 object-cover rounded animate-pulse" />
+            )}
             <div className="flex-1">
                 <h2 className="font-bold">{name}</h2>
                 <p className="text-gray-600 mt-2 font-bold">

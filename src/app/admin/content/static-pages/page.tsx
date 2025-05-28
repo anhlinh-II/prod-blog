@@ -69,8 +69,11 @@ export default function StaticPagesPage() {
      });
 
      // Mutations
-     const createMutation = useMutation({
-          mutationFn: createStaticPage,
+     const createMutation = useMutation<StaticPageResponse, unknown, StaticPageRequest>({
+          mutationFn: async (request: StaticPageRequest) => {
+               const res = await createStaticPage(request);
+               return res.result;
+          },
           onSuccess: () => {
                queryClient.invalidateQueries({ queryKey: ['static-pages'] });
                handleCloseDialog();
@@ -131,8 +134,7 @@ export default function StaticPagesPage() {
      const handleSubmit = (e: React.FormEvent) => {
           e.preventDefault();
           const requestData = {
-               ...form,
-               type: form.type.toString() // Ensure type is sent as string
+               ...form
           };
           
           if (editingId) {
