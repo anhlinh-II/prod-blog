@@ -28,7 +28,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         {products.length > 0 ? (
           products.map((product) => (
             <div key={product.id} className="flex items-start gap-4 border-t border-gray-300 pt-4">
-              <Image src={product.image} width={80} height={80} alt={product.name} className="w-20 h-20 object-contain" />
+              {product.image && product.image != '' ? (
+                <Image src={product.image} width={80} height={80} alt={product.name} className="w-20 h-20 object-contain" />
+              ) : (
+                  <div className="w-20 h-20 object-cover rounded animate-pulse" />
+              )}
               <div className="flex-1">
                 <p className="font-medium text-gray-800">{product.name}</p>
                 <p className="text-sm text-gray-600">Số lượng: {product.quantity}</p>

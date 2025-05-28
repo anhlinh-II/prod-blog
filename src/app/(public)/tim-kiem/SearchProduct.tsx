@@ -82,7 +82,7 @@ export default function SearchProduct({ params }: SearchProps) {
         { label: "Tìm kiếm sản phẩm"}
     ] : [
         { label: "🏠 Trang chủ", href: "/" },
-        { label: `Kết quả tìm kiếm cho ${keyword}`}
+        { label: `Tìm kiếm cho: ${keyword}`}
     ];
 
     return (

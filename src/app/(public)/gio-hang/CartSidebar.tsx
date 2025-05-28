@@ -2,6 +2,8 @@
 
 import { useAppContext } from "@/utils/AppContext";
 import { X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 const CartSidebar = () => {
   const { cart, removeFromCart, isCartVisible, toggleCart } = useAppContext();
@@ -9,10 +11,10 @@ const CartSidebar = () => {
   if (!isCartVisible) return null;
 
   return (
-    <div className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg z-50 p-4 overflow-y-auto">
+    <div className="fixed top-16 right-0 w-80 bg-white shadow-lg z-50 p-4 overflow-y-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Giỏ hàng</h2>
-        <button onClick={toggleCart}>
+        <button onClick={toggleCart} className=" cursor-pointer">
           <X size={20} />
         </button>
       </div>
@@ -21,19 +23,36 @@ const CartSidebar = () => {
       ) : (
         <ul className="space-y-4">
           {cart.map(item => (
-            <li key={item.id} className="flex items-center justify-between">
+            <li key={item.id} className="flex items-center justify-between border-t border-gray-300 pt-2">
               <div className="flex items-center gap-2">
-                <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded" />
+                {item.image && item.image != '' ? (
+                <Image src={item.image} alt={item.name} width={48} height={48} className="w-12 h-12 object-cover rounded" />
+                ) : (
+                  <div className="w-12 h-12 object-cover rounded animate-pulse" />
+                )}
                 <div>
                   <p className="font-semibold">{item.name}</p>
                   <p className="text-sm text-gray-500">{item.quantity} × {item.price.toLocaleString()}đ</p>
                 </div>
               </div>
-              <button onClick={() => removeFromCart(item.id)} className="text-red-600">Xoá</button>
             </li>
           ))}
         </ul>
       )}
+
+      <Link href={`/gio-hang`}>
+        <button className="w-full mt-2 py-2 border border-gray-500 rounded font-medium 
+            text-sm hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150">
+          Xem giỏ hàng
+        </button>
+      </Link>
+
+      <Link href={`/don-hang`}>
+        <button className="w-full mt-2 py-2 border border-gray-500 rounded font-medium 
+            text-sm hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150">
+          Tạo đơn hàng
+        </button>
+      </Link>
     </div>
   );
 };
