@@ -7,20 +7,21 @@ import Link from 'next/link';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { Box, IconButton, Typography, CssBaseline } from '@mui/material';
 import {
-     Menu as MenuIconLib,
-     Dashboard as DashboardIcon,
-     Category as CategoryIcon,
-     ShoppingCart as SalesIcon,
-     People as CustomersIcon,
-     Article as ContentIcon,
-     Inventory as ProductIcon,
-     Description as ProductDetailIcon,
-     Settings as SpecsIcon,
-     Image as BannerIcon,
-     PostAdd as PostIcon,
-     Person as AuthorIcon,
-     Receipt as OrderIcon
+    Menu as MenuIconLib,
+    Dashboard as DashboardIcon,
+    Category as CategoryIcon,
+    ShoppingCart as SalesIcon,
+    People as CustomersIcon,
+    Article as ContentIcon,
+    Inventory as ProductIcon,
+    Description as ProductDetailIcon,
+    Settings as SpecsIcon,
+    Image as BannerIcon,
+    PostAdd as PostIcon,
+    Person as AuthorIcon,
+    Receipt as OrderIcon
 } from '@mui/icons-material';
+import { ContactIcon } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const [collapsed, setCollapsed] = useState(false);
@@ -49,20 +50,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             icon: <SalesIcon />,
             subMenu: [
                 { title: 'Quản lý đơn hàng', path: '/admin/sales/orders', icon: <OrderIcon /> },
+                {
+                    title: 'Khách hàng',
+                    icon: <CustomersIcon />,
+                    path: '/admin/sales/customers',
+                },
             ],
-        },
-        {
-            title: 'Khách hàng',
-            icon: <CustomersIcon />,
-            path: '/admin/customers',
         },
         {
             title: 'Quản lý nội dung',
             icon: <ContentIcon />,
             subMenu: [
                 { title: 'Quản lý banner', path: '/admin/content/banners', icon: <BannerIcon /> },
-                { title: 'Quản lý bài viết', path: '/admin/content/posts', icon: <PostIcon /> },
+                { title: 'Quản lý bài viết', path: '/admin/content/news', icon: <PostIcon /> },
                 { title: 'Quản lý tác giả', path: '/admin/content/authors', icon: <AuthorIcon /> },
+                { title: 'Quản lý liên lạc', path: '/admin/content/contact', icon: <ContactIcon /> },
+
             ],
         },
     ];
@@ -102,7 +105,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         borderBottom: '1px solid #e0e0e0',
                         flexShrink: 0
                     }}>
-                        {!collapsed && <Typography variant="h6" fontWeight="bold" noWrap>Admin Panel</Typography>}
+                        {!collapsed && (
+                            <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <Typography variant="h6" fontWeight="bold" noWrap>
+                                    VShare
+                                </Typography>
+                            </Link>
+                        )}
                         <IconButton onClick={() => setCollapsed(!collapsed)} sx={{ display: { xs: 'none', md: 'inline-flex' } }}>
                             <MenuIconLib />
                         </IconButton>

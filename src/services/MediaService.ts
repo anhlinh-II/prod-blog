@@ -64,3 +64,10 @@ export const getBannerImages = async () => {
     return response.data;
 };
 
+export const deleteImage = async (mediaId: number) => {
+    return (await instance.delete<ApiResponse<void>>(
+        `/api/medias/delete/one`,
+        { params: { mediaId } }
+    )).data;
+};
+

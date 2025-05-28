@@ -7,27 +7,28 @@ export enum NewsType {
 }
 
 export interface NewsRequest {
-  title: string;
-  content: string;
-  type: NewsType;
-  categoryIds?: number[]; 
-  isActive?: boolean; 
-  userId: number;
+    title: string;
+    content: string;
+    type: NewsType;
+    categoryIds?: number[] | null;
 }
 
 export interface NewsResponse {
-  id: number;
-  title: string;
-  slug: string;
-  images: MediaResponse[];
-  description: string;
-  content: string;
-  type: NewsType;
-  categorySlugs: string[]; 
-  createdAt: string; 
-  updatedAt: string;
-  isActive: boolean;
-  userId: number;
+    id: number;
+    title: string;
+    slug: string;
+    description: string;
+    content: string;
+    type: NewsType;
+    images: MediaResponse[];  // Change this to MediaResponse[]
+    views: number;
+    isPublished: boolean;
+    isDeleted: boolean;
+    categorySlugs: string[];
+    createdAt: string;
+    updatedAt: string;
+    createdBy: string;
+    updatedBy: string;
 }
 
 ////////////////////////////////////// STATIC PAGE

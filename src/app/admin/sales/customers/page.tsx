@@ -36,6 +36,7 @@ export default function AdminContactsPage() {
   const [selectedContact, setSelectedContact] = useState<ContactResponse | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteContactId, setDeleteContactId] = useState<number | null>(null);
+  const [tempSize, setTempSize] = useState<string>('10');
 
   // Fetch contacts with pagination
   const { data: pageData, isLoading, error } = useQuery<PageType<ContactResponse>>({
@@ -70,6 +71,15 @@ export default function AdminContactsPage() {
   const handleConfirmDelete = () => {
     if (deleteContactId) {
       deleteMutation.mutate(deleteContactId);
+    }
+  };
+
+  // Add handler for Enter key
+  const handleSizeKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const newSize = Math.max(1, parseInt(tempSize) || 10);
+      setSize(newSize);
+      setPage(0);
     }
   };
 
@@ -169,13 +179,15 @@ export default function AdminContactsPage() {
                 <TextField
                   size="small"
                   type="number"
-                  value={size}
-                  onChange={e => {
-                    const val = Math.max(1, Number(e.target.value));
-                    setSize(val);
-                    setPage(0);
+                  value={tempSize}
+                  onChange={e => setTempSize(e.target.value)}
+                  onKeyPress={handleSizeKeyPress}
+                  onBlur={() => setTempSize(size.toString())}
+                  inputProps={{ 
+                    min: 1,
+                    style: { width: 60 },
+                    'aria-label': 'page size'
                   }}
-                  inputProps={{ min: 1, style: { width: 60 } }}
                 />
                 <Typography component="span">
                   Tổng: {pageData?.page.totalElements ?? 0}

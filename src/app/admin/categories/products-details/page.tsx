@@ -57,11 +57,14 @@ const defaultForm: ProductRequest = {
      isEnabled: true,
      isActive: true,
      brandId: undefined,
-     categoryIds: [],
-     attributes: [],
+     categoryIds: null,
+     attributes: null,
 };
 
 export default function AdminProductDetailsPage() {
+  // Add new state for temporary page size
+  const [tempSize, setTempSize] = useState<string>('10');
+
      const queryClient = useQueryClient();
 
      // State
@@ -440,7 +443,7 @@ export default function AdminProductDetailsPage() {
                          ? (img.startsWith('http') ? img : `http://localhost:8080${img}`)
                          : ''
                );
-          } 
+          }
           // else if (typeof res.result.image === 'string') {
           //      images = res.result.image
           //           ? res.result.image.split(',').map(url =>
@@ -534,6 +537,15 @@ export default function AdminProductDetailsPage() {
           }));
      };
 
+     // Add handler for Enter key
+     const handleSizeKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+          if (e.key === 'Enter') {
+               const newSize = Math.max(1, parseInt(tempSize) || 10);
+               setSize(newSize);
+               setPage(0);
+          }
+     };
+
      return (
           <Box>
                <Typography variant="h5" fontWeight="bold" mb={2}>
@@ -552,123 +564,125 @@ export default function AdminProductDetailsPage() {
                     )}
                     {!isLoading && !error && (
                          <>
-                         <Box sx={{ overflowX: 'auto' }}>
-                              <Table sx={{ minWidth: 900 }}>
-                                   <TableHead>
-                                        <TableRow>
-                                             <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>ID</TableCell>
-                                             <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>Tên</TableCell>
-                                             <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>Giá</TableCell>
-                                             <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>Trạng thái</TableCell>
-                                             <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>Ảnh</TableCell>
-                                             <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>Thuộc tính</TableCell>
-                                             <TableCell>Hành động</TableCell>
-                                        </TableRow>
-                                   </TableHead>
-                                   <TableBody>
-                                        {pageData?.content.map((prod: ProductResponse) => (
-                                             <TableRow key={prod.id}>
-                                                  <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>{prod.id}</TableCell>
-                                                  <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>{prod.name}</TableCell>
-                                                  <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>{prod.price}</TableCell>
-                                                  <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>{prod.isEnabled ? 'Bật' : 'Tắt'}</TableCell>
-                                                  <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>
-                                                       <Tooltip title="Xem/Chỉnh sửa ảnh">
-                                                            <IconButton color="primary" onClick={() => handleViewImages(prod.id)}>
-                                                                 <PhotoLibraryIcon />
-                                                            </IconButton>
-                                                       </Tooltip>
-                                                  </TableCell>
-                                                  <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>
-                                                       <Tooltip title="Xem thuộc tính">
-                                                            <IconButton color="primary" onClick={() => handleViewAttributes(prod.id)}>
-                                                                 <VisibilityIcon />
-                                                            </IconButton>
-                                                       </Tooltip>
-                                                  </TableCell>
-                                                  <TableCell>
-                                                       <Tooltip title="Xem chi tiết">
-                                                            <IconButton color="primary" onClick={() => handleViewDetails(prod.id)}>
-                                                                 <InfoIcon />
-                                                            </IconButton>
-                                                       </Tooltip>
-                                                       <Tooltip title="Sửa">
-                                                            <IconButton color="info" onClick={() => handleOpenEdit(prod.id)}>
-                                                                 <EditIcon />
-                                                            </IconButton>
-                                                       </Tooltip>
-                                                       <Tooltip title="Xóa">
-                                                            <IconButton color="error" onClick={() => handleDeleteClick(prod.id)}>
-                                                                 <DeleteIcon />
-                                                            </IconButton>
-                                                       </Tooltip>
-                                                  </TableCell>
+                              <Box sx={{ overflowX: 'auto' }}>
+                                   <Table sx={{ minWidth: 900 }}>
+                                        <TableHead>
+                                             <TableRow>
+                                                  <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>ID</TableCell>
+                                                  <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>Tên</TableCell>
+                                                  <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>Giá</TableCell>
+                                                  <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>Trạng thái</TableCell>
+                                                  <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>Ảnh</TableCell>
+                                                  <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>Thuộc tính</TableCell>
+                                                  <TableCell>Hành động</TableCell>
                                              </TableRow>
-                                        ))}
-                                   </TableBody>
-                              </Table>
-                         </Box>
-                         {/* Pagination controls */}
-                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2, flexWrap: 'wrap', gap: 2 }}>
-                              <Box>
-                                   <Button
-                                        variant="outlined"
-                                        size="small"
-                                        disabled={page === 0}
-                                        onClick={() => setPage(0)}
-                                        sx={{ mr: 1 }}
-                                   >
-                                        Trang đầu
-                                   </Button>
-                                   <Button
-                                        variant="outlined"
-                                        size="small"
-                                        disabled={page === 0}
-                                        onClick={() => setPage(p => Math.max(0, p - 1))}
-                                        sx={{ mr: 1 }}
-                                   >
-                                        &lt;
-                                   </Button>
-                                   <Typography component="span" sx={{ mx: 1 }}>
-                                        Trang {(pageData?.page?.number ?? 0) + 1} / {pageData?.page?.totalPages ?? 1}
-                                   </Typography>
-                                   <Button
-                                        variant="outlined"
-                                        size="small"
-                                        disabled={pageData ? page >= pageData.page.totalPages - 1 : true}
-                                        onClick={() => setPage(p => pageData ? Math.min(pageData.page.totalPages - 1, p + 1) : p)}
-                                        sx={{ ml: 1 }}
-                                   >
-                                        &gt;
-                                   </Button>
-                                   <Button
-                                        variant="outlined"
-                                        size="small"
-                                        disabled={pageData ? page >= pageData.page.totalPages - 1 : true}
-                                        onClick={() => setPage(pageData ? pageData.page.totalPages - 1 : 0)}
-                                        sx={{ ml: 1 }}
-                                   >
-                                        Trang cuối
-                                   </Button>
+                                        </TableHead>
+                                        <TableBody>
+                                             {pageData?.content.map((prod: ProductResponse) => (
+                                                  <TableRow key={prod.id}>
+                                                       <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>{prod.id}</TableCell>
+                                                       <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>{prod.name}</TableCell>
+                                                       <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>{prod.price}</TableCell>
+                                                       <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>{prod.isEnabled ? 'Bật' : 'Tắt'}</TableCell>
+                                                       <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>
+                                                            <Tooltip title="Xem/Chỉnh sửa ảnh">
+                                                                 <IconButton color="primary" onClick={() => handleViewImages(prod.id)}>
+                                                                      <PhotoLibraryIcon />
+                                                                 </IconButton>
+                                                            </Tooltip>
+                                                       </TableCell>
+                                                       <TableCell sx={{ borderRight: '1px solid #e0e0e0' }}>
+                                                            <Tooltip title="Xem thuộc tính">
+                                                                 <IconButton color="primary" onClick={() => handleViewAttributes(prod.id)}>
+                                                                      <VisibilityIcon />
+                                                                 </IconButton>
+                                                            </Tooltip>
+                                                       </TableCell>
+                                                       <TableCell>
+                                                            <Tooltip title="Xem chi tiết">
+                                                                 <IconButton color="primary" onClick={() => handleViewDetails(prod.id)}>
+                                                                      <InfoIcon />
+                                                                 </IconButton>
+                                                            </Tooltip>
+                                                            <Tooltip title="Sửa">
+                                                                 <IconButton color="info" onClick={() => handleOpenEdit(prod.id)}>
+                                                                      <EditIcon />
+                                                                 </IconButton>
+                                                            </Tooltip>
+                                                            <Tooltip title="Xóa">
+                                                                 <IconButton color="error" onClick={() => handleDeleteClick(prod.id)}>
+                                                                      <DeleteIcon />
+                                                                 </IconButton>
+                                                            </Tooltip>
+                                                       </TableCell>
+                                                  </TableRow>
+                                             ))}
+                                        </TableBody>
+                                   </Table>
                               </Box>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                   <Typography component="span">Số sản phẩm/trang:</Typography>
-                                   <TextField
-                                        size="small"
-                                        type="number"
-                                        value={size}
-                                        onChange={e => {
-                                             const val = Math.max(1, Number(e.target.value));
-                                             setSize(val);
-                                             setPage(0);
-                                        }}
-                                        inputProps={{ min: 1, style: { width: 60 } }}
-                                   />
-                                   <Typography component="span">
-                                        Tổng: {pageData?.page.totalElements ?? 0}
-                                   </Typography>
+                              {/* Pagination controls */}
+                              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2, flexWrap: 'wrap', gap: 2 }}>
+                                   <Box>
+                                        <Button
+                                             variant="outlined"
+                                             size="small"
+                                             disabled={page === 0}
+                                             onClick={() => setPage(0)}
+                                             sx={{ mr: 1 }}
+                                        >
+                                             Trang đầu
+                                        </Button>
+                                        <Button
+                                             variant="outlined"
+                                             size="small"
+                                             disabled={page === 0}
+                                             onClick={() => setPage(p => Math.max(0, p - 1))}
+                                             sx={{ mr: 1 }}
+                                        >
+                                             &lt;
+                                        </Button>
+                                        <Typography component="span" sx={{ mx: 1 }}>
+                                             Trang {(pageData?.page?.number ?? 0) + 1} / {pageData?.page?.totalPages ?? 1}
+                                        </Typography>
+                                        <Button
+                                             variant="outlined"
+                                             size="small"
+                                             disabled={pageData ? page >= pageData.page.totalPages - 1 : true}
+                                             onClick={() => setPage(p => pageData ? Math.min(pageData.page.totalPages - 1, p + 1) : p)}
+                                             sx={{ ml: 1 }}
+                                        >
+                                             &gt;
+                                        </Button>
+                                        <Button
+                                             variant="outlined"
+                                             size="small"
+                                             disabled={pageData ? page >= pageData.page.totalPages - 1 : true}
+                                             onClick={() => setPage(pageData ? pageData.page.totalPages - 1 : 0)}
+                                             sx={{ ml: 1 }}
+                                        >
+                                             Trang cuối
+                                        </Button>
+                                   </Box>
+                                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <Typography component="span">Số sản phẩm/trang:</Typography>
+                                        <TextField
+                                             size="small"
+                                             type="number"
+                                             value={tempSize}
+                                             onChange={e => setTempSize(e.target.value)}
+                                             onKeyPress={handleSizeKeyPress}
+                                             onBlur={() => setTempSize(size.toString())}
+                                             inputProps={{ 
+                                                  min: 1,
+                                                  style: { width: 60 },
+                                                  'aria-label': 'page size'
+                                             }}
+                                        />
+                                        <Typography component="span">
+                                             Tổng: {pageData?.page.totalElements ?? 0}
+                                        </Typography>
+                                   </Box>
                               </Box>
-                         </Box>
                          </>
                     )}
                </Paper>
@@ -1030,17 +1044,17 @@ export default function AdminProductDetailsPage() {
                     </DialogActions>
                </Dialog>
 
-          {/* Modal xác nhận xóa sản phẩm */}
-          <Dialog open={openDeleteDialog} onClose={handleCancelDelete}>
-               <DialogTitle>Xác nhận xóa sản phẩm</DialogTitle>
-               <DialogContent>
-                    <Typography>Bạn có chắc chắn muốn xóa sản phẩm này?</Typography>
-               </DialogContent>
-               <DialogActions>
-                    <Button onClick={handleCancelDelete}>Hủy</Button>
-                    <Button onClick={handleConfirmDelete} color="error" variant="contained">Xóa</Button>
-               </DialogActions>
-          </Dialog>
+               {/* Modal xác nhận xóa sản phẩm */}
+               <Dialog open={openDeleteDialog} onClose={handleCancelDelete}>
+                    <DialogTitle>Xác nhận xóa sản phẩm</DialogTitle>
+                    <DialogContent>
+                         <Typography>Bạn có chắc chắn muốn xóa sản phẩm này?</Typography>
+                    </DialogContent>
+                    <DialogActions>
+                         <Button onClick={handleCancelDelete}>Hủy</Button>
+                         <Button onClick={handleConfirmDelete} color="error" variant="contained">Xóa</Button>
+                    </DialogActions>
+               </Dialog>
           </Box>
      );
 }
