@@ -7,7 +7,6 @@ import '@/styles/scrollbar.css'
 import { NewsResponse } from "@/types/News";
 import { getNewsBySlug } from "@/services/NewsService";
 import Post from "@/components/news/Post";
-import Head from "next/head";
 
 
 interface NewsPageProps {
@@ -50,14 +49,6 @@ export default function NewsPage({ params }: NewsPageProps) {
 
     return (
         <section className="w-full lg:w-13/25 flex flex-col items-center gap-12" ref={newsRef}>
-            <Head>
-                <title>{news?.title} | Điện máy V Share</title>
-                <meta name="description" content={news?.content} />
-                <meta property="og:title" content={`${news?.title} | Điện máy V Share`} />
-                <meta property="og:description" content={news?.content} />
-                <meta property="og:image" content={news?.images && news?.images.length > 0 ? news?.images[0].url : 'logo.jpg'} />
-                <meta name="robots" content="index, follow" />
-            </Head>
         {news && (
             <Post
                 key={news.id}

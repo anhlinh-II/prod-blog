@@ -21,7 +21,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   return (
     <AnimatePresence>
       {visible && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -41,8 +41,8 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
             </h2>
 
             <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 border-2 border-red-500 rounded-full flex items-center justify-center">
-                <span className="text-red-500 text-xl font-bold">!</span>
+              <div className="w-16 h-16 border-2 border-yellow-500 rounded-full flex items-center justify-center">
+                <span className="text-yellow-500 text-3xl font-bold">?</span>
               </div>
             </div>
 

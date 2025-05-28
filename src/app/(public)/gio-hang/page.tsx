@@ -9,7 +9,6 @@ import OrderBreadcrumb from "@/components/common/OrderBreadcrumb";
 import Link from "next/link";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { useAppContext } from "@/utils/AppContext";
-import Head from "next/head";
 
 
 type CartItem = {
@@ -92,14 +91,6 @@ export default function Cart() {
 
     return (
         <div className="">
-            <Head>
-                <title>Giỏ hàng | Điện máy V Share</title>
-                <meta name="description" content={``} />
-                <meta property="og:title" content={`Giỏ hàng | Điện máy V Share`} />
-                <meta property="og:description" content={``} />
-                <meta property="og:image" content={`/logo.jpg`} />
-                <meta name="robots" content="index, follow" />
-            </Head>
             <Breadcrumb items={breadcrumbItems} />
 
             <main className="flex-grow bg-gray-50 py-6">
@@ -129,7 +120,7 @@ export default function Cart() {
                         {/* Thông tin đơn hàng */}
                         <div className="p-6 rounded-xl h-max border border-gray-300">
                             <h2 className="text-lg font-bold mb-4">
-                                Thông tin đơn hàng ({cart.length})
+                                Thông tin giỏ hàng ({cart.length})
                             </h2>
                             <div className="flex justify-between mb-2">
                                 <span>Tạm tính</span>
@@ -147,11 +138,12 @@ export default function Cart() {
                                 <span>{subtotal.toLocaleString()} VND</span>
                             </div>
                             <p className="text-sm text-gray-500">(Đã bao gồm VAT)</p>
-                            <p className="text-base my-4 text-red-700">Khi tạo đơn hàng, nhân viên sẽ liên hệ và trao đổi với bạn thông qua số điện thoại</p>
+                            <p className="text-base my-4 text-red-700">Khi tạo đơn hàng, nhân viên sẽ tiếp nhận thông tin và sẽ liên hệ, trao đổi với quý khách thông qua số điện thoại</p>
                             <p className="text-base text-red-700">(Tuyệt đối không thanh toán trực tuyến)</p>
 
                             <Link href={`/don-hang`}>
-                                <button className={`w-full bg-red-700 text-white py-2 rounded mt-4 font-bold 
+                                <button className={`w-full bg-red-600 text-white py-2 rounded-lg mt-4 font-bold 
+                                transition hover:bg-red-700
                                     ${cart.length < 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                                     disabled={cart.length < 1}>
                                         Tạo đơn hàng

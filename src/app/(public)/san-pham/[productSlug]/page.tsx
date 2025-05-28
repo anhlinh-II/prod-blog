@@ -31,7 +31,7 @@ export default function ProductPage({ params }: ProductPageProps) {
     const [price, setPrice] = useState<number>();
     const [quantity, setQuantity] = useState(1);
     const [displayMediaIndex, setDisplayMediaIndex] = useState<number | null>(null);
-    const { addToCart } = useAppContext();
+    const { cart, addToCart } = useAppContext();
     const [toast, setToast] = useState<{
         message: string;
         visible: boolean;
@@ -188,15 +188,19 @@ export default function ProductPage({ params }: ProductPageProps) {
                                 <Button className="flex-1 w-[80%] text-red-700 bg-white hover:bg-gray-100
                                     border border-red-700"
                                     onClick={() => {
+                                        if(cart.length >= 5) {
+                                            showToast("Bạn chỉ có thể đưa tối đa 5 sản phẩm vào giỏ hàng.", "warning");
+                                        } else {
                                         if (product) {
                                             addToCart({
                                                 id: product.id,
                                                 name: product.name,
                                                 price: product.specialPrice || product.price,
                                                 image: product.images && product.images.length > 0 ? product.images[0] : '',
-                                                quantity: 1
+                                                quantity: quantity
                                             });
                                             showToast(`Đã thêm sản phẩm vào giỏ hàng`, 'success');
+                                        }
                                         }
                                     }}>
                                     Thêm vào giỏ hàng

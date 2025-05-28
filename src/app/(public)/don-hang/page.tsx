@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import CheckoutForm from "./CheckoutForm";
 import OrderSummary from "./OrderSummary";
 import { Container } from "@mui/material";
@@ -10,11 +10,12 @@ import { throttle } from 'lodash';
 import Breadcrumb from "@/components/common/Breadcrumb";
 import { useAppContext } from "@/utils/AppContext";
 import Toast from "@/components/common/Toast";
-import { placeOrder } from "@/services/OrderService";
+import { deleteOrder, placeOrder } from "@/services/OrderService";
 import { OrderItemRequest, OrderRequest } from "@/types/Order";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import Link from "next/link";
-import Head from "next/head";
+import Image from 'next/image';
+import ConfirmModal from "@/components/common/ConfirmModal";
 
 export default function Checkout() {
     const { cart, clearCart } = useAppContext();
@@ -22,6 +23,11 @@ export default function Checkout() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isOrderplaced, setIsOrderplaced] = useState(false);
     const [orderID, setOrderID] = useState<number>();
+    const [orderSummary, setOrderSummary] = useState<{
+        products: typeof cart;
+        customerInfo: typeof checkoutData;
+    } | null>(null);
+
     const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
     const [toast, setToast] = useState<{
         message: string;
@@ -32,6 +38,8 @@ export default function Checkout() {
         visible: false,
         type: 'success',
     });
+    const [showConfirm, setShowConfirm] = useState(false);
+    const formRef = useRef<HTMLDivElement>(null);
     
     const showToast = (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
         setToast({ message, visible: true, type });
@@ -48,6 +56,9 @@ export default function Checkout() {
             const validationErrors = validateOrderFormData(checkoutData);
             if (Object.keys(validationErrors).length > 0) {
                 setFormErrors(validationErrors);
+                setTimeout(() => {
+                    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
                 return;
             }
 
@@ -83,6 +94,10 @@ export default function Checkout() {
 
                 setIsOrderplaced(true);
                 setOrderID(response.result);
+                setOrderSummary({
+                    products: cart,
+                    customerInfo: checkoutData
+                });
                 showToast(`Đặt hàng thành công! Mã đơn: ${response.result}`, 'success');
                 clearCart();
             } catch (err) {
@@ -94,6 +109,20 @@ export default function Checkout() {
         }, 5000),
         [checkoutData, cart, isSubmitting]
     );
+
+    const handleCancelOrder = async (id: number) => {
+
+        try {
+            await deleteOrder(id);
+            showToast("Huỷ đơn hàng thành công", "success");
+            setIsOrderplaced(false);
+            setOrderSummary(null);
+            setOrderID(undefined);
+        } catch (err) {
+            console.error("Cancel failed", err);
+            showToast("Huỷ đơn hàng thất bại", "error");
+        }
+    };
     
     useEffect(() => {
         setIsOrderplaced(false);
@@ -117,15 +146,7 @@ export default function Checkout() {
   	];
 
     return (
-        <div className="">
-            <Head>
-                <title>Đơn hàng | Điện máy V Share</title>
-                <meta name="description" content={``} />
-                <meta property="og:title" content={`Đơn hàng | Điện máy V Share`} />
-                <meta property="og:description" content={``} />
-                <meta property="og:image" content={`/logo.jpg`} />
-                <meta name="robots" content="index, follow" />
-            </Head>
+        <div className="" ref={formRef}>
             <Breadcrumb items={breadcrumbItems} />
             <main className="flex-grow bg-gray-50 py-6">
                 <Container maxWidth={"lg"} >
@@ -147,26 +168,72 @@ export default function Checkout() {
                         </section>
                     </div>
                     ) : (
+                    orderSummary && (
                     <div className="max-w-3xl w-full mx-auto bg-white border border-gray-300 rounded-2xl shadow-lg p-6
-                        flex flex-col items-center justify-center gap-4 my-16">
-                        <p className="text-xl font-semibold">Đơn hàng được tạo thành công</p>
-                        <div className="flex justify-center mb-4">
-                            <div className="w-16 h-16 border-2 border-green-500 rounded-full flex items-center justify-center">
-                                <span className="text-green-500 text-3xl font-bold"><FaRegCircleCheck /></span>
+                        flex flex-col gap-6 my-16">
+                        <div className="flex flex-col items-center">
+                            <div className="w-16 h-16 border-2 border-green-500 rounded-full flex items-center justify-center mb-4">
+                                <FaRegCircleCheck className="text-green-500 text-3xl" />
                             </div>
+                            <p className="text-xl font-semibold">Đơn hàng được tạo thành công</p>
+                            <p>Mã đơn hàng: {orderID}</p>
+                            <p className="text-black text-center text-xl mt-2">
+                                Nhân viên Điện máy V Share sẽ liên hệ với quý khách qua số điện thoại. <br />
+                                <span className="text-red-700">(Tuyệt đối không thanh toán trực tuyến)</span>
+                            </p>
                         </div>
-                        <p>Mã đơn hàng: {orderID}</p>
-                        <p className="text-lg text-gray-700">Nhân viên sẽ liên hệ và trao đổi với bạn thông qua số điện thoại</p>
-                        <p className="text-base text-red-700">(Tuyệt đối không thanh toán trực tuyến)</p>
-                        <button className="w-full mt-2 text-center text-gray-700 underline cursor-pointer">
-                            <Link href={`/`}>
-                                Về trang chủ
-                            </Link>
+
+                        <div className="border-t pt-4 space-y-2">
+                            <h3 className="text-lg font-bold text-gray-800">Thông tin khách hàng</h3>
+                            <p>Họ tên: {orderSummary.customerInfo.firstName} {orderSummary.customerInfo.lastName}</p>
+                            <p>SĐT: {orderSummary.customerInfo.phone}</p>
+                            <p>Email: {orderSummary.customerInfo.email}</p>
+                            <p>Địa chỉ: {orderSummary.customerInfo.address}</p>
+                            <p>Ghi chú: {orderSummary.customerInfo.note}</p>
+                        </div>
+
+                        <div className="border-t pt-4 space-y-2">
+                            <h3 className="text-lg font-bold text-gray-800">Sản phẩm đã đặt</h3>
+                            {orderSummary.products.map(product => (
+                                <div key={product.id} className="flex justify-between border-b py-2">
+                                    {product.image && product.image != '' ? (
+                                        <Image src={product.image} width={80} height={80} alt={product.name} className="w-20 h-20 object-contain" />
+                                    ) : (
+                                        <div className="w-20 h-20 object-cover rounded animate-pulse" />
+                                    )}
+                                    <span>{product.name} x {product.quantity}</span>
+                                    <span>{(product.price * product.quantity).toLocaleString()} VND</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <button 
+                            className="w-full mt-4 py-2 px-4 rounded bg-red-600 text-white font-semibold 
+                                hover:bg-red-700 cursor-pointer"
+                            onClick={() => setShowConfirm(true)}
+                        >
+                            Huỷ đơn hàng
                         </button>
+
+                        <Link href="/" className="text-center text-gray-700 underline">
+                            Về trang chủ
+                        </Link>
                     </div>
+                    )
                     )}
                     {/* Toast */}
                     <Toast message={toast.message} visible={toast.visible} type={toast.type} />
+                    
+                    <ConfirmModal
+                        visible={showConfirm}
+                        title="Huỷ đơn hàng đã đặt"
+                        message={`Bạn có chắc chắn muốn huỷ đơn hàng vừa được đặt không?`}
+                        onConfirm={() => {
+                            handleCancelOrder(orderID!);
+                            setShowConfirm(false);
+                        }}
+                        onCancel={() => setShowConfirm(false)}
+                    />
                 </Container>
             </main>
         </div>

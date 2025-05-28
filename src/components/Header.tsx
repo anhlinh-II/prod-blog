@@ -112,7 +112,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, categories }) 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 lg:hidden">
+    <div className="fixed inset-0 z-45 lg:hidden">
       <div className="fixed inset-0 bg-opacity-50" onClick={onClose} />
       <div className="fixed top-0 left-0 w-80 h-full bg-white shadow-lg">
         <div className="flex items-center justify-between p-4 border-b">
@@ -131,7 +131,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, categories }) 
             className="font-semibold block text-gray-700 hover:text-blue-600 transition-colors py-2"
             onClick={onClose}
         >
-            Bảng tin
+            Bảng tin tức
         </Link>
           <div className="space-y-1">
             <h3 className="font-semibold text-gray-800 mb-2">Danh mục sản phẩm</h3>
@@ -186,11 +186,11 @@ const Header: React.FC = () => {
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
-    };
+    }
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -220,7 +220,7 @@ const Header: React.FC = () => {
                 {!isMobile ? (
                     <Image src={`/logo-long.jpg`} alt='Điện máy V Share' width={200} height={64} priority={true}/>
                 ) : (
-                    <Image src={`/logo.jpg`} alt='Điện máy V Share' width={64} height={64} priority={true} className='rounded-full'/>
+                    <Image src={`/logo.jpg`} alt='Điện máy V Share' width={56} height={56} priority={true} className='rounded-full p-1'/>
                 )}
               </Link>
             </div>
@@ -257,7 +257,7 @@ const Header: React.FC = () => {
                 href="/tin-tuc"
                 className="text-gray-100 py-3 hover:text-gray-300 font-medium transition-colors"
               >
-                Bảng tin
+                Bảng tin tức
               </Link>
               
               <Link
@@ -279,19 +279,20 @@ const Header: React.FC = () => {
             {/* Search Bar & Cart & Mobile Menu */}
             <div className="flex items-center space-x-4 ml-auto">
               {/* Search Bar */}
-              <div className="hidden sm:block flex-shrink-0 md:w-80 max-w-lg">
+              <div className="hidden md:block flex-shrink-0 md:w-80 max-w-lg">
                 <form onSubmit={handleSearch} className="relative">
                   <input
                     type="text"
                     placeholder="Bạn tìm sản phẩm gì..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 
-                    focus:ring-blue-500 focus:border-transparent text-gray-200"
+                    className="w-full pl-4 pr-12 py-2 bg-white border border-white rounded-full focus:outline-none focus:ring-2 
+                    focus:ring-gray-200 focus:border-transparent text-black"
                   />
                   <button
                     type="submit"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-black 
+                    hover:text-gray-800 transition-colors cursor-pointer"
                   >
                     <Search className="w-5 h-5" />
                   </button>
@@ -301,7 +302,8 @@ const Header: React.FC = () => {
               {/* Cart */}
               <button
                 onClick={handleCartClick}
-                className="flex items-center gap-2 relative p-2 text-gray-100 hover:text-gray-300 transition-colors cursor-pointer"
+                className="flex items-center relative m-1 ps-1 pe-3 text-white hover:text-gray-200 transition-colors cursor-pointer
+                border border-white rounded-full"
               >
                 <div className='relative p-2'>
                 <ShoppingCart className="w-6 h-6" />
@@ -319,9 +321,10 @@ const Header: React.FC = () => {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="lg:hidden p-2 text-gray-100 hover:text-gray-300 transition-colors"
+                className="flex items-center gap-2 lg:hidden p-2 text-gray-100 hover:text-gray-300 transition-colors"
               >
                 <Menu className="w-6 h-6" />
+                <p>Danh mục</p>
               </button>
             </div>
           </div>

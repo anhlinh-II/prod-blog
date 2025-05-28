@@ -61,7 +61,7 @@ const CartItem: React.FC<CartItemProps> = ({
             </div>
             <button
                 onClick={() => onRemove(id)}
-                className="absolute top-2 right-2 text-2xl cursor-pointer text-gray-400 hover:text-red-500"
+                className="absolute top-2 right-2 text-3xl cursor-pointer text-gray-400 hover:text-red-500"
                 title="Xóa sản phẩm"
             >
                 <GoXCircle />

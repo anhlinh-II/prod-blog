@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const CartSidebar = () => {
-  const { cart, removeFromCart, isCartVisible, toggleCart } = useAppContext();
+  const { cart, isCartVisible, toggleCart } = useAppContext();
 
   if (!isCartVisible) return null;
 
@@ -21,9 +21,10 @@ const CartSidebar = () => {
       {cart.length === 0 ? (
         <p>Giỏ hàng trống</p>
       ) : (
+        <div>
         <ul className="space-y-4">
           {cart.map(item => (
-            <li key={item.id} className="flex items-center justify-between border-t border-gray-300 pt-2">
+            <li key={item.id} className="flex items-center justify-between border-t border-gray-300 py-2 ">
               <div className="flex items-center gap-2">
                 {item.image && item.image != '' ? (
                 <Image src={item.image} alt={item.name} width={48} height={48} className="w-12 h-12 object-cover rounded" />
@@ -38,21 +39,23 @@ const CartSidebar = () => {
             </li>
           ))}
         </ul>
-      )}
+        
 
-      <Link href={`/gio-hang`}>
+      <Link href={`/gio-hang`} onClick={toggleCart}>
         <button className="w-full mt-2 py-2 border border-gray-500 rounded font-medium 
-            text-sm hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150">
+            text-sm hover:bg-[#00A650] hover:text-white cursor-pointer transition-all ease-in duration-150">
           Xem giỏ hàng
         </button>
       </Link>
 
-      <Link href={`/don-hang`}>
+      <Link href={`/don-hang`} onClick={toggleCart}>
         <button className="w-full mt-2 py-2 border border-gray-500 rounded font-medium 
-            text-sm hover:bg-red-900 hover:text-white cursor-pointer transition-all ease-in duration-150">
+            text-sm hover:bg-[#00A650] hover:text-white cursor-pointer transition-all ease-in duration-150">
           Tạo đơn hàng
         </button>
       </Link>
+      </div>
+      )}
     </div>
   );
 };
