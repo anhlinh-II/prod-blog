@@ -18,8 +18,8 @@ export interface ProductRequest {
   isEnabled?: boolean;
   isActive?: boolean;
   brandId?: number;
-  categoryIds?: number[]; // Đổi từ Set<number> sang number[]
-  attributes?: ProductAttributeRequest[];
+  categoryIds?: number[] | null; 
+  attributes?: ProductAttributeRequest[] | null;
 }
 
 export interface ProductAttribute {

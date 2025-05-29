@@ -11,7 +11,7 @@ interface AccessTokenResponse {
  */
 
 const instance = axiosClient.create({
-    baseURL: 'http://localhost:8080',
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
     withCredentials: true
 });
 
@@ -19,25 +19,26 @@ const instance = axiosClient.create({
 const mutex = new Mutex();
 const NO_RETRY_HEADER = 'x-no-retry';
 
-// const handleRefreshToken = async (): Promise<string | null | undefined> => {
-//     return await mutex.runExclusive(async () => {
-//         const res = await instance.get<ApiResponse<AccessTokenResponse>>('/api/auth/refresh');
-//         if (res && res.data) return res.data?.result?.access_token;
-//         else return null;
-//     });
-// };
+const handleRefreshToken = async (): Promise<string | null | undefined> => {
+    return await mutex.runExclusive(async () => {
+        const res = await instance.get<ApiResponse<AccessTokenResponse>>('/api/auth/refresh');
+        if (res && res.data) return res.data?.result?.access_token;
+        else return null;
+    });
+};
 
 // instance.interceptors.request.use(function (config) {
-//     const excludedEndpoints = ['/api/auth/login', '/api/auth/register', '/api/auth/logout', '/api/auth/account'];
+//     const excludedEndpoints = ['/api/auth/login', '/api/auth/register', '/api/auth/logout', '/api/medias/images/bannerapi/banners'];
 //     const shouldExcludeToken = excludedEndpoints.some(endpoint =>
 //         config.url?.endsWith(endpoint)
 //     );
 
-//     if (!shouldExcludeToken && typeof window !== "undefined" && window.localStorage.getItem('access_token')) {
-//         const token = window.localStorage.getItem('access_token');
+//     if (!shouldExcludeToken && typeof window !== "undefined" && window.localStorage.getItem('jwt')) {
+//         const token = window.localStorage.getItem('jwt');
 //         if (token) {
 //             config.headers.Authorization = `Bearer ${token.trim()}`;
 //         }
+//         console.log("token >> ", token);
 //     }
 
 //     if (!config.headers.Accept && config.headers["Content-Type"]) {
@@ -47,10 +48,10 @@ const NO_RETRY_HEADER = 'x-no-retry';
 //     return config;
 // });
 
-// /**
-//  * Handle all responses. It is possible to add handlers
-//  * for requests, but it is omitted here for brevity.
-//  */
+// // /**
+// //  * Handle all responses. It is possible to add handlers
+// //  * for requests, but it is omitted here for brevity.
+// //  */
 // instance.interceptors.response.use(
 //     (res) => res,
 //     async (error) => {
@@ -77,7 +78,7 @@ const NO_RETRY_HEADER = 'x-no-retry';
 //         ) {
 //             const message = error?.response?.data?.error ?? "Có lỗi xảy ra, vui lòng login.";
 //             alert(message)
-//             window.location.href = '/login';
+//             window.location.href = '/auth/login';
 //         }
 
 //         if (+error.response.status === 403) {

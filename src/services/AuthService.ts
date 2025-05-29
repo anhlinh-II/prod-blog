@@ -1,4 +1,3 @@
-
 import { UserCreationRequest } from "@/types/User";
 import instance from "./Axios-customize"
 import { Account, ApiResponse, GetAccount, User } from "@/types";

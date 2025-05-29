@@ -330,3 +330,48 @@
 .arrow-3 {
   animation-delay: 0.4s;
 }
+
+/* Nội dung trang tĩnh */
+.static-page-content {
+  max-width: 100%;
+  overflow-x: auto;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+.static-page-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0;
+}
+
+.static-page-content h1,
+.static-page-content h2,
+.static-page-content h3,
+.static-page-content h4,
+.static-page-content h5,
+.static-page-content h6 {
+  margin: 1em 0 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.static-page-content p {
+  margin: 0.5em 0;
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+.static-page-content ul,
+.static-page-content ol {
+  margin: 0.5em 0;
+  margin-left: 2em;
+  margin-bottom: 1em;
+  padding-left: 2em;
+}
+
+.static-page-content blockquote {
+  border-left: 4px solid #ccc;
+  margin: 1em 0;
+  padding-left: 1em;
+  color: #666;
+}

@@ -21,7 +21,7 @@ export const getStaticPageById = async (id: number) => {
 
 // Lấy trang tĩnh theo slug
 export const getStaticPageBySlug = async (slug: string) => {
-  const response = await instance.get<ApiResponse<StaticPageResponse>>(`/api/pages/slug}`, {params: slug});
+  const response = await instance.get<ApiResponse<StaticPageResponse>>(`/api/pages/slug`, { params: { slug } });
   return response.data;
 };
 

@@ -7,20 +7,27 @@ import Link from 'next/link';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { Box, IconButton, Typography, CssBaseline } from '@mui/material';
 import {
-     Menu as MenuIconLib,
-     Dashboard as DashboardIcon,
-     Category as CategoryIcon,
-     ShoppingCart as SalesIcon,
-     People as CustomersIcon,
-     Article as ContentIcon,
-     Inventory as ProductIcon,
-     Description as ProductDetailIcon,
-     Settings as SpecsIcon,
-     Image as BannerIcon,
-     PostAdd as PostIcon,
-     Person as AuthorIcon,
-     Receipt as OrderIcon
+    Menu as MenuIconLib,
+    Dashboard as DashboardIcon,
+    Category as CategoryIcon,
+    ShoppingCart as SalesIcon,
+    People as CustomersIcon,
+    Article as ContentIcon,
+    Inventory as ProductIcon,
+    Description as ProductDetailIcon,
+    Settings as SpecsIcon,
+    Image as BannerIcon,
+    PostAdd as PostIcon,
+    Person as AuthorIcon,
+    Receipt as OrderIcon,
+    Policy
 } from '@mui/icons-material';
+import { ContactIcon } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { callFetchAccount, callLogout } from '@/services/AuthService';
+import Avatar from '@mui/material/Avatar';
+import MenuMui from '@mui/material/Menu';
+import MenuItemMui from '@mui/material/MenuItem';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const [collapsed, setCollapsed] = useState(false);
@@ -42,7 +49,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             subMenu: [
                 { title: 'Danh mục sản phẩm', path: '/admin/categories/product-categories', icon: <ProductIcon /> },
                 { title: 'Sản phẩm chi tiết', path: '/admin/categories/products-details', icon: <ProductDetailIcon /> },
-                { title: 'Thông số kỹ thuật', path: '/admin/categories/specs', icon: <SpecsIcon /> },
             ],
         },
         {
@@ -50,23 +56,51 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             icon: <SalesIcon />,
             subMenu: [
                 { title: 'Quản lý đơn hàng', path: '/admin/sales/orders', icon: <OrderIcon /> },
+                {
+                    title: 'Khách hàng',
+                    icon: <CustomersIcon />,
+                    path: '/admin/sales/customers',
+                },
             ],
-        },
-        {
-            title: 'Khách hàng',
-            icon: <CustomersIcon />,
-            path: '/admin/customers',
         },
         {
             title: 'Quản lý nội dung',
             icon: <ContentIcon />,
             subMenu: [
                 { title: 'Quản lý banner', path: '/admin/content/banners', icon: <BannerIcon /> },
-                { title: 'Quản lý bài viết', path: '/admin/content/posts', icon: <PostIcon /> },
+                { title: 'Quản lý bài viết', path: '/admin/content/news', icon: <PostIcon /> },
                 { title: 'Quản lý tác giả', path: '/admin/content/authors', icon: <AuthorIcon /> },
+                { title: 'Quản lý liên lạc', path: '/admin/content/contact', icon: <ContactIcon /> },
+                { title: 'Quản lý trang tĩnh', path: '/admin/content/static-pages', icon: <Policy /> },
+
             ],
         },
     ];
+
+    // Fetch account info
+    const { data: accountData } = useQuery({
+        queryKey: ['account'],
+        queryFn: callFetchAccount,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const user = accountData?.data.result.user;
+    const userName = user ? user.username : 'Người dùng';
+    const avatarUrl = user?.avatarUrl || '/avatar-default.png';
+
+    // Avatar menu state
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const openMenu = Boolean(anchorEl);
+
+    const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleMenuClose = () => setAnchorEl(null);
+
+    const handleLogout = async () => {
+        await callLogout();
+        window.location.href = '/auth/login';
+    };
 
     return (
         <div style={{ margin: 0, padding: 0, boxSizing: 'border-box', height: '100%', width: '100%', overflow: 'hidden' }}>
@@ -103,7 +137,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         borderBottom: '1px solid #e0e0e0',
                         flexShrink: 0
                     }}>
-                        {!collapsed && <Typography variant="h6" fontWeight="bold" noWrap>Admin Panel</Typography>}
+                        {!collapsed && (
+                            <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <Typography variant="h6" fontWeight="bold" noWrap>
+                                    VShare
+                                </Typography>
+                            </Link>
+                        )}
                         <IconButton onClick={() => setCollapsed(!collapsed)} sx={{ display: { xs: 'none', md: 'inline-flex' } }}>
                             <MenuIconLib />
                         </IconButton>
@@ -152,6 +192,35 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             )}
                         </Menu>
                     </Box>
+                    <Box sx={{ flexGrow: 1 }} />
+                    {/* User info at bottom */}
+                    <Box sx={{
+                        p: 2,
+                        borderTop: '1px solid #e0e0e0',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        cursor: 'pointer',
+                        minHeight: 64,
+                    }}
+                        onClick={handleAvatarClick}
+                    >
+                        <Avatar src={avatarUrl} alt={userName} sx={{ width: 36, height: 36 }} />
+                        {!collapsed && (
+                            <Typography variant="subtitle2" fontWeight="bold" sx={{ ml: 1 }}>
+                                {userName}
+                            </Typography>
+                        )}
+                    </Box>
+                    <MenuMui
+                        anchorEl={anchorEl}
+                        open={openMenu}
+                        onClose={handleMenuClose}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        transformOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    >
+                        <MenuItemMui onClick={handleLogout}>Đăng xuất</MenuItemMui>
+                    </MenuMui>
                 </Sidebar>
 
                 <Box component="main" sx={{
