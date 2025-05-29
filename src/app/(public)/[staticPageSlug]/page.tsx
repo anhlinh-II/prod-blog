@@ -29,7 +29,9 @@ export default function StaticPage({ params }: StaticPageProps) {
             try {
                 setIsLoading(true);
                 const res = await getStaticPageBySlug(staticPageSlug);
-                setStaticPage(res.result);
+                if(res.code == 1000) {
+                    setStaticPage(res.result);
+                }
             } catch (error) {
                 console.error("Error fetching news:", error);
             } finally {

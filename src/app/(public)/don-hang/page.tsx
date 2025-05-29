@@ -100,6 +100,10 @@ export default function Checkout() {
                 });
                 showToast(`Đặt hàng thành công! Mã đơn: ${response.result}`, 'success');
                 clearCart();
+                
+                setTimeout(() => {
+                    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
             } catch (err) {
                 console.error('Order failed', err);
                 showToast('Đặt hàng thất bại. Vui lòng thử lại.', 'error');
@@ -195,14 +199,16 @@ export default function Checkout() {
                         <div className="border-t pt-4 space-y-2">
                             <h3 className="text-lg font-bold text-gray-800">Sản phẩm đã đặt</h3>
                             {orderSummary.products.map(product => (
-                                <div key={product.id} className="flex justify-between border-b py-2">
+                                <div key={product.id} className="flex justify-start items-center gap-4 border-b py-2">
                                     {product.image && product.image != '' ? (
                                         <Image src={product.image} width={80} height={80} alt={product.name} className="w-20 h-20 object-contain" />
                                     ) : (
-                                        <div className="w-20 h-20 object-cover rounded animate-pulse" />
+                                        <div className="w-20 h-20 object-cover rounded bg-gray-100 animate-pulse" />
                                     )}
-                                    <span>{product.name} x {product.quantity}</span>
-                                    <span>{(product.price * product.quantity).toLocaleString()} VND</span>
+                                    <div className="flex flex-col gap-1">
+                                        <p className="text-lg line-clamp-2">{product.name} x {product.quantity}</p>
+                                        <p className="text-lg">{(product.price * product.quantity).toLocaleString()} VND</p>
+                                    </div>
                                 </div>
                             ))}
                         </div>

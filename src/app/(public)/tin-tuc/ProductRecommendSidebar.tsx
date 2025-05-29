@@ -68,7 +68,7 @@ const ProductRecommendSidebar = () => {
                                         alt={product.name}
                                         width={64}
                                         height={64}
-                                        className="object-contain min-w-16 min-h-16"
+                                        className="object-contain min-w-16 min-h-16 w-[64px] h-[64px]"
                                         sizes="(max-width: 64px) 64px 64px"
                                     />
                                 ) : (

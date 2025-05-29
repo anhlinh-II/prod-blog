@@ -240,9 +240,7 @@ export default function Header() {
                     Danh mục sản phẩm
                     <ChevronDown className="ml-1 w-4 h-4" />
                 </Link>
-                {categoriesError ? (
-                  <span className="text-red-500 font-medium">Lỗi tải danh mục</span>
-                ) : (
+                {!categoriesError &&(
                   <>
                     <Dropdown
                       categories={categories}

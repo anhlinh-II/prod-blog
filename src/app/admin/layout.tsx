@@ -126,6 +126,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         display: typeof window !== 'undefined' && window.innerWidth < 900 ? (toggled ? 'block' : 'none') : 'block',
                         left: 0,
                         top: 0,
+                        position: 'relative',
                     }}
                 >
                     <Box sx={{
@@ -148,7 +149,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             <MenuIconLib />
                         </IconButton>
                     </Box>
-                    <Box sx={{ overflowY: 'auto', height: 'calc(100% - 64px)' }}>
+                    <Box sx={{ overflowY: 'auto', height: 'calc(100% - 64px)', paddingBottom: 10, }}>
                         <Menu
                             menuItemStyles={{
                                 button: ({ level, active }) => ({
@@ -202,6 +203,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         gap: 1,
                         cursor: 'pointer',
                         minHeight: 64,
+                        backgroundColor: 'white',
+                        position: 'absolute',
+                        width: '100%',
+                        bottom: 0,
                     }}
                         onClick={handleAvatarClick}
                     >

@@ -7,7 +7,7 @@ const nextConfig = {
             protocol: 'http',
             hostname: 'localhost',
             port: '8080',
-            pathname: '/uploads/images/**',
+            pathname: '/uploads/**',
           },
         ],
         minimumCacheTTL: 86400,

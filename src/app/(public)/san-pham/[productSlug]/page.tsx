@@ -108,14 +108,15 @@ export default function ProductPage({ params }: ProductPageProps) {
                             <div className="h-4 bg-gray-300 rounded w-full"></div>
                             <div className="h-8 bg-gray-300 rounded w-1/2"></div>
                             <ul className="space-y-2">
-                            {Array.from({ length: 5 }).map((_, index) => (
-                                <li key={index} className="h-4 bg-gray-300 rounded w-5/6"></li>
+                            {Array.from({ length: 8 }).map((_, index) => (
+                                <li key={index} className="h-6 bg-gray-300 rounded w-5/6"></li>
                             ))}
                             </ul>
                             <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 bg-gray-300 rounded"></div>
-                            <div className="w-10 h-10 bg-gray-300 rounded"></div>
+                                <div className="w-10 h-10 bg-gray-300 rounded"></div>
+                                <div className="w-10 h-10 bg-gray-300 rounded"></div>
                             </div>
+                            <div className="w-[80%] h-10 bg-gray-300 rounded mx-auto"></div>
                             <div className="w-[80%] h-10 bg-gray-300 rounded mx-auto"></div>
                             <div className="w-[80%] h-10 bg-gray-300 rounded mx-auto"></div>
                         </div>
@@ -215,7 +216,25 @@ export default function ProductPage({ params }: ProductPageProps) {
 
                     <section className="col-span-2 my-10">
                     {/* Thông số kỹ thuật */}
-                    {product?.attributes && product?.attributes.length > 0 && (
+                    {isLoading && !product?.attributes && (
+                    <>
+                        <h2 className="text-2xl font-bold mb-4">Thông số kỹ thuật</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {[0, 1].map((col) => (
+                            <div key={col} className="space-y-2">
+                            {Array.from({ length: 4 }).map((_, i) => (
+                                <div key={i} className="flex h-12">
+                                <div className="w-1/3 bg-gray-200 animate-pulse border border-gray-300"></div>
+                                <div className="w-2/3 bg-gray-100 animate-pulse border border-gray-300"></div>
+                                </div>
+                            ))}
+                            </div>
+                        ))}
+                        </div>
+                    </>
+                    )}
+
+                    {!isLoading && product?.attributes && product?.attributes.length > 0 && (
                     <>
                         <h2 className="text-2xl font-bold mb-4">Thông số kỹ thuật</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2">
@@ -274,7 +293,17 @@ export default function ProductPage({ params }: ProductPageProps) {
                     )}
 
                     {/* Mô tả sản phẩm */}
-                    {product?.description && product?.description != "" && (
+                    {isLoading && (
+                    <div className="mt-10 space-y-4">
+                        <div className="h-6 w-48 bg-gray-300 rounded animate-pulse" />
+                        <div className="space-y-2">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+                        ))}
+                        </div>
+                    </div>
+                    )}
+                    {!isLoading && product?.description && product?.description != "" && (
                         <div className="mt-10">
                         <h2 className="text-2xl font-bold mb-4">Mô tả sản phẩm</h2>
                         <PostViewer title={""} content={product.description} />
@@ -285,7 +314,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                     {/* Similar products */}
                     <section className="mb-10">
                         <h2 className="text-2xl font-bold mb-4">Sản phẩm tương tự</h2>
-                        <ProductCarousel products={similarProducts}/>
+                        <ProductCarousel products={similarProducts} isLoading={isLoading}/>
                     </section>
                     
                     {/* Toast */}

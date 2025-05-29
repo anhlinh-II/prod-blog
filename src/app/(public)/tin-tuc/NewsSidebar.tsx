@@ -19,8 +19,8 @@ export default function NewsSidebar() {
           {isLoading
             ? Array.from({ length: 5 }).map((_, i) => (
                 <li key={i} className="w-full border-b border-gray-300 my-2 animate-pulse">
-                  <div className="h-6 bg-gray-300 rounded w-4/4 mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                  <div className="h-12 bg-gray-300 rounded w-4/4 mb-2"></div>
+                  <div className="h-8 bg-gray-200 rounded w-1/4"></div>
                 </li>
               ))
             : newsList.map((news) => (

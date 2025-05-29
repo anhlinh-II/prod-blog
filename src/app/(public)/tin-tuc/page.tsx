@@ -87,13 +87,15 @@ export default function NewsListPage() {
                     {isLoading ? (
                     // Hiển thị placeholder khi đang loading
                     Array.from({ length: 2 }).map((_, i) => (
-                        <div key={i} className="w-full animate-pulse border-b border-gray-300 pb-4">
-                        <div className="h-4 w-4 bg-gray-300 rounded-full mb-2"></div>
-                        <div className="h-6 bg-gray-400 rounded w-3/4 mb-2"></div>
-                        <div className="h-3 bg-gray-200 rounded w-full mb-1"></div>
-                        <div className="h-3 bg-gray-200 rounded w-5/6 mb-1"></div>
-                        <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-                        <div className="mt-2 w-full h-48 bg-gray-200 rounded"></div>
+                        <div key={i} className="w-full flex items-center justify-center animate-pulse border-b border-gray-300 pb-4">
+                            <div className="w-[70%]">
+                                <div className="h-10 w-10 bg-gray-200 rounded-full mb-2"></div>
+                                <div className="h-6 bg-gray-200 rounded w-2/4 mb-2"></div>
+                                <div className="h-3 bg-gray-200 rounded w-3/4 mb-1"></div>
+                                <div className="h-3 bg-gray-200 rounded w-4/6 mb-1"></div>
+                                <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                                <div className="mt-2 w-full h-48 bg-gray-200 rounded"></div>
+                            </div>
                         </div>
                     ))
                     ) : newsList && newsList.length > 0 ? (
