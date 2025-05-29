@@ -36,8 +36,8 @@ const Dropdown: React.FC<DropdownProps> = ({ categories, level, parentHovered })
         >
           <Link
             href={`/danh-muc/${category.slug}`}
-            className=" flex items-center justify-between px-4 py-2.5 text-gray-700 hover:bg-blue-50 
-            hover:text-blue-600 transition-colors rounded-xl"
+            className=" flex items-center justify-between px-4 py-2.5 text-gray-700 hover:bg-[#effff7] 
+             transition-colors rounded-xl"
           >
             <span className='w-max'>{category.name}</span>
             {category.children && category.children.length > 0 && (
@@ -308,7 +308,8 @@ const Header: React.FC = () => {
                 <div className='relative p-2'>
                 <ShoppingCart className="w-6 h-6" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full 
+                  flex items-center justify-center">
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>
                 )}
@@ -321,7 +322,8 @@ const Header: React.FC = () => {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="flex items-center gap-2 lg:hidden p-2 text-gray-100 hover:text-gray-300 transition-colors"
+                className="flex items-center gap-2 lg:hidden p-2 ms-2 text-gray-100 hover:text-gray-300 rounded-full 
+                border border-white transition-colors"
               >
                 <Menu className="w-6 h-6" />
                 <p>Danh mục</p>

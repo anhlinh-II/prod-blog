@@ -11,7 +11,7 @@ const CartSidebar = () => {
   if (!isCartVisible) return null;
 
   return (
-    <div className="fixed top-16 right-0 w-80 bg-white shadow-lg z-50 p-4 overflow-y-auto">
+    <div className="fixed top-16 right-0 w-80 bg-white shadow-lg z-50 p-4 overflow-y-auto rounded-bl-2xl border border-gray-200">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Giỏ hàng</h2>
         <button onClick={toggleCart} className=" cursor-pointer">
@@ -29,10 +29,10 @@ const CartSidebar = () => {
                 {item.image && item.image != '' ? (
                 <Image src={item.image} alt={item.name} width={48} height={48} className="w-12 h-12 object-cover rounded" />
                 ) : (
-                  <div className="w-12 h-12 object-cover rounded animate-pulse" />
+                  <div className="w-12 h-12 object-cover rounded bg-gray-100 animate-pulse" />
                 )}
                 <div>
-                  <p className="font-semibold">{item.name}</p>
+                  <p className="font-semibold line-clamp-2 max-w-60">{item.name}</p>
                   <p className="text-sm text-gray-500">{item.quantity} × {item.price.toLocaleString()}đ</p>
                 </div>
               </div>

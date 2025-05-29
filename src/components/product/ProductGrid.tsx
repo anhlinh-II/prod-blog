@@ -9,7 +9,7 @@ type ProductGridProps = {
 
 const ProductGrid: React.FC<ProductGridProps> = ({ products, isLoading }) => {
     return (
-      <div className="md:min-h-94 grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-2">
+      <div className="md:min-h-94 grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-5 gap-2">
         {products && products.map((p, idx) => (
           <ProductItem key={idx} product={p} />
         ))}

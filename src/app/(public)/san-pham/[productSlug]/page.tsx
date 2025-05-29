@@ -132,7 +132,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                             setIsDisplayMedia={setDisplayMediaIndex}
                         />
                         ) : (
-                            <div className="text-gray-500">Lỗi tải ảnh</div>
+                            <div className="text-gray-500 h-40 w-full md:h-full bg-gray-100 animate-pulse rounded-2xl p-4">Không thể tải ảnh</div> 
                         )}
 
                         {/* Product Info */}
@@ -147,12 +147,15 @@ export default function ProductPage({ params }: ProductPageProps) {
                                     <span>{product?.views ? product.views : 0}</span>
                                 </span>
                             </p>
-                            <p className="text-2xl font-bold text-red-700">{formatNumberWithCommas(price)}
-                                <span className="text-sm font-normal"> VND</span>
-                                <span className="text-lg line-through ms-4 text-gray-500 font-medium">
+                            <div className="flex flex-col-reverse md:flex-row md:items-center text-red-700">
+                                <p className="">
+                                    <span className="text-2xl font-bold">{formatNumberWithCommas(price)}</span>
+                                    <span className="text-sm font-normal"> VND</span>
+                                </p>
+                                <span className="text-lg line-through md:ms-4 text-gray-500 font-medium">
                                     {formatNumberWithCommas(product?.price)} VND
                                 </span>
-                            </p>
+                            </div>
                             
                             {/* Product attributes List */}
                             <ul className="list-disc pl-5 text-sm space-y-1">

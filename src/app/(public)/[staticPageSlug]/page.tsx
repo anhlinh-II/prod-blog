@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "@mui/material";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import StaticPageSidebar from "./StaticPageSidebar";
@@ -10,7 +10,6 @@ import Link from "next/link";
 import '@/styles/scrollbar.css'
 import { StaticPageResponse } from "@/types/News";
 import { getAllStaticPages, getStaticPageBySlug, increaseStaticPageViews } from "@/services/StaticPageService";
-import Head from "next/head";
 
 
 interface StaticPageProps {
@@ -74,7 +73,7 @@ export default function StaticPage({ params }: StaticPageProps) {
             <Breadcrumb items={breadcrumbItems} />
             <main className="flex-grow bg-gray-50 py-6">
                 <Container maxWidth={"lg"}>
-                  <div className="text-3xl text-gray-800 border-b border-gray-300 pb-2 mb-4">Chính sách / Về chúng tôi / Hướng dẫn</div>
+                  <div className="text-3xl text-gray-800 border-b border-gray-300 pb-2 mb-4">{staticPage?.title}</div>
 
                     <div className="flex flex-col md:flex-row justify-center gap-4">
                         <section className="w-full lg:w-5/7 flex flex-col gap-12">
@@ -87,16 +86,16 @@ export default function StaticPage({ params }: StaticPageProps) {
                                     p-3 border-y border-gray-300 text-lg">
                                     <div className="flex items-center gap-2 hover:-translate-x-4 transition-all ease-in duration-150">
                                         <FiChevronLeft className="text-2xl"/>
-                                        <Link href={`/news/slug`} className="">
-                                            <p className="line-clamp-2 min-h-[3rem] font-serif">Giới thiệu sản phẩm mới: Tai nghe không dây X-Pro</p>
+                                        <Link href={`/tin-tuc`} className="">
+                                            <p className="line-clamp-1 min-h-[1.5rem] font-serif">Đi tới Bảng tin tức | Điện máy V Share</p>
                                         </Link>
                                     </div>
 
                                     <div className='h-12 w-0.25 bg-gray-300 rounded-lg'></div>
 
                                     <div className="flex items-center gap-2 hover:translate-x-4 transition-all ease-in duration-150">
-                                        <Link href={`/news/slug`} className="">
-                                            <p className="line-clamp-2 min-h-[3rem] font-serif">Giới thiệu sản phẩm mới: Tai nghe không dây Y-Pro</p>
+                                        <Link href={`/danh-muc`} className="">
+                                            <p className="line-clamp-1 min-h-[1.5rem] font-serif">Danh mục sản phẩm | Điện máy V Share</p>
                                         </Link>
                                         <FiChevronRight className="text-2xl"/>
                                     </div>

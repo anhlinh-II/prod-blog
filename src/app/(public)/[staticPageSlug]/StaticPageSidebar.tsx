@@ -63,17 +63,17 @@ export default function StaticPageSidebar({pageList}: StaticPageSidebarProps) {
         <h2 className="text-lg font-semibold mb-1 text-gray-800">Chính sách</h2>
         <div className='h-0.5 w-12 bg-black rounded-lg mb-2'></div>
         <ul className="space-y-2">
-          {pageList.map((news) => (
-            <li key={news.id} className='w-full border-b border-gray-300 pb-1'>
+          {pageList.map((page) => (
+            <li key={page.id} className='w-full border-b border-gray-300 pb-1'>
               <div className='hover:translate-x-2 transition-all ease-in duration-150'>
                 <Link
-                  href={`/news?category=${encodeURIComponent(news.title)}`}
+                  href={`/${page.slug}`}
                   className="text-gray-700 text-lg font-light uppercase"
                 >
-                  {news.title}
+                  {page.title}
                 </Link>
               </div>
-                <p className="text-gray-400 text-xs">{formatDate(news.createdAt)}</p>
+                <p className="text-gray-400 text-xs">{formatDate(page.createdAt)}</p>
             </li>
           ))}
         </ul>
