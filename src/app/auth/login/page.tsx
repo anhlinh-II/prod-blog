@@ -21,7 +21,14 @@ const LoginPage = () => {
     setSubmitting(true);
     try {
       const res = await callLogin(email, password);
-      // window.location.href = '/admin/dashboard';
+      if(res.data.code == 1000) {
+        const accessToken = res.data.result?.access_token;
+        if (accessToken) {
+              localStorage.setItem('access_token', accessToken);
+        }
+
+        window.location.href = '/admin/dashboard';
+      }
 
     } catch (err: any) {
       setErrorMsg('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');

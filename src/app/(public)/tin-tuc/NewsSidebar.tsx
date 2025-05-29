@@ -8,7 +8,7 @@ export default function NewsSidebar() {
   const newsList = data?.result?.content ?? [];
 
   return (
-    <aside className="hidden md:block w-full md:w-80 px-4 py-2 border-s border-gray-300 space-y-4">
+    <aside className="hidden md:block w-full  px-4 py-2 border-s border-gray-300 space-y-4">
 
       {/* Tin cũ */}
       <div>
@@ -28,7 +28,7 @@ export default function NewsSidebar() {
                   <div className="hover:translate-x-2 transition-all ease-in duration-150">
                     <Link
                       href={`/tin-tuc/${news.slug}`}
-                      className="text-gray-800 text-lg font-light uppercase"
+                      className="text-gray-800 text-lg font-light uppercase line-clamp-2"
                     >
                       {news.title}
                     </Link>

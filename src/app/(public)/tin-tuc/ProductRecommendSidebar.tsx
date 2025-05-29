@@ -61,7 +61,7 @@ const ProductRecommendSidebar = () => {
                                 className="flex items-center justify-between pb-2 border-b border-gray-300 mb-2
                                     text-gray-800 hover:text-red-700 hover:scale-105 transition-all ease-in duration-150"
                             >
-                                <span className="text-base font-semibold line-clamp-2">{product.name}</span>
+                                <span className="text-sm font-semibold line-clamp-2">{product.name}</span>
                                 {product.image ? (
                                     <Image
                                         src={apiUrl + product.image}

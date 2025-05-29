@@ -56,7 +56,7 @@ export default function Post({
 
                 {/* Content */}
                 <div className="text-gray-800 whitespace-pre-line">
-                    <p className={`${!isExpanded && 'line-clamp-4'}`}>{content}</p>
+                    <p className={`${!isExpanded && 'line-clamp-4'} whitespace-pre-wrap`}>{content}</p>
                     {shouldShowExpand && (
                         <button
                             onClick={() => setIsExpanded(!isExpanded)}

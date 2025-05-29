@@ -26,7 +26,7 @@ export default function NewsLayout({ children }: { children: React.ReactNode }) 
     ];
     
     return (
-        <div className="bg-gray-100">
+        <div className="bg-gray-50">
             <Breadcrumb items={breadcrumbItems} />
             <main className="min-h-screen flex-grow py-4">
                     <div className="flex flex-col-reverse lg:flex-row justify-center gap-4">

@@ -34,7 +34,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (storedCart) {
           const parsedCart = JSON.parse(storedCart);
           setCart(parsedCart);
-          console.log('Đã khôi phục giỏ hàng từ localStorage:', parsedCart);
         }
         setIsInitialized(true);
       } catch (error) {
@@ -48,7 +47,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (typeof window !== 'undefined' && isInitialized) {
       try {
         localStorage.setItem('cart', JSON.stringify(cart));
-        console.log('Đã lưu giỏ hàng vào localStorage:', cart);
       } catch (error) {
         console.error('Lỗi khi lưu giỏ hàng vào localStorage:', error);
       }
