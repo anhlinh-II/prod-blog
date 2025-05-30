@@ -21,9 +21,9 @@ export default function Post({
     images,
     width
 }: PostProps) {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const imagesUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
     const [displayMediaIndex, setDisplayMediaIndex] = useState<number | null>(null);
-    const imageUrls = images.filter(image => image && image.url).map(image => `${apiUrl}${image.url}`);
+    const imageUrls = images.filter(image => image && image.url).map(image => `${imagesUrl}${image.url}`);
     const [isExpanded, setIsExpanded] = useState(false);
     const contentPreviewLimit = 300;
 

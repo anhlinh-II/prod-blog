@@ -61,7 +61,7 @@ export default function StaticPagesPage() {
      const [previewOpen, setPreviewOpen] = useState(false);
      const [pendingImages, setPendingImages] = useState<{ tempId: string, file: File }[]>([]);
      const [editingPageImages, setEditingPageImages] = useState<string[]>([]); // lưu url ảnh cũ khi edit
-     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+     const imagesUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
 
      // Fetch static pages
      const { data: pageData, isLoading } = useQuery({
@@ -237,7 +237,7 @@ export default function StaticPagesPage() {
                     const res = await uploadPageContentImages(editingId, pendingImages.map(i => i.file));
                     const replacements = pendingImages.map((img, idx) => ({
                          tempId: img.tempId,
-                         url: `${apiUrl}${res.result[idx].url}`
+                         url: `${imagesUrl}${res.result[idx].url}`
                     }));
                     updatedContent = replaceImagePlaceholders(form.content, replacements);
                }
@@ -273,7 +273,7 @@ export default function StaticPagesPage() {
                     const res = await uploadPageContentImages(newId, pendingImages.map(i => i.file));
                     const replacements = pendingImages.map((img, idx) => ({
                          tempId: img.tempId,
-                         url: `${apiUrl}${res.result[idx].url}`
+                         url: `${imagesUrl}${res.result[idx].url}`
                     }));
                     updatedContent = replaceImagePlaceholders(form.content, replacements);
                     // Update page with new content

@@ -22,7 +22,7 @@ interface ProductPageProps {
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const imagesUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
     const { productSlug } = params;
     const [product, setProduct] = useState<ProductResponse>();
     const [similarProducts, setSimilarProducts] = useState<ProductShortResponse[]>();
@@ -63,7 +63,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
                 setProduct(product.result);
                 if(product.result.images && product.result.images.length > 0) {
-                    setImages(product.result.images.filter(image => image).map(image => `${apiUrl}${image}`));
+                    setImages(product.result.images.filter(image => image).map(image => `${imagesUrl}${image}`));
                     console.log(images)
                 }
                 setPrice(product.result.price * (100 - product.result.discountPercent)/100);

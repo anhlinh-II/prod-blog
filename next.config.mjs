@@ -9,6 +9,12 @@ const nextConfig = {
             port: '8080',
             pathname: '/uploads/**',
           },
+          {
+            protocol: 'http',
+            hostname: 'backend',
+            port: '8080',
+            pathname: '/uploads/**',
+          },
         ],
         minimumCacheTTL: 86400,
       },

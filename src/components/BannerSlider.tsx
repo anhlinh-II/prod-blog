@@ -12,7 +12,7 @@ import { useBanners } from "@/hooks/ReactQueries";
 
 
 const BannerSlider = () => {
-	const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const imagesUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
 	const { data, isLoading, error } = useBanners();
 	const prevRef = useRef(null);
 	const nextRef = useRef(null);
@@ -22,7 +22,7 @@ const BannerSlider = () => {
 			const preloadImages = data.result.slice(0, 2);
 			preloadImages.forEach((banner) => {
 				const img = new window.Image();
-				img.src = `${apiUrl + banner.url}`;
+				img.src = `${imagesUrl + banner.url}`;
 			});
 		}
 	}, [data]);
@@ -74,7 +74,7 @@ const BannerSlider = () => {
 					<SwiperSlide key={banner.id}>
 						<div className="relative w-full h-full">
 							<Image
-								src={`${apiUrl + banner.url}`}
+								src={`${imagesUrl + banner.url}`}
 								alt={`banner ${banner.id}`}
 								fill
 								className="object-cover"

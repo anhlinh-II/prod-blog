@@ -9,7 +9,7 @@ type ProductItemProps = {
 };
 
 export default function ProductItem({ product }: ProductItemProps) {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const imagesUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
   const [isNew, setIsNew] = useState(false);
   const [price, setPrice] = useState(0);
   
@@ -36,7 +36,7 @@ export default function ProductItem({ product }: ProductItemProps) {
         {product.image ? (
         <div className='overflow-hidden'>
           <Image
-            src={`${apiUrl}${product.image}`}
+            src={`${imagesUrl}${product.image}`}
             alt={product.name}
             width={200}
             height={150}

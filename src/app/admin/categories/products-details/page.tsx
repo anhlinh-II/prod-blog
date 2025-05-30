@@ -66,6 +66,7 @@ export default function AdminProductDetailsPage() {
   const [tempSize, setTempSize] = useState<string>('10');
 
      const queryClient = useQueryClient();
+     const imagesUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
 
      // State
      const [openDialog, setOpenDialog] = useState(false);
@@ -440,7 +441,7 @@ export default function AdminProductDetailsPage() {
           if (Array.isArray(res.result.images)) {
                images = res.result.images.map(img =>
                     img
-                         ? (img.startsWith('http') ? img : `http://localhost:8080${img}`)
+                         ? (img.startsWith('http') ? img : `${imagesUrl}${img}`)
                          : ''
                );
           }
@@ -465,7 +466,7 @@ export default function AdminProductDetailsPage() {
                // Chuẩn hóa lấy url từ MediaResponse
                const newUrls = (res.result || []).map((img: MediaResponse) =>
                     img.url
-                         ? (img.url.startsWith('http') ? img.url : `http://localhost:8080${img.url}`)
+                         ? (img.url.startsWith('http') ? img.url : `${imagesUrl}${img.url}`)
                          : ''
                );
                setImageList(list => [...list, ...newUrls.filter(Boolean)]);

@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 
 const ProductRecommendSidebar = () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const imagesUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
     const [products, setProducts] = useState<ProductShortResponse[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -64,7 +64,7 @@ const ProductRecommendSidebar = () => {
                                 <span className="text-sm font-semibold line-clamp-2">{product.name}</span>
                                 {product.image ? (
                                     <Image
-                                        src={apiUrl + product.image}
+                                        src={imagesUrl + product.image}
                                         alt={product.name}
                                         width={64}
                                         height={64}

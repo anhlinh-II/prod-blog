@@ -44,6 +44,7 @@ const defaultForm: NewsRequest = {
 };
 
 export default function AdminNewsPage() {
+  const imagesUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
   const queryClient = useQueryClient();
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
@@ -200,8 +201,6 @@ export default function AdminNewsPage() {
     }
   };
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
   return (
     <Box>
       <Typography variant="h5" fontWeight="bold" mb={2}>
@@ -244,7 +243,7 @@ export default function AdminNewsPage() {
                 <TableCell>
                   {news.images?.[0] && (
                     <Image 
-                      src={`${apiUrl}${news.images[0].url}`}
+                      src={`${imagesUrl}${news.images[0].url}`}
                       alt={news.images[0].fileName}
                       width={50}
                       height={50}
@@ -394,7 +393,7 @@ export default function AdminNewsPage() {
               {previews.map((preview, index) => (
                 <ImageListItem key={index}>
                   <Image
-                    src={preview.url.startsWith('blob:') ? preview.url : `${apiUrl}${preview.url}`}
+                    src={preview.url.startsWith('blob:') ? preview.url : `${imagesUrl}${preview.url}`}
                     alt={preview.fileName || ''}
                     width={100}
                     height={100}

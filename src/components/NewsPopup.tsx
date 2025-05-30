@@ -12,7 +12,7 @@ import Link from 'next/link';
 
 
 const NewsPopup = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const imagesUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
   const [news, setNews] = useState<NewsResponse>();
   const [showPopup, setShowPopup] = useState(false);
 
@@ -71,7 +71,7 @@ const NewsPopup = () => {
           {news?.images && news?.images?.length > 0 && news.images[0]?.url && (
           <div className='w-[300px] h-[300px] relative'>
             <Image
-              src={apiUrl + news?.images[0].url}
+              src={imagesUrl + news?.images[0].url}
               alt="main image"
               fill
               priority={true}

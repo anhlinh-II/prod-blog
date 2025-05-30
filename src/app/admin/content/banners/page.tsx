@@ -18,6 +18,7 @@ import { getBannerImages, uploadBannerImages } from '@/services/MediaService';
 import { MediaResponse } from '@/types';
 
 export default function AdminBannersPage() {
+  const imagesUrl = process.env.NEXT_PUBLIC_IMAGE_URL;
   const queryClient = useQueryClient();
   const [uploading, setUploading] = useState(false);
 
@@ -111,7 +112,7 @@ export default function AdminBannersPage() {
               }}
             >
               <Image
-                src={banner.url.startsWith('http') ? banner.url : `http://localhost:8080${banner.url}`}
+                src={banner.url.startsWith('http') ? banner.url : `${imagesUrl}${banner.url}`}
                 alt={banner.fileName}
                 width={400}
                 height={200}
